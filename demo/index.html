@@ -1,0 +1,17 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;background:#0D0A08}</style></head><body>
+<script src="../dist/home-live-card.js"></script><script src="demo.js"></script>
+<script>
+const q=new URLSearchParams(location.search);const cfg=Object.assign({},DEMO_CFG);if(q.get('lang'))cfg.language=q.get('lang');if(q.get('pal'))cfg.palette=q.get('pal');
+if(q.get('day')==='0')DEMO_ST['sun.sun'].state='below_horizon';
+const el=document.createElement("home-live-card");el.setConfig(cfg);document.body.appendChild(el);window.EL=el;
+const now=Date.now()/1000;const H=[];for(let i=0;i<80;i++)H.push({s:String(Math.round(700+380*Math.sin(i/9)+((i*37)%60))),lu:now-12*3600+i*540});
+const FC=[0,1,2,3,4].map(d=>({datetime:new Date(Date.now()+d*864e5).toISOString(),condition:["partlycloudy","sunny","cloudy","rainy","sunny"][d],temperature:[12,14,11,9,13][d],templow:[5,6,6,4,5][d]}));
+el.hass={states:DEMO_ST,user:{name:"Alex Example"},language:cfg.language,locale:{language:cfg.language},config:{unit_system:{temperature:"°C"}},
+ callService:(d,s,x)=>{const id=x&&x.entity_id;const o=DEMO_ST[id];if(o){const a=Object.assign({},o.attributes);let st=o.state;
+ if(d==="light"&&s==="turn_on"){st="on";if(x.brightness_pct!=null)a.brightness=Math.round(x.brightness_pct*2.55);else if(!a.brightness)a.brightness=255;}
+ else if(s==="turn_off"){st="off";}else if(s==="turn_on"){st=d==="climate"?"heat":"on";}else if(s==="toggle"){st=st==="on"?"off":"on";}
+ else if(d==="climate"&&s==="set_temperature"){a.temperature=x.temperature;}else if(d==="climate"&&s==="set_hvac_mode"){st=x.hvac_mode;}
+ else if(d==="cover"&&s==="set_cover_position"){a.current_position=x.position;st=x.position>0?"open":"closed";}else if(d==="cover"){a.current_position=s==="open_cover"?100:s==="close_cover"?0:a.current_position;st=a.current_position>0?"open":"closed";}
+ DEMO_ST[id]=Object.assign({},o,{state:st,attributes:a,last_changed:new Date().toISOString()});setTimeout(()=>{el.hass=Object.assign({},el._hass,{states:Object.assign({},DEMO_ST)});},150);}return Promise.resolve();},callApi:()=>Promise.resolve([{summary:"Paper",start:{date:new Date(Date.now()+864e5).toISOString().slice(0,10)}}]),
+ callWS:()=>Promise.resolve({"sensor.home_power":H}),connection:{subscribeMessage:(cb)=>{setTimeout(()=>cb({forecast:FC}),50);return Promise.resolve(()=>{});}}};
+</script></body></html>

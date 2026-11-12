@@ -1,0 +1,102 @@
+# Every option the card understands today. All blocks except "rooms" are optional;
+# leave a block out and its tile or view is hidden.
+type: custom:home-live-card
+language: auto              # auto (follows your Home Assistant language) | de | en
+image_path: /local/home-live/rooms/   # folder with the room photos
+load_font: true             # false = no request to Google Fonts, system font instead
+theme: auto                 # auto (follows the sun) | light | dark
+palette: amber              # amber (warm brown) | graphite (cool charcoal, orange accent) – dark mode
+start_view: overview        # overview | room | energy | security
+default_room: living
+energy_path: /energy        # where the "Details" button navigates
+
+rooms:
+  - id: living              # also the photo name: <image_path>/living_day.webp and living_night.webp
+    name: Living room
+    floor: Ground floor     # rooms are grouped by this in the navigation
+    type: living            # icon/fallback scene: living, dining, kitchen, office, bath,
+                            # hall, utility, bed, closet, kids, outdoor, garage
+    temp: sensor.living_room_temperature
+    hum: sensor.living_room_humidity
+    power: [sensor.tv_power]            # summed for the room's power figure
+    media: media_player.living_room
+    image: living           # optional; false = drawn scene instead of a photo
+    devices:
+      - entity: light.floor_lamp
+        name: Floor lamp
+        power: sensor.floor_lamp_power
+      - entity: switch.tv_plug
+        name: TV
+        icon: tv            # bulb, tv, pc, dish, washer, gate, ...
+        confirm: true       # second tap needed before switching
+      - entity: cover.living_room_blind
+        name: Blind
+        short: Blind        # short label for compact tiles
+      - entity: climate.living_room
+        name: Heating       # gets the dial + curved scale
+      - entity: media_player.living_room
+        name: Speaker
+    sensors:                # doors/windows shown as open/closed chips
+      - entity: binary_sensor.patio_door
+        name: Patio door
+    info:                   # any numeric sensor shown as a chip
+      - entity: sensor.fridge_temperature
+        name: Fridge
+        unit: °C
+
+overview:
+  hero_day: /local/home-live/house_day.webp
+  hero_night: /local/home-live/house_night.webp
+  persons: [person.alex, person.sam]
+  alarm: alarm_control_panel.home
+  weather: weather.home
+  climate: climate.bedroom
+  climate_name: Bedroom
+  lights:
+    - { entity: light.living_room, name: Living room, room: living }
+  extra_lights: [light.hallway]
+  doors:
+    - { entity: binary_sensor.front_door, name: Front door }
+  media: [media_player.living_room]
+  devices:
+    - { entity: switch.tv_plug, name: TV, icon: tv }
+  camera: camera.front_door
+  camera_name: Front door
+  actions:
+    - { entity: script.open_gate, name: Gate, icon: gate }
+
+energy:
+  solar: sensor.pv_power                  # W
+  battery: sensor.battery_power           # W, positive = charging
+  battery_invert: false                   # true if your inverter reports discharging as positive
+  grid_invert: false                      # true if your meter reports export as positive
+  battery_soc: sensor.battery_level       # %
+  grid: sensor.grid_power                 # W
+  solar_today: sensor.pv_energy_today     # kWh
+  consumption_today: sensor.home_energy_today
+  import_today: sensor.grid_import_today
+  export_today: sensor.grid_export_today
+  forecast_today: sensor.pv_forecast_today
+  forecast_tomorrow: sensor.pv_forecast_tomorrow
+  outdoor_temp: sensor.outdoor_temperature
+  consumers:
+    - { name: Washing machine, entity: sensor.washer_power }
+  water_temp: sensor.hot_water_temperature
+  water_heater: water_heater.hot_water
+  water_boost: switch.hot_water_boost
+  trash:
+    calendar: calendar.waste_collection
+    days: 14
+    patterns:
+      - { match: Residual, name: Residual waste, color: "#8A8F98" }
+      - { match: Bio, name: Organic, color: "#9BCB5A" }
+
+security:
+  alarm: alarm_control_panel.home
+  groups:
+    - name: Ground floor
+      items: [binary_sensor.front_door, binary_sensor.patio_door]
+  gates:
+    - { name: Gate, sensor: binary_sensor.gate, action: script.open_gate, icon: gate }
+  cameras:
+    - { entity: camera.front_door, name: Front door, motion: binary_sensor.front_motion }

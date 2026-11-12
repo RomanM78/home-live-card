@@ -1,0 +1,16 @@
+# Smallest working setup: one panel view, rooms with devices.
+# Use it in a view of type "panel" so the card can fill the screen.
+type: custom:home-live-card
+rooms:
+  - id: living
+    name: Living room
+    devices:
+      - entity: light.living_room
+        name: Ceiling
+      - entity: climate.living_room
+        name: Heating
+  - id: kitchen
+    name: Kitchen
+    devices:
+      - entity: light.kitchen
+        name: Ceiling
