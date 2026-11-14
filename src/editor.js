@@ -7,16 +7,16 @@ const ED = {
     rooms: "Räume", add_room: "Raum hinzufügen", from_areas: "Aus Home-Assistant-Bereichen übernehmen", from_areas_done: "{n} Räume übernommen", from_areas_none: "Keine neuen Bereiche gefunden",
     name: "Name", id: "Kennung (für Fotos)", floor: "Etage", type: "Raumtyp", temp: "Temperatursensor", hum: "Feuchtesensor", image: "Fotoname (leer = Kennung)",
     devices: "Geräte", add_device: "Gerät hinzufügen", entity: "Entität", confirm: "Nachfragen vor dem Schalten", sensors: "Fenster und Türen", add_sensor: "Kontakt hinzufügen",
-    energy: "Energie", solar: "PV-Leistung (W)", battery: "Akku-Leistung (W)", battery_soc: "Akku-Ladestand (%)", grid: "Netz-Leistung (W)", solar_today: "PV-Ertrag heute (kWh)", consumption_today: "Verbrauch heute (kWh)", import_today: "Netzbezug heute (kWh)", export_today: "Einspeisung heute (kWh)", outdoor_temp: "Außentemperatur", battery_invert: "Akku-Vorzeichen umkehren", grid_invert: "Netz-Vorzeichen umkehren",
-    more: "Übersicht, Sicherheit, Warmwasser und Müllkalender richtest du im Code-Editor ein (Beispiele im README).", up: "Nach oben", down: "Nach unten", remove: "Entfernen", edit: "Bearbeiten",
+    energy: "Energie", solar: "PV-Leistung (W)", battery: "Akku-Leistung (W)", battery_soc: "Akku-Ladestand (%)", grid: "Netz-Leistung (W)", solar_today: "PV-Ertrag heute (kWh)", consumption_today: "Verbrauch heute (kWh)", import_today: "Netzbezug heute (kWh)", export_today: "Einspeisung heute (kWh)", outdoor_temp: "Außentemperatur", home: "Hausverbrauch (W)", forecast_today: "PV-Prognose heute (kWh)", forecast_tomorrow: "PV-Prognose morgen (kWh)", consumers: "Großverbraucher (Leistung in W)", water_temp: "Warmwasser-Temperatur", water_heater: "Warmwasser-Gerät", battery_invert: "Akku-Vorzeichen umkehren", grid_invert: "Netz-Vorzeichen umkehren",
+    more: "Übersicht, Sicherheit und Müllkalender richtest du im Code-Editor ein (Beispiele im README).", up: "Nach oben", down: "Nach unten", remove: "Entfernen", edit: "Bearbeiten",
     auto: "Automatisch", day: "Tag", night: "Abend", overview: "Übersicht", room: "Räume", sec: "Sicherheit", none: "–",
     t_living: "Wohnzimmer", t_dining: "Esszimmer", t_kitchen: "Küche", t_office: "Arbeitszimmer", t_bath: "Bad", t_hall: "Flur", t_utility: "Hauswirtschaft", t_bed: "Schlafzimmer", t_closet: "Ankleide", t_kids: "Kinderzimmer", t_outdoor: "Außen", t_garage: "Garage" },
   en: { general: "General", language: "Language", theme: "Appearance", palette: "Colour scheme", amber: "Amber (warm)", graphite: "Graphite (cool, orange)", start_view: "Start view", default_room: "Start room", image_path: "Room photo folder", energy_path: "Target of the “Details” button", load_font: "Load the Manrope font from Google",
     rooms: "Rooms", add_room: "Add room", from_areas: "Import Home Assistant areas", from_areas_done: "{n} rooms imported", from_areas_none: "No new areas found",
     name: "Name", id: "ID (used for photos)", floor: "Floor", type: "Room type", temp: "Temperature sensor", hum: "Humidity sensor", image: "Photo name (empty = ID)",
     devices: "Devices", add_device: "Add device", entity: "Entity", confirm: "Ask before switching", sensors: "Windows and doors", add_sensor: "Add contact",
-    energy: "Energy", solar: "Solar power (W)", battery: "Battery power (W)", battery_soc: "Battery level (%)", grid: "Grid power (W)", solar_today: "Solar today (kWh)", consumption_today: "Consumption today (kWh)", import_today: "Grid import today (kWh)", export_today: "Export today (kWh)", outdoor_temp: "Outdoor temperature", battery_invert: "Invert battery sign", grid_invert: "Invert grid sign",
-    more: "Overview, security, hot water and the waste calendar are set up in the code editor (examples in the README).", up: "Move up", down: "Move down", remove: "Remove", edit: "Edit",
+    energy: "Energy", solar: "Solar power (W)", battery: "Battery power (W)", battery_soc: "Battery level (%)", grid: "Grid power (W)", solar_today: "Solar today (kWh)", consumption_today: "Consumption today (kWh)", import_today: "Grid import today (kWh)", export_today: "Export today (kWh)", outdoor_temp: "Outdoor temperature", home: "Home consumption (W)", forecast_today: "Solar forecast today (kWh)", forecast_tomorrow: "Solar forecast tomorrow (kWh)", consumers: "Largest consumers (power in W)", water_temp: "Hot water temperature", water_heater: "Hot water heater", battery_invert: "Invert battery sign", grid_invert: "Invert grid sign",
+    more: "Overview, security and the waste calendar are set up in the code editor (examples in the README).", up: "Move up", down: "Move down", remove: "Remove", edit: "Edit",
     auto: "Automatic", day: "Day", night: "Evening", overview: "Overview", room: "Rooms", sec: "Security", none: "–",
     t_living: "Living room", t_dining: "Dining room", t_kitchen: "Kitchen", t_office: "Office", t_bath: "Bathroom", t_hall: "Hallway", t_utility: "Utility room", t_bed: "Bedroom", t_closet: "Dressing room", t_kids: "Kids' room", t_outdoor: "Outdoor", t_garage: "Garage" }
 };
@@ -123,12 +123,20 @@ class HomeLiveCardEditor extends HTMLElement {
     rs.appendChild(act);
     R.appendChild(rs.parentNode);
     // energy
-    const en = this._section(L("energy")), ec = c.energy || {}, ent = (dc, dom) => ({ entity: { filter: dc ? { domain: dom || "sensor", device_class: dc } : { domain: dom || "sensor" } } });
+    // No device_class filter: many integrations (e.g. battery level or forecast sensors) do not set one, and the picker would then show nothing.
+    const en = this._section(L("energy")), ec = c.energy || {}, ent = (dom) => ({ entity: { filter: { domain: dom || "sensor" } } });
+    const ed = Object.assign({}, ec, { consumers: (ec.consumers || []).map((x) => x.entity).filter(Boolean) });
     en.appendChild(this._form([
-      { name: "solar", selector: ent("power") }, { name: "battery", selector: ent("power") }, { name: "battery_soc", selector: ent("battery") }, { name: "grid", selector: ent("power") },
-      { name: "solar_today", selector: ent("energy") }, { name: "consumption_today", selector: ent("energy") }, { name: "import_today", selector: ent("energy") }, { name: "export_today", selector: ent("energy") },
-      { name: "outdoor_temp", selector: ent("temperature") }, { name: "battery_invert", selector: { boolean: {} } }, { name: "grid_invert", selector: { boolean: {} } }
-    ], ec, (v) => { const n = this._clean(Object.assign({}, c.energy || {}, v)); if (n.battery_invert === false) delete n.battery_invert; if (n.grid_invert === false) delete n.grid_invert; if (Object.keys(n).length) c.energy = n; else delete c.energy; this._emit(); }));
+      { name: "solar", selector: ent() }, { name: "battery", selector: ent() }, { name: "battery_soc", selector: ent() }, { name: "grid", selector: ent() }, { name: "home", selector: ent() },
+      { name: "solar_today", selector: ent() }, { name: "consumption_today", selector: ent() }, { name: "import_today", selector: ent() }, { name: "export_today", selector: ent() },
+      { name: "forecast_today", selector: ent() }, { name: "forecast_tomorrow", selector: ent() }, { name: "outdoor_temp", selector: ent() },
+      { name: "consumers", selector: { entity: { multiple: true, filter: { domain: "sensor" } } } },
+      { name: "water_temp", selector: ent() }, { name: "water_heater", selector: ent("water_heater") },
+      { name: "battery_invert", selector: { boolean: {} } }, { name: "grid_invert", selector: { boolean: {} } }
+    ], ed, (v) => {
+      if ("consumers" in v) { const old = (c.energy && c.energy.consumers) || [], list = Array.isArray(v.consumers) ? v.consumers : String(v.consumers || "").split(",").map((x) => x.trim()).filter(Boolean);
+        v.consumers = list.map((id) => old.find((o) => o.entity === id) || { entity: id, name: (this._h && this._h.states[id] && this._h.states[id].attributes.friendly_name) || id }); if (!v.consumers.length) delete v.consumers; }
+      const n = this._clean(Object.assign({}, c.energy || {}, v)); if (!v.consumers) delete n.consumers; if (n.battery_invert === false) delete n.battery_invert; if (n.grid_invert === false) delete n.grid_invert; if (Object.keys(n).length) c.energy = n; else delete c.energy; this._emit(); }));
     R.appendChild(en.parentNode);
     const h = document.createElement("p"); h.className = "hint"; h.textContent = L("more"); R.appendChild(h);
   }

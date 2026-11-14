@@ -32,8 +32,9 @@ resource (type *JavaScript module*, URL `/local/home-live-card.js`).
 
 Create a view of type **Panel** and add the card. It starts with one room per Home Assistant
 area (lights, switches, covers, climate, media players, door and window contacts). Rooms,
-devices, sensors and the energy block can then be edited in the visual editor; the overview,
-security, hot water and waste calendar blocks are set in the code editor.
+devices, sensors and the energy block (including hot water and the largest consumers) can then
+be edited in the visual editor; the overview, security and waste calendar blocks are set in the
+code editor.
 
 Minimal configuration:
 
