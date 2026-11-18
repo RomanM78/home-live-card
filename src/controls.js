@@ -81,7 +81,7 @@ const M = {
     return `<style>${TDCSS}${LTCSS}</style><div class="dev ltile dim ${on ? "on" : ""}">${head}<div class="lmid">${nm}<div class="lpre">${[25, 50, 75, 100].map((v) => `<button class="${on && Math.abs(pct - v) < 3 ? "on" : ""}" data-a="lset" data-v="${esc(id)}|${v}" aria-label="${v} ${T("Prozent")}">${v}</button>`).join("")}<button class="pw ${on ? "on" : ""}" data-a="lset" data-v="${esc(id)}|${on ? 0 : 100}" aria-label="${on ? T("Ausschalten") : T("Einschalten")}">${IC.off}</button></div></div><div class="trul" data-rk="l" data-id="${esc(id)}" aria-label="Helligkeit wischen">${this._tdRuler(pct, 0, 100, 5, 20, 10)}</div></div>`;
   },
   _roomImg(r, lit) {
-    const I = window.HOME_LIVE_IMG || {}, dy = this._isDay(), k = dy ? "day" : "night";
+    const I = window.HOME_LIVE_IMG || {}, dy = this._dayEff(), k = dy ? "day" : "night";
     let u = I[`room_${r.id}_${k}`] || (r.image !== false ? `${String(this._c.image_path || "/local/home-live/rooms/").replace(/\/?$/, "/")}${r.image || r.id}_${k}.webp` : "");
     if (!u) return ""; const C = (window.__hlImg = window.__hlImg || {});
     if (u.startsWith("/")) { if (C[u] === undefined) { C[u] = null; const im = new Image(); im.onload = () => { C[u] = true; this._render(); }; im.onerror = () => { C[u] = false; }; im.src = u; } if (C[u] !== true) return ""; }

@@ -229,6 +229,77 @@ const CSS_GR_X = `
 .dev{background:linear-gradient(165deg,#1C1F26,#15171C 80%)}
 .dev.on,.ltile.on{border-color:rgba(255,122,31,.45)}
 `;
+
+// neon palette: synthwave sunset scene behind glass cards, pink/cyan neon, chrome numbers.
+// Colours of the amber base are recoloured by rule (warm neutrals -> violet, orange accents -> pink).
+const NEX = { "#F2B183": "#FFB347", "#8FB8D8": "#5CF3FF", "#8FB8E8": "#5CF3FF", "#F2C14E": "#FFE27A", "#4CC38A": "#3DF5A6", "#0D0A08": "#12021E" };
+const _nec = new Map();
+const neRGB = (r, g, b) => {
+  const k = r + "," + g + "," + b; if (_nec.has(k)) return _nec.get(k);
+  const R = r / 255, G = g / 255, B = b / 255, mx = Math.max(R, G, B), mn = Math.min(R, G, B), L = (mx + mn) / 2, d = mx - mn;
+  let h = 0, S = 0;
+  if (d) { S = L > .5 ? d / (2 - mx - mn) : d / (mx + mn); h = mx === R ? ((G - B) / d + (G < B ? 6 : 0)) : mx === G ? (B - R) / d + 2 : (R - G) / d + 4; h *= 60; }
+  let out = [r, g, b];
+  const warm = h >= 0 && h < 52 && d > 0.01;
+  if (warm || !d) {
+    let H, SS;
+    if (warm && S >= .45 && L > .25) { H = 326; SS = Math.min(1, S + .1); }
+    else if (L > .62) { H = 318; SS = .45; }
+    else { H = 282; SS = Math.min(.62, S + .28); }
+    if (!d && L > .9) { H = 0; SS = 0; }
+    const q = L < .5 ? L * (1 + SS) : L + SS - L * SS, p2 = 2 * L - q, hk = H / 360;
+    const f = (t) => { t = t < 0 ? t + 1 : t > 1 ? t - 1 : t; return t < 1 / 6 ? p2 + (q - p2) * 6 * t : t < .5 ? q : t < 2 / 3 ? p2 + (q - p2) * (2 / 3 - t) * 6 : p2; };
+    out = [f(hk + 1 / 3), f(hk), f(hk - 1 / 3)].map((x) => Math.round(x * 255));
+  }
+  _nec.set(k, out); return out;
+};
+const neMap = (t) => t.replace(/#[0-9A-Fa-f]{6}\b/g, (c) => { const u = c.toUpperCase(); if (NEX[u]) return NEX[u]; const [r, g, b] = neRGB(parseInt(u.slice(1, 3), 16), parseInt(u.slice(3, 5), 16), parseInt(u.slice(5, 7), 16)); return "#" + [r, g, b].map((x) => x.toString(16).padStart(2, "0")).join("").toUpperCase(); })
+  .replace(/rgba\((\d+),\s*(\d+),\s*(\d+),/g, (m, r, g, b) => { if (+r === 0 && +g === 0 && +b === 0 || +r === 255 && +g === 255 && +b === 255) return m; const o = neRGB(+r, +g, +b); return `rgba(${o[0]},${o[1]},${o[2]},`; });
+const NE_SCENE = (() => {
+const palmB=(x,h,s,flip,c)=>{const f=flip?-1:1;return `<g transform="translate(${x} 600) scale(${f*s} ${s})"><path d="M0 0 C 10 -90 6 -180 26 -${h}" stroke="${c}" stroke-width="10" fill="none" stroke-linecap="round"/><g transform="translate(26 -${h})" fill="${c}"><path d="M0 0 C 45 -27 90 -15 120 18 C 82 0 45 0 0 6Z"/><path d="M0 0 C -45 -27 -93 -12 -117 24 C -78 3 -42 3 0 6Z"/><path d="M0 0 C 27 -45 69 -57 99 -45 C 60 -36 30 -21 0 3Z"/><path d="M0 0 C -24 -48 -63 -63 -96 -51 C -57 -39 -27 -21 0 3Z"/><path d="M0 0 C 6 -39 30 -69 54 -81 C 33 -60 15 -30 0 0Z"/><path d="M0 0 C 50 -6 96 12 112 52 C 84 22 46 12 0 8Z"/></g></g>`;};
+return "data:image/svg+xml;utf8,"+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice">
+<defs><linearGradient id="s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF07A"/><stop offset=".45" stop-color="#FF9D4D"/><stop offset="1" stop-color="#FF2E88"/></linearGradient>
+<mask id="m"><rect width="1600" height="600" fill="#fff"/>${[330,352,372,390,406,420,432,442].map((y,i)=>`<rect y="${y}" width="1600" height="${4+i*1.8}" fill="#000"/>`).join('')}</mask>
+<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF3CAC" stop-opacity=".9"/><stop offset="1" stop-color="#FF3CAC" stop-opacity=".15"/></linearGradient></defs>
+<circle cx="1180" cy="300" r="230" fill="url(#s)" mask="url(#m)"/>
+<rect y="450" width="1600" height="150" fill="#14021f"/>
+${[450,458,470,486,508,536,570,600].map(y=>`<path d="M0 ${y}H1600" stroke="url(#g)" stroke-width="1.6"/>`).join('')}
+${Array.from({length:41},(_,i)=>`<path d="M${800+(i-20)*14} 450L${800+(i-20)*110} 600" stroke="#FF3CAC" stroke-opacity=".55" stroke-width="1.4"/>`).join('')}
+${palmB(90,330,1,false,'#0c0114')}${palmB(190,250,.85,true,'#0c0114')}${palmB(1480,360,1.05,true,'#0c0114')}${palmB(1560,270,.8,false,'#0c0114')}
+</svg>`);
+
+})();
+const CSS_NE_X = `
+:host{background:#12021E!important;--card:rgba(24,6,40,.55);--card2:rgba(40,10,60,.55);--line:rgba(255,255,255,.10);--line2:rgba(255,255,255,.16);--tx:#FFF2FA;--mu:#D3A6D8;--mu2:#F2C9EE;--ac:#FF3CAC;--acbg:rgba(255,60,172,.18);--acln:rgba(255,60,172,.55);--warn:#FFB347;--cold:#5CF3FF;--inv:#12021E;font-family:Rajdhani,Manrope,system-ui,sans-serif!important;font-weight:600}
+.app{background:url("${NE_SCENE}") center bottom/100% auto no-repeat fixed,linear-gradient(180deg,#0E0120 0%,#2A0646 28%,#6B1A7A 50%,#D23C86 66%,#FF7A59 76%,#14021f 76.1%)!important;background-attachment:fixed!important}
+.side{background:rgba(14,1,28,.55)!important;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-right:1px solid rgba(255,60,172,.35)!important}
+.clock b{font-family:Monoton,sans-serif!important;font-weight:400!important;font-size:44px!important;color:#FF8AD8!important;text-shadow:0 0 6px #FF3CAC,0 0 18px #FF3CAC,0 0 40px rgba(255,60,172,.7)}
+.clock small{color:#FFD27A!important;letter-spacing:.12em;text-transform:uppercase;font-size:12px!important}
+.rl,.ovb{font-family:Rajdhani,sans-serif!important;font-weight:700!important;font-size:17px!important;letter-spacing:.04em}
+.rl.on,.ovb.on{background:linear-gradient(90deg,#FF3CAC,#FF7A59 60%,#FFB347)!important;color:#1A0326!important;box-shadow:0 0 22px rgba(255,60,172,.65)!important;transform:skewX(-8deg)}
+.floor{color:#5CF3FF!important;letter-spacing:.3em!important;text-shadow:0 0 8px rgba(92,243,255,.7)}
+.oc,.dev{background:linear-gradient(160deg,rgba(40,8,64,.62),rgba(16,3,30,.66))!important;backdrop-filter:blur(16px) saturate(1.5);-webkit-backdrop-filter:blur(16px) saturate(1.5);border:1px solid rgba(255,255,255,.12)!important;box-shadow:0 18px 40px rgba(8,0,20,.55),inset 0 1px 0 rgba(255,255,255,.12)!important;position:relative}
+.oc::before{content:"";position:absolute;left:18px;right:18px;top:0;height:2px;border-radius:2px;background:linear-gradient(90deg,#5CF3FF,#FF3CAC 50%,#FFB347);box-shadow:0 0 12px #FF3CAC;z-index:5}
+.oh b,.oh h3,.oh span:first-of-type{font-family:Bungee,sans-serif!important;font-weight:400!important;text-transform:uppercase;letter-spacing:.06em;font-size:15px!important;background:linear-gradient(90deg,#FFF07A,#FF7A59 45%,#FF3CAC);-webkit-background-clip:text;background-clip:text;color:transparent!important}
+.oh .ic,.oh svg{color:#5CF3FF!important;filter:drop-shadow(0 0 6px #5CF3FF)}
+.hero{background:transparent!important;border:2px solid rgba(255,60,172,.6)!important;box-shadow:0 0 30px rgba(255,60,172,.45),inset 0 0 40px rgba(255,60,172,.2)!important;overflow:hidden}
+.hero>img{position:absolute!important;inset:0;width:100%!important;height:100%!important;object-fit:cover;filter:grayscale(1) contrast(1.3) brightness(.85);mix-blend-mode:screen;opacity:.75;-webkit-mask-image:linear-gradient(90deg,transparent 15%,#000 60%)!important;mask-image:linear-gradient(90deg,transparent 15%,#000 60%)!important}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,60,172,.35),rgba(255,122,89,.25) 60%,rgba(255,179,71,.2)),repeating-linear-gradient(0deg,rgba(255,255,255,.05) 0 1px,transparent 1px 3px);mix-blend-mode:color;pointer-events:none;z-index:1}
+.hc{position:relative;z-index:4}
+.hero h2{font-family:Yellowtail,cursive!important;font-weight:400!important;font-size:58px!important;letter-spacing:0!important;line-height:1!important;color:#FFF!important;transform:rotate(-5deg);transform-origin:left;margin:6px 0 10px!important;text-shadow:0 0 4px #fff,0 0 12px #FF3CAC,0 0 26px #FF3CAC,0 0 48px rgba(255,60,172,.8)}
+.hero .hi{color:#5CF3FF!important;filter:drop-shadow(0 0 8px #5CF3FF)}
+.pill{background:rgba(14,1,28,.7)!important;border:1px solid rgba(92,243,255,.45)!important;box-shadow:0 0 14px rgba(92,243,255,.3)!important}
+.wt,.eg b,.eg strong,.eg big{font-family:Bungee,sans-serif!important;font-weight:400!important;background:linear-gradient(180deg,#FFF07A 10%,#FF7A59 55%,#FF3CAC 90%);-webkit-background-clip:text;background-clip:text;color:transparent!important;filter:drop-shadow(0 2px 10px rgba(255,60,172,.5))}
+.dev.on,.lt.on{border-color:#FF3CAC!important;box-shadow:0 0 18px rgba(255,60,172,.6),inset 0 0 18px rgba(255,60,172,.18)!important}
+.lt>img{filter:grayscale(.6) sepia(.5) hue-rotate(280deg) saturate(2.2) contrast(1.1)!important}
+.nav,.navw nav{background:rgba(14,1,28,.72)!important;backdrop-filter:blur(18px);border:1px solid rgba(255,60,172,.5)!important;box-shadow:0 0 30px rgba(255,60,172,.35)!important}
+.nitem.on{color:#FF8AD8!important;text-shadow:0 0 10px #FF3CAC}
+.flow,.stat,.panel,.dlg,.ltile,.ldev{background:linear-gradient(160deg,rgba(40,8,64,.62),rgba(16,3,30,.70))!important;backdrop-filter:blur(16px) saturate(1.5);-webkit-backdrop-filter:blur(16px) saturate(1.5);border:1px solid rgba(255,255,255,.12)!important;box-shadow:0 18px 40px rgba(8,0,20,.5),inset 0 1px 0 rgba(255,255,255,.1)!important}
+.stat b,.stat strong{font-family:Bungee,sans-serif;font-weight:400;background:linear-gradient(180deg,#FFF07A 10%,#FF7A59 55%,#FF3CAC 90%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hdr h1,.hdr h2{font-family:Bungee,sans-serif;font-weight:400;letter-spacing:.04em;background:linear-gradient(90deg,#FFF07A,#FF7A59 45%,#FF3CAC);-webkit-background-clip:text;background-clip:text;color:transparent}
+.thb,.pill small{color:#F2C9EE!important}
+`;
+
 const dayMap = (t) => t.replace(/#[0-9A-Fa-f]{6}\b/g, (c) => DAYC[c.toUpperCase()] || c).replace(/rgba\([^)]*\)/g, (c) => DAYR[c] || c);
 const CSS_DAY_X = `
 :host{--inv:#FFF8F0}
@@ -291,7 +362,12 @@ class HausLiveCard extends HTMLElement {
       l.href = "https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&display=swap";
       document.head.appendChild(l);
     }
-    this._tick = setInterval(() => { this._clock(); if (this._dayOn !== null && this._isDay() !== this._dayB) this._render(); }, 20000);
+    if (this._c && this._c.palette === "neon" && this._c.load_font !== false && !document.getElementById("wz-neon")) {
+      const l = document.createElement("link"); l.id = "wz-neon"; l.rel = "stylesheet";
+      l.href = "https://fonts.googleapis.com/css2?family=Bungee&family=Monoton&family=Rajdhani:wght@500;600;700&family=Yellowtail&display=swap";
+      document.head.appendChild(l);
+    }
+    this._tick = setInterval(() => { this._clock(); if (this._dayOn !== null && this._dayEff() !== this._dayB) this._render(); }, 20000);
     if (!this._imgL) { this._imgL = () => this._render(); window.addEventListener("home-live-img", this._imgL); }
     if (!this._ro && window.ResizeObserver) { this._ro = new ResizeObserver(() => { const w = (this.clientWidth || 0) >= 900; if (w !== this._wide) { this._wide = w; this._render(); } }); this._ro.observe(this); }
   }
@@ -313,7 +389,7 @@ class HausLiveCard extends HTMLElement {
       const o = this._c.overview;
       if (o) { for (const k of ["alarm", "weather", "climate", "camera"]) if (o[k]) s.add(o[k]); for (const k of ["persons", "media"]) for (const x of o[k] || []) s.add(x); for (const k of ["lights", "extra_lights", "doors", "devices", "actions"]) for (const x of o[k] || []) s.add(typeof x === "string" ? x : x.entity); }
       const sc = this._c.security;
-      if (sc) { if (sc.alarm) s.add(sc.alarm); for (const g of sc.groups || []) for (const it of g.items || []) s.add(it.entity); for (const g of sc.gates || []) { if (g.sensor) s.add(g.sensor); if (g.action) s.add(g.action); } for (const c of sc.cameras || []) { s.add(c.entity); if (c.motion) s.add(c.motion); } }
+      if (sc) { if (sc.alarm) s.add(sc.alarm); for (const g of sc.groups || []) for (const it of g.items || []) s.add(typeof it === "string" ? it : it.entity); for (const g of sc.gates || []) { if (g.sensor) s.add(g.sensor); if (g.action) s.add(g.action); } for (const c of sc.cameras || []) { s.add(c.entity); if (c.motion) s.add(c.motion); } }
       s.add("sun.sun");
       this._ids = [...s];
     }
@@ -492,12 +568,13 @@ class HausLiveCard extends HTMLElement {
   }
 
   _themeMode() { let m = null; try { m = localStorage.getItem("home-live-theme"); } catch (x) {} return m === "day" || m === "night" ? m : (this._c.theme === "day" || this._c.theme === "night" ? this._c.theme : "auto"); }
+  _dayEff() { return this._c.palette !== "neon" && this._isDay(); }
   _isDay() {
     const m = this._themeMode(); if (m !== "auto") return m === "day";
     const sun = this._st("sun.sun"); if (sun && sun.state !== "unavailable") return sun.state === "above_horizon";
     const h = new Date().getHours(); return h >= 7 && h < 19;
   }
-  _themeBtn(cls) { const m = this._themeMode(), d = this._isDay(); return `<button class="${cls}" data-a="theme" aria-label="${T("Darstellung")}: ${m === "auto" ? T("automatisch") : m === "day" ? T("Tag") : T("Abend")}">${ic(d ? "sun" : "moon", 16, 2)}<span>${m === "auto" ? T("Auto") : m === "day" ? T("Tag") : T("Abend")}</span></button>`; }
+  _themeBtn(cls) { if (this._c.palette === "neon") return ""; const m = this._themeMode(), d = this._isDay(); return `<button class="${cls}" data-a="theme" aria-label="${T("Darstellung")}: ${m === "auto" ? T("automatisch") : m === "day" ? T("Tag") : T("Abend")}">${ic(d ? "sun" : "moon", 16, 2)}<span>${m === "auto" ? T("Auto") : m === "day" ? T("Tag") : T("Abend")}</span></button>`; }
   _render() {
     if (!this.shadowRoot || !this._hass) return;
     const r = this._roomObj();
@@ -515,12 +592,13 @@ class HausLiveCard extends HTMLElement {
       this._appEl = this.shadowRoot.querySelector(".app"); this._dlgEl = this.shadowRoot.querySelector(".dlgw"); this._styEl = this.shadowRoot.querySelector("style"); this._dayOn = null;
       this._buildNav(this.shadowRoot.querySelector(".navw"));
     }
-    const day = this._isDay();
-    const gr = !day && this._c.palette === "graphite", mk = day ? "day" : gr ? "gr" : "amber"; this._dayB = day;
-    if (mk !== this._dayOn) { this._dayOn = mk; this._styEl.textContent = day ? dayMap(CSS) + CSS_DAY_X : gr ? grMap(CSS) + CSS_GR_X : CSS; this.toggleAttribute("day", day); this.style.background = day ? "#F2EBE2" : gr ? "#0E1014" : ""; }
+    const day = this._dayEff();
+    const ne = this._c.palette === "neon", gr = !day && this._c.palette === "graphite", mk = ne ? "ne" : day ? "day" : gr ? "gr" : "amber"; this._dayB = day;
+    const pm = ne ? neMap : day ? dayMap : gr ? grMap : (x) => x;
+    if (mk !== this._dayOn) { this._dayOn = mk; this._styEl.textContent = ne ? neMap(CSS) + CSS_NE_X : day ? dayMap(CSS) + CSS_DAY_X : gr ? grMap(CSS) + CSS_GR_X : CSS; this.toggleAttribute("day", day); this.style.background = ne ? "#12021E" : day ? "#F2EBE2" : gr ? "#0E1014" : ""; }
     const html = `${side}<div class="main">${body}</div>`;
-    this._appEl.innerHTML = day ? dayMap(html) : gr ? grMap(html) : html;
-    this._dlgEl.innerHTML = day ? dayMap(dlg) : gr ? grMap(dlg) : dlg;
+    this._appEl.innerHTML = pm(html);
+    this._dlgEl.innerHTML = pm(dlg);
     this._navSync();
     this._clock();
     requestAnimationFrame(() => { try { const t = Math.max(0, Math.round(this.getBoundingClientRect().top + (window.scrollY || 0))); if (t !== this._off) { this._off = t; this.style.setProperty("--off", t + "px"); } const tb = this.shadowRoot.querySelector(".tabs"), on = tb && tb.querySelector(".on"); if (on) tb.scrollLeft = Math.max(0, on.offsetLeft - 20); } catch (x) {} });
@@ -678,7 +756,7 @@ class HausLiveCard extends HTMLElement {
     if (alm) pills.push(`<button class="pill" data-a="info" data-v="${esc(o.alarm)}"><span class="${alCls}">${ic("shield", 18, 2)}</span><span><b>${al.state.startsWith("armed") ? T("Alarm scharf") : al.state === "disarmed" ? T("Alarm unscharf") : T("Alarm")}</b><small>${esc(alm[0].replace(/^Scharf · /, ""))}</small></span></button>`);
     const trp = this._trashHero(); if (trp) pills.unshift(trp);
     if (solar != null) pills.push(`<button class="pill" data-a="energy"><span class="g">${ic("leaf", 18, 2)}</span><span><b>PV ${f(solar, 0)} W</b><small>${soc != null ? `${T("Batterie")} ${f(soc, 0)} %` : T("Solar")}</small></span></button>`);
-    const hero = `<div class="oc hero">${(() => { const dy = this._isDay(), hs = (dy ? o.hero_day : o.hero_night) || o.hero_image || IMGX()[dy ? "hero_day" : "hero_night"] || IMGX().hero; return o.hero !== false && hs ? `<img src="${esc(hs)}" alt="">` : ""; })()}<div class="hc"><span class="hi">${ic("house", 30, 2)}</span>${this._themeBtn("thb thh")}<h2>${esc(greet)}${uname ? `, ${esc(uname)}` : ""}!</h2><div class="pills">${pills.join("")}</div></div></div>`;
+    const hero = `<div class="oc hero">${(() => { const dy = this._dayEff(), hs = (dy ? o.hero_day : o.hero_night) || o.hero_image || IMGX()[dy ? "hero_day" : "hero_night"] || IMGX().hero; return o.hero !== false && hs ? `<img src="${esc(hs)}" alt="">` : ""; })()}<div class="hc"><span class="hi">${ic("house", 30, 2)}</span>${this._themeBtn("thb thh")}<h2>${esc(greet)}${uname ? `, ${esc(uname)}` : ""}!</h2><div class="pills">${pills.join("")}</div></div></div>`;
     // Wetter
     let wx = "";
     const w = o.weather && st(o.weather);
@@ -691,7 +769,7 @@ class HausLiveCard extends HTMLElement {
     const lts = (o.lights || []).map((l, k) => {
       const s = st(l.entity), on = !!s && s.state === "on", off = !s || s.state === "unavailable";
       const room = l.room ? this._roomObj(l.room) : null;
-      const dy = this._isDay(), im = l.image && (dy ? IMGX()[l.image + "_day"] : IMGX()[l.image]);
+      const dy = this._dayEff(), im = l.image && (dy ? IMGX()[l.image + "_day"] : IMGX()[l.image]);
       const pic = im ? `<img src="${im}" alt="">` : scene(l.type || (room && room.type) || "living", on, room ? this._firstCover(room) : null, true, "ov" + k);
       return `<button class="lt ${on ? "on" : ""}" data-a="otog" data-v="${esc(l.entity)}" aria-pressed="${on}" ${off ? "disabled" : ""}>${pic}<span class="sh"></span><span class="lx"><b>${esc(l.name)}</b><span><small>${off ? T("offline") : on ? T("An") : T("Aus")}</small><span class="ms"><i></i></span></span></span></button>`;
     }).join("");
@@ -748,7 +826,7 @@ class HausLiveCard extends HTMLElement {
   }
   _secData() {
     const sc = this._c.security || {}, st = (id) => this._st(id);
-    const items = []; for (const g of sc.groups || []) for (const it of g.items || []) { const s = st(it.entity); items.push({ g: g.name, it, s, open: !!s && s.state === "on", off: !s || s.state === "unavailable" }); }
+    const items = []; for (const g of sc.groups || []) for (const i0 of g.items || []) { const it = typeof i0 === "string" ? { entity: i0 } : Object.assign({}, i0), s = st(it.entity); if (!it.name) it.name = (s && s.attributes.friendly_name) || it.entity; items.push({ g: g.name, it, s, open: !!s && s.state === "on", off: !s || s.state === "unavailable" }); }
     const cams = (sc.cameras || []).map((c) => ({ c, s: st(c.entity), m: c.motion ? st(c.motion) : null }));
     return { sc, items, nOpen: items.filter((x) => x.open).length, motion: cams.some((x) => x.m && x.m.state === "on"), cams, al: sc.alarm ? st(sc.alarm) : null };
   }

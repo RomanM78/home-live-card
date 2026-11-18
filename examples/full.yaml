@@ -5,7 +5,7 @@ language: auto              # auto (follows your Home Assistant language) | de |
 image_path: /local/home-live/rooms/   # folder with the room photos
 load_font: true             # false = no request to Google Fonts, system font instead
 theme: auto                 # auto (follows the sun) | light | dark
-palette: amber              # amber (warm brown) | graphite (cool charcoal, orange accent) – dark mode
+palette: amber              # amber (warm brown) | graphite (cool charcoal, orange accent) – dark mode | neon (synthwave sunset, always dark)
 start_view: overview        # overview | room | energy | security
 default_room: living
 energy_path: /energy        # where the "Details" button navigates

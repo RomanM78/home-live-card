@@ -4,7 +4,7 @@ A full-screen dashboard card for Home Assistant: house picture with live figures
 rooms with photo backgrounds, a thermostat dial with a curved scale, light rulers,
 energy and security views. Built for wall tablets and phones.
 
-> Status: early preview (v0.4). English and German; the language follows your Home Assistant profile.
+> Status: early preview (v0.5). English and German; the language follows your Home Assistant profile.
 
 ![Demo](docs/demo.gif)
 
@@ -13,6 +13,13 @@ energy and security views. Built for wall tablets and phones.
 Second colour scheme, `palette: graphite`:
 
 ![Overview, graphite](docs/overview-graphite.webp)
+
+New in 0.5: `palette: neon` – a synthwave sunset scene behind glass cards, neon headings and chrome numbers.
+It always uses the night look.
+
+| Neon, tablet | Neon, phone |
+|---|---|
+| ![Overview, neon](docs/overview-neon.webp) | ![Phone, neon](docs/phone-neon.webp) |
 
 | Room with light ruler and thermostat dial | Phone |
 |---|---|
@@ -63,8 +70,9 @@ No pictures are shipped with the card.
 
 ## Privacy
 
-By default the card loads the Manrope font from Google Fonts. Set `load_font: false` to use
-the system font instead and make no request to Google.
+By default the card loads the Manrope font from Google Fonts (with `palette: neon` also
+Bungee, Monoton, Rajdhani and Yellowtail, all under the SIL Open Font License). Set
+`load_font: false` to use the system fonts instead and make no request to Google.
 
 ## License
 
