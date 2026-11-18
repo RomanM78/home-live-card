@@ -5,7 +5,9 @@ language: auto              # auto (follows your Home Assistant language) | de |
 image_path: /local/home-live/rooms/   # folder with the room photos
 load_font: true             # false = no request to Google Fonts, system font instead
 theme: auto                 # auto (follows the sun) | light | dark
-palette: amber              # amber (warm brown) | graphite (cool charcoal, orange accent) – dark mode | neon (synthwave sunset, always dark)
+palette: amber              # amber (warm brown) | graphite (cool charcoal, orange accent) – dark mode | neon (city at sunset, always dark)
+animation: off              # off | city (neon only) | weather (all) | daycycle (amber, graphite)
+# background_image: /local/my-picture.webp   # own picture; "synthwave" = 0.5 neon scene; "none" = no picture
 start_view: overview        # overview | room | energy | security
 default_room: living
 energy_path: /energy        # where the "Details" button navigates

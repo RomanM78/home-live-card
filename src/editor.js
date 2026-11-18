@@ -3,7 +3,7 @@
 const ROOM_TYPES = ["living", "dining", "kitchen", "office", "bath", "hall", "utility", "bed", "closet", "kids", "outdoor", "garage"];
 const DEV_DOMAINS = ["light", "switch", "cover", "climate", "media_player", "script", "fan"];
 const ED = {
-  de: { general: "Allgemein", language: "Sprache", theme: "Darstellung", palette: "Farbschema", amber: "Amber (warm)", graphite: "Graphit (kühl, orange)", neon: "Neon Sunset (Synthwave)", start_view: "Startansicht", default_room: "Startraum", image_path: "Ordner der Raumfotos", energy_path: "Ziel des Knopfs „Details“", load_font: "Schrift Manrope von Google laden",
+  de: { general: "Allgemein", language: "Sprache", theme: "Darstellung", palette: "Farbschema", amber: "Amber (warm)", graphite: "Graphit (kühl, orange)", neon: "Neon Sunset (Synthwave)", animation: "Hintergrund-Animation", an_off: "Aus", an_city: "Stadtlichter (Neon-Stadtbild)", an_weather: "Wetter (Regen, Schnee, Wolken)", an_daycycle: "Tageslauf (Sonnenstand)", background_image: "Hintergrundbild (URL, leer = Standard, none = keins)", start_view: "Startansicht", default_room: "Startraum", image_path: "Ordner der Raumfotos", energy_path: "Ziel des Knopfs „Details“", load_font: "Schrift Manrope von Google laden",
     rooms: "Räume", add_room: "Raum hinzufügen", from_areas: "Aus Home-Assistant-Bereichen übernehmen", from_areas_done: "{n} Räume übernommen", from_areas_none: "Keine neuen Bereiche gefunden",
     name: "Name", id: "Kennung (für Fotos)", floor: "Etage", type: "Raumtyp", temp: "Temperatursensor", hum: "Feuchtesensor", image: "Fotoname (leer = Kennung)",
     devices: "Geräte", add_device: "Gerät hinzufügen", entity: "Entität", confirm: "Nachfragen vor dem Schalten", sensors: "Fenster und Türen", add_sensor: "Kontakt hinzufügen",
@@ -11,7 +11,7 @@ const ED = {
     more: "Übersicht, Sicherheit und Müllkalender richtest du im Code-Editor ein (Beispiele im README).", up: "Nach oben", down: "Nach unten", remove: "Entfernen", edit: "Bearbeiten",
     auto: "Automatisch", day: "Tag", night: "Abend", overview: "Übersicht", room: "Räume", sec: "Sicherheit", none: "–",
     t_living: "Wohnzimmer", t_dining: "Esszimmer", t_kitchen: "Küche", t_office: "Arbeitszimmer", t_bath: "Bad", t_hall: "Flur", t_utility: "Hauswirtschaft", t_bed: "Schlafzimmer", t_closet: "Ankleide", t_kids: "Kinderzimmer", t_outdoor: "Außen", t_garage: "Garage" },
-  en: { general: "General", language: "Language", theme: "Appearance", palette: "Colour scheme", amber: "Amber (warm)", graphite: "Graphite (cool, orange)", neon: "Neon Sunset (synthwave)", start_view: "Start view", default_room: "Start room", image_path: "Room photo folder", energy_path: "Target of the “Details” button", load_font: "Load the Manrope font from Google",
+  en: { general: "General", language: "Language", theme: "Appearance", palette: "Colour scheme", amber: "Amber (warm)", graphite: "Graphite (cool, orange)", neon: "Neon Sunset (synthwave)", animation: "Background animation", an_off: "Off", an_city: "City lights (neon city picture)", an_weather: "Weather (rain, snow, clouds)", an_daycycle: "Day cycle (sun position)", background_image: "Background picture (URL, empty = default, none = no picture)", start_view: "Start view", default_room: "Start room", image_path: "Room photo folder", energy_path: "Target of the “Details” button", load_font: "Load the Manrope font from Google",
     rooms: "Rooms", add_room: "Add room", from_areas: "Import Home Assistant areas", from_areas_done: "{n} rooms imported", from_areas_none: "No new areas found",
     name: "Name", id: "ID (used for photos)", floor: "Floor", type: "Room type", temp: "Temperature sensor", hum: "Humidity sensor", image: "Photo name (empty = ID)",
     devices: "Devices", add_device: "Add device", entity: "Entity", confirm: "Ask before switching", sensors: "Windows and doors", add_sensor: "Add contact",
@@ -105,13 +105,15 @@ class HomeLiveCardEditor extends HTMLElement {
       { name: "language", selector: this._sel([{ value: "auto", label: L("auto") }, { value: "de", label: "Deutsch" }, { value: "en", label: "English" }]) },
       { name: "theme", selector: this._sel([{ value: "auto", label: L("auto") }, { value: "day", label: L("day") }, { value: "night", label: L("night") }]) },
       { name: "palette", selector: this._sel([{ value: "amber", label: L("amber") }, { value: "graphite", label: L("graphite") }, { value: "neon", label: L("neon") }]) },
+      { name: "animation", selector: this._sel(((window.HOME_LIVE_ANIMS || {})[c.palette || "amber"] || ["off"]).map((a) => ({ value: a, label: L("an_" + a) }))) },
+      { name: "background_image", selector: { text: {} } },
       { name: "start_view", selector: this._sel([{ value: "room", label: L("room") }, { value: "overview", label: L("overview") }]) },
       { name: "default_room", selector: this._sel([{ value: "", label: L("none") }, ...c.rooms.map((r) => ({ value: r.id, label: r.name || r.id }))]) },
       { name: "image_path", selector: { text: {} } },
       { name: "energy_path", selector: { text: {} } },
       { name: "load_font", selector: { boolean: {} } }
-    ], { language: c.language || "auto", theme: c.theme || "auto", palette: c.palette || "amber", start_view: c.start_view || "room", default_room: c.default_room || "", image_path: c.image_path || "", energy_path: c.energy_path || "", load_font: c.load_font !== false },
-    (v) => { Object.assign(c, v); if (v.load_font === true) delete c.load_font; if (c.palette === "amber") delete c.palette; this._clean(c); this._emit(); }));
+    ], { language: c.language || "auto", theme: c.theme || "auto", palette: c.palette || "amber", animation: (() => { const al = (window.HOME_LIVE_ANIMS || {})[c.palette || "amber"] || ["off"], a = typeof c.animation === "object" && c.animation ? c.animation[c.palette || "amber"] : c.animation; return al.includes(a) ? a : "off"; })(), background_image: c.background_image || "", start_view: c.start_view || "room", default_room: c.default_room || "", image_path: c.image_path || "", energy_path: c.energy_path || "", load_font: c.load_font !== false },
+    (v) => { const pp = c.palette || "amber"; Object.assign(c, v); if (v.load_font === true) delete c.load_font; if (c.palette === "amber") delete c.palette; const np = c.palette || "amber", al = (window.HOME_LIVE_ANIMS || {})[np] || ["off"]; if (np !== pp && !al.includes(c.animation)) c.animation = "off"; if (c.animation === "off") delete c.animation; if (!c.background_image) delete c.background_image; this._clean(c); this._emit(); if (np !== pp) setTimeout(() => this._build(), 0); }));
     R.appendChild(g.parentNode);
     // rooms
     const rs = this._section(L("rooms"));

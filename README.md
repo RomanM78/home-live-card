@@ -4,7 +4,7 @@ A full-screen dashboard card for Home Assistant: house picture with live figures
 rooms with photo backgrounds, a thermostat dial with a curved scale, light rulers,
 energy and security views. Built for wall tablets and phones.
 
-> Status: early preview (v0.5). English and German; the language follows your Home Assistant profile.
+> Status: early preview (v0.6). English and German; the language follows your Home Assistant profile.
 
 ![Demo](docs/demo.gif)
 
@@ -14,12 +14,27 @@ Second colour scheme, `palette: graphite`:
 
 ![Overview, graphite](docs/overview-graphite.webp)
 
-New in 0.5: `palette: neon` – a synthwave sunset scene behind glass cards, neon headings and chrome numbers.
-It always uses the night look.
+`palette: neon` – a coastal city at sunset behind glass cards, neon headings and chrome numbers.
+It always uses the night look. The upper part of the overview stays free so the picture shows.
 
 | Neon, tablet | Neon, phone |
 |---|---|
 | ![Overview, neon](docs/overview-neon.webp) | ![Phone, neon](docs/phone-neon.webp) |
+
+New in 0.6: background animations, chosen per colour scheme with `animation`
+(off by default):
+
+| Value | Colour schemes | What moves |
+|---|---|---|
+| `city` | neon | car lights on the roads, glittering sea, windows and neon signs in the skyline, a boat |
+| `weather` | all | rain, snow, fog, clouds or stars, following your weather entity (`overview.weather`) |
+| `daycycle` | amber, graphite | sky colour, sun and stars following `sun.sun` |
+
+![Background animations](docs/animations.webp)
+
+The animations stop when the device asks for reduced motion. `background_image` sets your own picture
+(any URL, for example `/local/my-picture.webp`); `background_image: synthwave` brings back the
+neon grid scene of 0.5, `none` shows no picture.
 
 | Room with light ruler and thermostat dial | Phone |
 |---|---|
@@ -67,13 +82,19 @@ The card works without pictures (rooms get a drawn scene). To use your own:
 | House, day / night | `overview.hero_day`, `overview.hero_night` | 2000 px wide or more |
 | Room, day / night | `/local/home-live/rooms/<room id>_day.webp`, `_night.webp` (folder set by `image_path`) | 1600 × 900 or more |
 
-No pictures are shipped with the card.
+No pictures are shipped inside the card file. The neon city picture is loaded from this repository
+through the jsDelivr CDN (see Privacy); it was created with Google Gemini for this card.
 
 ## Privacy
 
 By default the card loads the Manrope font from Google Fonts (with `palette: neon` also
 Bungee, Monoton, Rajdhani and Yellowtail, all under the SIL Open Font License). Set
 `load_font: false` to use the system fonts instead and make no request to Google.
+
+With `palette: neon` the background picture is loaded from `cdn.jsdelivr.net`. To avoid that,
+download `docs/bg/neon-city.webp`, put it into `/config/www/` and set
+`background_image: /local/neon-city.webp` (the `city` animation then only zooms slowly, because the
+light positions belong to the original picture), or use `background_image: synthwave`.
 
 ## License
 

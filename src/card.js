@@ -354,7 +354,8 @@ class HausLiveCard extends HTMLElement {
     if (!this._room || !c.rooms.find((r) => r.id === this._room)) this._room = (saved && c.rooms.find((r) => r.id === saved)) ? saved : (c.default_room || c.rooms[0].id);
     let sv = null; try { sv = localStorage.getItem("home-live-view"); } catch (e) {}
     this._view = this._view || (c.overview && c.start_view === "overview" ? "overview" : sv === "energy" && c.energy ? "energy" : sv === "overview" && c.overview ? "overview" : sv === "sec" && c.security ? "sec" : "room");
-    this._ids = null;
+    this._ids = null; this._sig = null; this._dayOn = null; this._bgKey = null;
+    if (this._hass && this.shadowRoot) this.hass = this._hass;
   }
   getCardSize() { return 14; }
   connectedCallback() {
@@ -602,6 +603,7 @@ class HausLiveCard extends HTMLElement {
     this._dlgEl.innerHTML = pm(dlg);
     this._navSync();
     this._clock();
+    if (this._bgSync) this._bgSync();
     requestAnimationFrame(() => { try { const t = Math.max(0, Math.round(this.getBoundingClientRect().top + (window.scrollY || 0))); if (t !== this._off) { this._off = t; this.style.setProperty("--off", t + "px"); } const tb = this.shadowRoot.querySelector(".tabs"), on = tb && tb.querySelector(".on"); if (on) tb.scrollLeft = Math.max(0, on.offsetLeft - 20); } catch (x) {} });
   }
 
