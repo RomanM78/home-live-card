@@ -49,6 +49,7 @@ const IMGX = () => Object.assign({}, IMG, window.HOME_LIVE_IMG || {});
 const WX = { "clear-night": ["moon", "Klar"], cloudy: ["cloud", "Bewölkt"], fog: ["cloud", "Nebel"], hail: ["rain", "Hagel"], lightning: ["rain", "Gewitter"], "lightning-rainy": ["rain", "Gewitter"], partlycloudy: ["cloud", "Teilweise bewölkt"], pouring: ["rain", "Starkregen"], rainy: ["rain", "Regen"], snowy: ["snow", "Schnee"], "snowy-rainy": ["rain", "Schneeregen"], sunny: ["sun", "Sonnig"], windy: ["cloud", "Windig"], "windy-variant": ["cloud", "Windig"], exceptional: ["rain", "Unwetter"] };
 const ALARM = { disarmed: ["Unscharf", ""], armed_home: ["Scharf · Zuhause", "g"], armed_away: ["Scharf · Abwesend", "g"], armed_night: ["Scharf · Nacht", "g"], armed_vacation: ["Scharf · Urlaub", "g"], armed_custom_bypass: ["Scharf", "g"], arming: ["Wird scharf …", "w"], pending: ["Verzögerung …", "w"], disarming: ["Wird entschärft …", "w"], triggered: ["ALARM ausgelöst", "r"] };
 const ic = (n, s = 20, w = 1.8) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n] || P.plug}</svg>`;
+const safeCol = (c) => { const v = String(c == null ? "" : c).trim(); return /^#[0-9a-f]{3,8}$/i.test(v) || /^[a-z]{3,20}$/i.test(v) || /^(rgb|hsl)a?\([\d\s.,%/+-]+\)$/i.test(v) ? v : "#9C9086"; };
 const esc = (s) => String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const TX = (a, i) => { if (!a) return a; const b = a.slice(); b[i] = T(b[i]); return b; };
 const HVAC = { off: ["power", "Aus"], cool: ["snow", "Kühlen"], heat: ["sun", "Heizen"], dry: ["drop", "Trocknen"], fan_only: ["fan", "Lüften"], heat_cool: ["auto", "Auto"], auto: ["auto", "Auto"] };
@@ -584,7 +585,7 @@ class HausLiveCard extends HTMLElement {
     const floors = [];
     for (const x of this._c.rooms) { const f = x.floor || ""; let g = floors.find((y) => y.f === f); if (!g) floors.push(g = { f, rs: [] }); g.rs.push(x); }
     const en = !!this._c.energy, ov = this._view === "overview" && !!this._c.overview, sv = this._view === "sec" && !!this._c.security, ev = this._view === "energy" || ov || sv;
-    const side = `<aside class="side"><div class="clock" id="clk"></div>${this._themeBtn("thb")}${this._c.overview ? `<button class="rl ovb ${ov ? "on" : ""}" data-a="ov">${ic("dash", 16, 2)}${T("Übersicht")}</button>` : ""}${this._c.security ? `<button class="rl ovb ${sv ? "on" : ""}" data-a="sec">${ic("shield", 16, 2)}${T("Sicherheit")}</button>` : ""}${en ? `<button class="rl en ${this._view === "energy" ? "on" : ""}" data-a="energy">${ic("bolt", 16, 2)}${T("Energie")}</button>` : ""}${floors.map((g) => `${g.f ? `<div class="floor">${esc(g.f)}</div>` : ""}${g.rs.map((x) => { const n = this._roomCount(x); return `<button class="rl ${!ev && x.id === this._room ? "on" : ""}" data-a="room" data-v="${x.id}">${esc(x.name)}${n ? `<em>${n}</em>` : ""}</button>`; }).join("")}`).join("")}
+    const side = `<aside class="side"><div class="clock" id="clk"></div>${this._themeBtn("thb")}${this._c.overview ? `<button class="rl ovb ${ov ? "on" : ""}" data-a="ov">${ic("dash", 16, 2)}${T("Übersicht")}</button>` : ""}${this._c.security ? `<button class="rl ovb ${sv ? "on" : ""}" data-a="sec">${ic("shield", 16, 2)}${T("Sicherheit")}</button>` : ""}${en ? `<button class="rl en ${this._view === "energy" ? "on" : ""}" data-a="energy">${ic("bolt", 16, 2)}${T("Energie")}</button>` : ""}${floors.map((g) => `${g.f ? `<div class="floor">${esc(g.f)}</div>` : ""}${g.rs.map((x) => { const n = this._roomCount(x); return `<button class="rl ${!ev && x.id === this._room ? "on" : ""}" data-a="room" data-v="${esc(x.id)}">${esc(x.name)}${n ? `<em>${n}</em>` : ""}</button>`; }).join("")}`).join("")}
       <div class="sidenav">${this._c.home_path ? `<button data-a="nav" data-v="${esc(this._c.home_path)}">${ic("dash", 16)}${T("Zuhause")}</button>` : ""}${this._c.energy || this._c.energy_path ? `<button data-a="nav" data-v="${esc(this._c.energy_path || "/energy")}">${ic("bolt", 16)}${T("Details")}</button>` : ""}</div></aside>`;
     const dlg = this._pin ? this._pinDlg() : this._confirm ? `<div class="ovl"><div class="dlg" role="dialog"><b>${esc(this._confirm.text)}</b><p>${esc(this._confirm.sub)}</p><div class="row"><button data-a="cancel">${T("Abbrechen")}</button><button class="ok" data-a="ok">${T("Ja")}</button></div></div></div>` : "";
     if (!this._appEl) {
@@ -702,7 +703,7 @@ class HausLiveCard extends HTMLElement {
     const on = this._roomCount(r);
     return `<div class="view room"><div class="colR">
       <header class="hdr"><div class="ttl"><b>${esc(r.name)}</b><small>${devs.length ? T(on === 1 ? "{n} Gerät an" : "{n} Geräte an", { n: on }) : T("nur Status")}</small></div>${r.media ? `<button class="rbtn" data-a="det" data-v="${esc(r.media)}" aria-label="${T("Musik")}">${ic("speaker", 18, 2)}</button>` : ""}</header>
-      <nav class="tabs" aria-label="${T("Räume")}">${this._c.rooms.map((x) => `<button class="${x.id === r.id ? "on" : ""}" data-a="room" data-v="${x.id}">${esc(x.name)}</button>`).join("")}</nav>
+      <nav class="tabs" aria-label="${T("Räume")}">${this._c.rooms.map((x) => `<button class="${x.id === r.id ? "on" : ""}" data-a="room" data-v="${esc(x.id)}">${esc(x.name)}</button>`).join("")}</nav>
       <div class="grid">${tiles || `<div class="empty" style="grid-column:1/-1">${T("Keine steuerbaren Geräte in diesem Raum")}</div>`}</div></div>
       <div class="colL">${(() => { const ph = this._roomImg ? this._roomImg(r, lit) : ""; return ph ? `<div class="scene ph">${ph}` : `<div class="scene">${scene(r.type || "living", lit, this._firstCover(r), devs.some((d) => this._dom(d.entity) === "cover"), "s")}`; })()}<div class="gauges">${rings.join("")}</div></div>
       <div class="chips">${chips}</div></div>
@@ -731,7 +732,7 @@ class HausLiveCard extends HTMLElement {
   _trashHero() {
     const t = this._c.energy && this._c.energy.trash; if (!t || !Array.isArray(this._trash)) return "";
     const pats = t.patterns || [], d0 = new Date(); d0.setHours(0, 0, 0, 0); const days = {};
-    for (const ev of this._trash) { const d = ((ev.start && (ev.start.date || ev.start.dateTime)) || "").slice(0, 10); if (!d) continue; const p = pats.find((q) => (ev.summary || "").toLowerCase().includes(q.match.toLowerCase())); (days[d] = days[d] || {})[p ? p.name : ev.summary] = p ? p.color : "#9C9086"; }
+    for (const ev of this._trash) { const d = ((ev.start && (ev.start.date || ev.start.dateTime)) || "").slice(0, 10); if (!d) continue; const p = pats.find((q) => (ev.summary || "").toLowerCase().includes(q.match.toLowerCase())); (days[d] = days[d] || {})[p ? p.name : ev.summary] = p ? safeCol(p.color) : "#9C9086"; }
     const k = Object.keys(days).sort().find((d) => new Date(d + "T00:00:00") >= d0); if (!k) return "";
     const dd = Math.round((new Date(k + "T00:00:00") - d0) / 86400000); if (dd > (t.hero_days != null ? t.hero_days : 2)) return "";
     const b = Object.entries(days[k]), wd = new Date(k + "T12:00:00").toLocaleDateString(LOC, { weekday: "long" });
@@ -770,7 +771,7 @@ class HausLiveCard extends HTMLElement {
       const s = st(l.entity), on = !!s && s.state === "on", off = !s || s.state === "unavailable";
       const room = l.room ? this._roomObj(l.room) : null;
       const dy = this._dayEff(), im = l.image && (dy ? IMGX()[l.image + "_day"] : IMGX()[l.image]);
-      const pic = im ? `<img src="${im}" alt="">` : scene(l.type || (room && room.type) || "living", on, room ? this._firstCover(room) : null, true, "ov" + k);
+      const pic = im ? `<img src="${esc(im)}" alt="">` : scene(l.type || (room && room.type) || "living", on, room ? this._firstCover(room) : null, true, "ov" + k);
       return `<button class="lt ${on ? "on" : ""}" data-a="otog" data-v="${esc(l.entity)}" aria-pressed="${on}" ${off ? "disabled" : ""}>${pic}<span class="sh"></span><span class="lx"><b>${esc(l.name)}</b><span><small>${off ? T("offline") : on ? T("An") : T("Aus")}</small><span class="ms"><i></i></span></span></span></button>`;
     }).join("");
     const lightsOn = [...(o.lights || []), ...(o.extra_lights || [])].filter((x) => this._on(typeof x === "string" ? x : x.entity)).length;
@@ -917,7 +918,7 @@ class HausLiveCard extends HTMLElement {
         for (const evn of this._trash) {
           const d = (evn.start && (evn.start.date || evn.start.dateTime) || "").slice(0, 10); if (!d) continue;
           const p = pats.find((q) => (evn.summary || "").toLowerCase().includes(q.match.toLowerCase()));
-          const lbl = p ? p.name : evn.summary, col = p ? p.color : "#9C9086";
+          const lbl = p ? p.name : evn.summary, col = p ? safeCol(p.color) : "#9C9086";
           (days[d] = days[d] || {})[lbl] = col;
         }
         const keys = Object.keys(days).sort().slice(0, e.trash.max_days || 3);

@@ -29,8 +29,9 @@ All screenshots use the invented demo home in [`demo/`](demo/) (open `demo/index
 
 ## Install
 
-**Marketplace (Home Assistant 2026.11+):** Settings → Marketplace → add this repository
-by link, then install *Home Live Card*.
+**Marketplace (Home Assistant 2026.11+):** Settings → Marketplace, search for *Home Live Card*
+and install it. Until the card is listed in the default catalog, add this repository by link
+first (`https://github.com/RomanM78/home-live-card`).
 
 **Manual:** copy `dist/home-live-card.js` to `/config/www/` and add it as a dashboard
 resource (type *JavaScript module*, URL `/local/home-live-card.js`).

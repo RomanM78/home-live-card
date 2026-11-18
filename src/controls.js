@@ -27,6 +27,7 @@ const LTCSS = `.view.det.lt{display:flex;flex-direction:column;gap:12px;width:10
 .ltile{position:relative;overflow:hidden;cursor:pointer}.ltile .lgl{position:absolute;right:-40px;top:-40px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(255,194,138,.45),rgba(242,138,60,.12) 45%,transparent 70%);pointer-events:none;transition:opacity .3s}.ltile .lic{position:relative;width:40px;height:40px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#241B15;color:#9C9086}.ltile.on .lic{background:#F28A3C;color:#1A0F07;box-shadow:0 0 18px rgba(242,138,60,.55)}
 .ltile .lst{position:relative;display:flex;align-items:center}.ltile .dm{fill:#F3ECE4}.ltile:not(.on) .dm{fill:#7A6E64}.ltile .bot .nm b{position:relative}
 .ltile.dim{grid-column:1/-1;gap:6px;min-height:214px;justify-content:flex-start}.ltile.dim .lmid{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;position:relative}.ltile.dim .lmid .bot{flex:1 1 140px}.ltile.dim .lpre{margin:0;gap:8px}.ltile.dim .lpre button{width:40px;height:40px;font-size:11px}.ltile.dim .trul{width:calc(100% + 28px);margin:0 -14px -14px;height:84px}`;
+const cssUrl = (u) => String(u).replace(/["'()\\<>\s]/g, (c) => "%" + c.charCodeAt(0).toString(16).toUpperCase().padStart(2, "0"));
 const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const HVAC = { off: "Aus", cool: "Kühlen", heat: "Heizen", dry: "Trocknen", fan_only: "Lüften", heat_cool: "Auto", auto: "Auto" };
 const SV = (p, w) => `<svg width="${w || 20}" height="${w || 20}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
@@ -87,7 +88,7 @@ const M = {
     if (u.startsWith("/")) { if (C[u] === undefined) { C[u] = null; const im = new Image(); im.onload = () => { C[u] = true; this._render(); }; im.onerror = () => { C[u] = false; }; im.src = u; } if (C[u] !== true) return ""; }
     const ov = dy ? "linear-gradient(180deg,rgba(242,235,226,.22),rgba(242,235,226,.5))" : !lit ? "linear-gradient(180deg,rgba(13,10,8,.55),rgba(13,10,8,.8))" : "linear-gradient(180deg,rgba(13,10,8,.2),rgba(13,10,8,.6))";
     const g = dy ? "rgba(255,252,247,.62)" : "rgba(21,16,12,.52)", gl = dy ? "rgba(90,60,30,.12)" : "rgba(255,255,255,.10)", gon = dy ? "rgba(251,230,210,.72)" : "rgba(36,23,15,.62)";
-    return `<style>.main{position:relative;isolation:isolate}.main:before{content:"";position:fixed;inset:0;z-index:-1;background:${ov},url("${u}") center/cover no-repeat}
+    return `<style>.main{position:relative;isolation:isolate}.main:before{content:"";position:fixed;inset:0;z-index:-1;background:${ov},url("${cssUrl(u)}") center/cover no-repeat}
 @container app (min-width: 900px){.main:before{position:absolute}}
 .scene.ph{background:none;border:none;height:auto;min-height:0;aspect-ratio:auto!important;overflow:visible}.scene.ph .gauges{position:relative;inset:auto;padding:0}
 .view.room .dev,.view.room .chip,.view.room .tabs button:not(.on),.view.room .rbtn{background:${g};border-color:${gl};-webkit-backdrop-filter:blur(14px) saturate(1.2);backdrop-filter:blur(14px) saturate(1.2)}
