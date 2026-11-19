@@ -1,6 +1,6 @@
-/*! home-live-card v0.6.0 | MIT License | https://github.com/RomanM78/home-live-card */
+/*! home-live-card v0.6.1 | MIT License | https://github.com/RomanM78/home-live-card */
 
-window.HOME_LIVE_VERSION = "0.6.0";
+window.HOME_LIVE_VERSION = "0.6.1";
 
 // Home Live Card – translations. Keys are the German source texts; {x} are placeholders.
 const EN = {
@@ -1346,7 +1346,7 @@ const M = {
     if (img) {
       let k = "";
       if (img.city && anim === "city") k = this._cityFx(R);
-      back.push(`<div class="pic"><div class="kb${anim !== "off" ? " mv" : ""}" style="background-image:url(&quot;${String(imgUrl).replace(/["\\<>()\s]/g, (ch) => "%" + ch.charCodeAt(0).toString(16).toUpperCase().padStart(2, "0"))}&quot;)">${k}</div></div>`);
+      back.push(`<div class="pic"><div class="kb${anim !== "off" ? " mv" : ""}" style="background-image:url(&quot;${String(imgUrl).replace(/["'&\\<>()\s]/g, (ch) => "%" + ch.charCodeAt(0).toString(16).toUpperCase().padStart(2, "0"))}&quot;)">${k}</div></div>`);
       if (img.city) back.push(`<div class="shade"></div>`);
     } else if (neSyn) {
       back.push(`<div class="synth" style="background-image:url(&quot;${NE_SCENE}&quot;),linear-gradient(180deg,#0E0120 0%,#2A0646 28%,#6B1A7A 50%,#D23C86 66%,#FF7A59 76%,#14021f 76.1%)"></div>`);

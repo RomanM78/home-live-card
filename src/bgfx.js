@@ -130,7 +130,7 @@ const M = {
     if (img) {
       let k = "";
       if (img.city && anim === "city") k = this._cityFx(R);
-      back.push(`<div class="pic"><div class="kb${anim !== "off" ? " mv" : ""}" style="background-image:url(&quot;${String(imgUrl).replace(/["\\<>()\s]/g, (ch) => "%" + ch.charCodeAt(0).toString(16).toUpperCase().padStart(2, "0"))}&quot;)">${k}</div></div>`);
+      back.push(`<div class="pic"><div class="kb${anim !== "off" ? " mv" : ""}" style="background-image:url(&quot;${String(imgUrl).replace(/["'&\\<>()\s]/g, (ch) => "%" + ch.charCodeAt(0).toString(16).toUpperCase().padStart(2, "0"))}&quot;)">${k}</div></div>`);
       if (img.city) back.push(`<div class="shade"></div>`);
     } else if (neSyn) {
       back.push(`<div class="synth" style="background-image:url(&quot;${NE_SCENE}&quot;),linear-gradient(180deg,#0E0120 0%,#2A0646 28%,#6B1A7A 50%,#D23C86 66%,#FF7A59 76%,#14021f 76.1%)"></div>`);
