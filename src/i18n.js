@@ -59,7 +59,9 @@ const EN = {
   "{a} von {b} zu": "{a} of {b} closed", "{n} an": "{n} on", "{n} auslösen?": "Run {n}?",
   "{n} ausschalten?": "Turn off {n}?", "{n} offen": "{n} open", "{n} schalten": "Toggle {n}", "Öffnen": "Open",
   "Übersicht": "Overview", "{n} Gerät an": "{n} device on", "{n} Geräte an": "{n} devices on",
-  "{n} ist zu Hause": "{n} is home", "{n} % offen": "{n} % open", "gestern": "yesterday", "{n} sind zu Hause": "{n} are home"
+  "{n} ist zu Hause": "{n} is home", "{n} % offen": "{n} % open", "gestern": "yesterday", "{n} sind zu Hause": "{n} are home",
+  "{n} Lichter an": "{n} lights on", "{n} Licht an": "{n} light on", "Alle Lichter aus": "All lights off", "Akku": "Battery",
+  "Innen": "Inside", "Heizung aus": "Heating off", "Draußen {t}° · {w}": "Outside {t}° · {w}", "Haus verbraucht gerade {w} W": "House is using {w} W", "Szenen": "Scenes"
 };
 let LANG = "de", LOC = "de-DE", TU = "°C";
 const T = (s, v) => {

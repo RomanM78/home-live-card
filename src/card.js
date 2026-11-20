@@ -331,8 +331,6 @@ text[fill="#FFD27A" i],text[fill="#F2C14E" i]{fill:var(--wntx)}
 .floor{color:rgba(255,255,255,.75)!important}
 .oc,.dev,.flow,.stat,.panel,.ltile,.ldev{background:${GLASS}!important;backdrop-filter:blur(18px) saturate(1.6);-webkit-backdrop-filter:blur(18px) saturate(1.6);border:1px solid rgba(255,255,255,.42)!important;border-radius:28px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -10px 24px -14px rgba(20,40,70,.35),0 14px 28px -10px rgba(20,35,60,.32),0 40px 70px -30px rgba(20,35,60,.42)!important;position:relative}
 .oc::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(120% 60% at 30% -10%,rgba(255,255,255,.32),rgba(255,255,255,0) 60%);z-index:0}
-.view.ov>.oc:nth-child(3n+1){background:linear-gradient(170deg,rgba(120,175,235,.42),rgba(255,255,255,.12) 55%,rgba(245,225,200,.32))!important}
-.view.ov>.oc:nth-child(3n+2){background:linear-gradient(170deg,rgba(235,185,175,.40),rgba(255,255,255,.12) 55%,rgba(170,200,235,.28))!important}
 .dlg{background:rgba(70,95,125,.86)!important;backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.4)!important;border-radius:28px!important}
 .hero{background:transparent!important;border:none!important;box-shadow:none!important}
 .hero::after,.hero::before{display:none!important}
@@ -349,6 +347,70 @@ button.pw,.lic{background:rgba(255,255,255,.26)!important;color:#fff!important}
 .rl em,.bub{color:#22381F!important;text-shadow:none!important;box-shadow:0 2px 6px rgba(20,35,60,.3)}
 .ltile .ln,.lt .lx,.lt .lx small{text-shadow:0 1px 4px rgba(0,0,0,.6)}
 button.ok,.btn.on{background:linear-gradient(180deg,#fff,#e7eef5)!important;color:#2F4A66!important;text-shadow:none!important}
+/* Apple-Home-Kacheln (nur glass) */
+.view.ov>.oc{background:${GLASS}!important}
+.hero.ap .hc{justify-content:center;gap:4px}.hero.ap h2{font-size:30px!important}
+.hero.ap p{color:rgba(255,255,255,.94)!important;font-size:14px;font-weight:500}
+.hchips{display:grid;grid-template-columns:repeat(2,minmax(0,max-content));gap:8px;margin-top:12px}.hchip b,.hchip small{max-width:none!important}
+.hchip{display:inline-flex;align-items:center;gap:9px;padding:6px 13px 6px 7px;border-radius:999px;font:inherit;font-size:12.5px;max-width:100%;font-weight:600;background:rgba(255,255,255,.24);border:none;color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 8px 16px -8px rgba(20,35,60,.4);text-align:left;cursor:pointer}
+div.hchip{cursor:default}
+.hchip .d{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:#fff;flex:none;box-shadow:0 3px 8px -2px rgba(20,35,60,.35)}
+.hchip>span:last-child{display:flex;flex-direction:column;line-height:1.25;min-width:0}.hchip b,.hchip small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}.hchip small{font-size:11.5px;font-weight:500;opacity:.92}
+.oh .allb{flex:none;height:28px;padding:0 12px;border-radius:999px;border:none;background:rgba(255,255,255,.24);color:#fff;font:inherit;font-size:12px;font-weight:600;box-shadow:inset 0 1px 0 rgba(255,255,255,.55);cursor:pointer}
+.oh small{color:rgba(255,255,255,.9)!important;font-size:13px!important;font-weight:500}
+.lts.ap{display:grid;gap:10px;grid-auto-rows:minmax(0,1fr);flex:1;min-height:0;margin-top:4px}
+.acc{position:relative;border:none;border-radius:20px;padding:12px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;gap:8px;text-align:left;background:rgba(255,255,255,.18);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 6px 14px -8px rgba(20,35,60,.35);font:inherit;min-height:0;min-width:0;cursor:pointer;transition:background .25s,color .25s}
+.acc .i{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.25);flex:none;transition:background .25s,box-shadow .25s}
+.acc>span:last-child{display:flex;flex-direction:column;min-width:0;max-width:100%}
+.acc b{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.acc small{font-size:12px;font-weight:500;opacity:.9}
+.acc.on{background:linear-gradient(180deg,#fff,#eef3f8);color:#1f2f42;text-shadow:none;box-shadow:0 12px 22px -10px rgba(20,35,60,.5),inset 0 -2px 3px rgba(20,40,70,.08)}
+.acc.on .i{background:#FFD45A;color:#5a3d00;box-shadow:0 0 16px rgba(255,212,90,.85)}
+.acc.on small{color:#4d5f73;opacity:1}
+.acc.off{opacity:.55;cursor:default}
+.acc.row{flex-direction:row;align-items:center;justify-content:flex-start;gap:12px;padding:8px 12px;flex:none}
+.dv6.ap .acc{background:rgba(255,255,255,.18)!important;border:none!important;min-height:0!important;padding:8px 12px!important;font-size:inherit!important;white-space:nowrap;color:#fff!important;align-items:center!important}
+.dv6.ap .acc span{color:inherit!important}.dv6.ap .acc small{color:inherit!important;font-size:12px!important;opacity:.9}
+.dv6.ap .acc.on{background:linear-gradient(180deg,#fff,#eef3f8)!important;color:#1f2f42!important;text-shadow:none}
+.dv6.ap .acc.on .i{color:#5a3d00!important}.dv6.ap .acc.on small{color:#4d5f73!important;opacity:1}
+.dv6.ap{display:flex!important;flex-direction:column;gap:8px;overflow:auto;margin-top:4px}
+.view.ov .gau{width:132px;height:132px}.gau svg{width:100%;height:100%}.gau .knob{filter:drop-shadow(0 3px 5px rgba(20,35,60,.45))}
+.gau b{font-weight:300!important;font-size:34px!important;letter-spacing:-.04em;color:#fff!important}.gau small{color:rgba(255,255,255,.92)!important;font-size:12.5px!important}
+.pm button{background:linear-gradient(180deg,#fff,#eef3f8)!important;color:#22384f!important;border:none!important;text-shadow:none;box-shadow:0 10px 20px -8px rgba(20,35,60,.5);width:38px!important;height:38px!important}
+.md3 button{border:none!important;background:rgba(255,255,255,.2)!important;color:#fff!important;border-radius:16px!important;font-weight:600;box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}
+.md3 button.on{background:linear-gradient(180deg,#fff,#eef3f8)!important;color:#a3480c!important;text-shadow:none;box-shadow:0 8px 16px -8px rgba(20,35,60,.45)}
+.md3 button.on[data-v$="|cool"]{color:#1b62c4!important}.md3 button.on[data-v$="|off"]{color:#2F4A66!important}
+.sc.ap{flex-direction:row;align-items:center;gap:12px;padding:8px 0 6px}
+.sc.ap .sb{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;color:#fff!important;flex:none;box-shadow:0 10px 20px -6px rgba(20,35,60,.45)}
+.sc.ap>span:last-child{display:flex;flex-direction:column;text-align:left;min-width:0}.sc.ap b{font-size:18px;font-weight:700}.sc.ap small{color:rgba(255,255,255,.92)!important;font-size:12.5px!important}
+.drs.ap{background:none!important;border:none!important;border-radius:0;overflow:auto}
+.drs.ap button{border-bottom:none!important;border-top:1px solid rgba(255,255,255,.25)!important;padding:9px 2px;color:#fff!important;font-weight:500}
+.drs.ap button>span:first-child{color:#fff!important}
+.drs.ap em{background:rgba(255,255,255,.9)!important;color:#1f6b2f!important;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:600;text-shadow:none;font-style:normal}
+.drs.ap em.wn{color:#9A5200!important}
+.apm .mp .cv{background:#fff!important;color:#2F4A66!important;box-shadow:0 10px 18px -8px rgba(20,35,60,.5)}
+.apm .mp b{font-size:15px;font-weight:700}.apm .mp small{color:rgba(255,255,255,.9)!important}
+.prg{height:4px;border-radius:2px;background:rgba(255,255,255,.3);margin:2px 2px 0}.prg i{display:block;height:100%;border-radius:2px;background:#fff}
+.mc button{color:#fff!important}
+.mc button.pp{background:linear-gradient(180deg,#fff,#eef3f8)!important;color:#22384f!important;box-shadow:0 10px 20px -8px rgba(20,35,60,.5)}
+.vl{color:rgba(255,255,255,.9)!important}.vl button{background:rgba(255,255,255,.22)!important;border:none!important;color:#fff!important}.vl>span{background:rgba(255,255,255,.3)!important;height:4px!important}.vl>span i{background:#fff!important}
+.view.ov .eg b{font-size:38px!important}.view.ov .spk{min-height:34px!important}
+.e3>span{display:grid!important;grid-template-columns:auto 1fr;align-items:center;column-gap:6px;row-gap:1px;padding:7px 10px!important;background:rgba(255,255,255,.2)!important;border-radius:14px!important;color:#fff!important;font-weight:600;font-size:12px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.5);border:none!important}
+.e3 b{grid-column:1/-1;font-size:15px!important;font-weight:700!important;color:#fff!important}
+.esub{color:rgba(255,255,255,.9)!important}
+.camap{padding:0!important;overflow:hidden;display:flex!important;align-items:stretch!important;text-align:left;color:#fff;min-height:170px;font:inherit;cursor:pointer}
+.camap>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit}
+.camap .cs{position:absolute;inset:0;border-radius:inherit;background:linear-gradient(180deg,rgba(10,20,35,.42),transparent 38%,transparent 58%,rgba(10,20,35,.55))}
+.camap .ct{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:space-between;padding:16px 18px;width:100%;box-sizing:border-box;flex:1}
+.camap .ct small{font-size:12.5px;font-weight:500;text-shadow:0 1px 4px rgba(0,0,0,.5)}
+.camap .oi{color:#fff!important}
+.qa.ap{gap:8px}
+.qa.ap button{text-shadow:0 1px 4px rgba(20,40,70,.5);border:none!important;background:rgba(255,255,255,.2)!important;border-radius:18px!important;font-weight:600;color:#fff!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.5);padding:0 12px 0 8px;gap:10px;min-height:44px}
+.qa.ap button>span{width:30px;height:30px;border-radius:50%;display:grid!important;place-items:center;background:#fff;color:#22384f!important;box-shadow:0 4px 8px -3px rgba(20,35,60,.4);flex:none}
+.qa.ap button.on{background:linear-gradient(180deg,#fff,#eef3f8)!important;color:#1f2f42!important;text-shadow:none}
+.qa.ap button.on>span{background:#FFD45A;color:#5a3d00!important}.qa.ap button small{color:#9A5200!important}
+.rl .rtp,.rl .ron{margin-left:auto;font-style:normal;font-size:12px;font-weight:600;opacity:.9}
+.rl .ron{display:inline-flex;align-items:center;gap:6px;opacity:1}
+.rl .ron::before{content:"";width:7px;height:7px;border-radius:50%;background:#FFD45A;box-shadow:0 0 8px #FFD45A}
 @media (prefers-reduced-transparency: reduce){.oc,.dev,.flow,.stat,.panel,.ltile,.ldev,.nav,.navw nav,.side,.pill{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
 `;
 
@@ -527,6 +589,7 @@ class HausLiveCard extends HTMLElement {
     return false;
   }
   _roomCount(r) { return (r.devices || []).filter((d) => ["light", "switch"].includes(this._dom(d.entity)) && this._isOn(d)).length; }
+  _roomTemp(r) { let t = r.temp ? this._num(r.temp) : null; if (t == null) { const cl = (r.devices || []).find((d) => this._dom(d.entity) === "climate"); const s = cl && this._st(cl.entity); if (s && typeof s.attributes.current_temperature === "number") t = s.attributes.current_temperature; } return t; }
   _roomLit(r) { return (r.devices || []).some((d) => this._dom(d.entity) === "light" && this._isOn(d)); }
   _firstCover(r) { const d = (r.devices || []).find((x) => this._dom(x.entity) === "cover"); return d ? this._pos(d.entity) : null; }
 
@@ -642,7 +705,7 @@ class HausLiveCard extends HTMLElement {
     const floors = [];
     for (const x of this._c.rooms) { const f = x.floor || ""; let g = floors.find((y) => y.f === f); if (!g) floors.push(g = { f, rs: [] }); g.rs.push(x); }
     const en = !!this._c.energy, ov = this._view === "overview" && !!this._c.overview, sv = this._view === "sec" && !!this._c.security, ev = this._view === "energy" || ov || sv;
-    const side = `<aside class="side"><div class="clock" id="clk"></div>${this._themeBtn("thb")}${this._c.overview ? `<button class="rl ovb ${ov ? "on" : ""}" data-a="ov">${ic("dash", 16, 2)}${T("Übersicht")}</button>` : ""}${this._c.security ? `<button class="rl ovb ${sv ? "on" : ""}" data-a="sec">${ic("shield", 16, 2)}${T("Sicherheit")}</button>` : ""}${en ? `<button class="rl en ${this._view === "energy" ? "on" : ""}" data-a="energy">${ic("bolt", 16, 2)}${T("Energie")}</button>` : ""}${floors.map((g) => `${g.f ? `<div class="floor">${esc(g.f)}</div>` : ""}${g.rs.map((x) => { const n = this._roomCount(x); return `<button class="rl ${!ev && x.id === this._room ? "on" : ""}" data-a="room" data-v="${esc(x.id)}">${esc(x.name)}${n ? `<em>${n}</em>` : ""}</button>`; }).join("")}`).join("")}
+    const side = `<aside class="side"><div class="clock" id="clk"></div>${this._themeBtn("thb")}${this._c.overview ? `<button class="rl ovb ${ov ? "on" : ""}" data-a="ov">${ic("dash", 16, 2)}${T("Übersicht")}</button>` : ""}${this._c.security ? `<button class="rl ovb ${sv ? "on" : ""}" data-a="sec">${ic("shield", 16, 2)}${T("Sicherheit")}</button>` : ""}${en ? `<button class="rl en ${this._view === "energy" ? "on" : ""}" data-a="energy">${ic("bolt", 16, 2)}${T("Energie")}</button>` : ""}${floors.map((g) => `${g.f ? `<div class="floor">${esc(g.f)}</div>` : ""}${g.rs.map((x) => { const n = this._roomCount(x); let badge = n ? `<em>${n}</em>` : ""; if (this._c.palette === "glass") { const tp = this._roomTemp(x); badge = n ? `<i class="ron">${T("{n} an", { n })}</i>` : tp != null ? `<i class="rtp">${this._fmt(tp, 0)}°</i>` : ""; } return `<button class="rl ${!ev && x.id === this._room ? "on" : ""}" data-a="room" data-v="${esc(x.id)}">${esc(x.name)}${badge}</button>`; }).join("")}`).join("")}
       <div class="sidenav">${this._c.home_path ? `<button data-a="nav" data-v="${esc(this._c.home_path)}">${ic("dash", 16)}${T("Zuhause")}</button>` : ""}${this._c.energy || this._c.energy_path ? `<button data-a="nav" data-v="${esc(this._c.energy_path || "/energy")}">${ic("bolt", 16)}${T("Details")}</button>` : ""}</div></aside>`;
     const dlg = this._pin ? this._pinDlg() : this._confirm ? `<div class="ovl"><div class="dlg" role="dialog"><b>${esc(this._confirm.text)}</b><p>${esc(this._confirm.sub)}</p><div class="row"><button data-a="cancel">${T("Abbrechen")}</button><button class="ok" data-a="ok">${T("Ja")}</button></div></div></div>` : "";
     if (!this._appEl) {
@@ -776,7 +839,7 @@ class HausLiveCard extends HTMLElement {
     for (const k of ["lights", "devices", "actions", "extra_lights"]) { const d = (o[k] || []).find((x) => (typeof x === "string" ? x : x.entity) === id); if (d) return typeof d === "string" ? { entity: d, name: id } : d; }
     return { entity: id, name: (this._st(id) && this._st(id).attributes.friendly_name) || id };
   }
-  _spark() {
+  _spark(smooth) {
     const pts = this._hist; if (!pts || pts.length < 2) return "";
     const now = Date.now(), t0 = now - 12 * 3600000, N = 48, step = (now - t0) / N, vals = [];
     let i = 0, last = null;
@@ -785,7 +848,9 @@ class HausLiveCard extends HTMLElement {
     const v = vals.filter((x) => x != null); if (v.length < 2) return "";
     const mx = Math.max(...v, 1), W = 300, H = 60;
     let d = "", first = null;
-    vals.forEach((y, k) => { if (y == null) return; const x = (k / N) * W, yy = H - 4 - (y / mx) * (H - 10); if (first == null) { first = x; d += `M${x.toFixed(1)} ${yy.toFixed(1)}`; } else d += `L${x.toFixed(1)} ${yy.toFixed(1)}`; });
+    let px = null, py = null, lx = 0, ly = 0;
+    vals.forEach((y, k) => { if (y == null) return; const x = (k / N) * W, yy = H - 4 - (y / mx) * (H - 10); if (first == null) { first = x; d += `M${x.toFixed(1)} ${yy.toFixed(1)}`; } else if (smooth) { const m = (px + x) / 2; d += `C${m.toFixed(1)} ${py.toFixed(1)} ${m.toFixed(1)} ${yy.toFixed(1)} ${x.toFixed(1)} ${yy.toFixed(1)}`; } else d += `L${x.toFixed(1)} ${yy.toFixed(1)}`; px = x; py = yy; lx = x; ly = yy; });
+    if (smooth) return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-label="${T("Hausverbrauch der letzten 12 Stunden")}"><defs><linearGradient id="spg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD08A" stop-opacity=".6"/><stop offset="1" stop-color="#FFD08A" stop-opacity="0"/></linearGradient></defs><path d="${d}L${W} ${H}L${first.toFixed(1)} ${H}Z" fill="url(#spg)"/><path d="${d}" fill="none" stroke="#FFB24A" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-linecap="round"/></svg>`;
     return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-label="${T("Hausverbrauch der letzten 12 Stunden")}"><defs><linearGradient id="spg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F28A3C" stop-opacity=".45"/><stop offset="1" stop-color="#F28A3C" stop-opacity="0"/></linearGradient></defs><path d="${d}L${W} ${H}L${first.toFixed(1)} ${H}Z" fill="url(#spg)"/><path d="${d}" fill="none" stroke="#F28A3C" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg>`;
   }
   _trashHero() {
@@ -802,6 +867,7 @@ class HausLiveCard extends HTMLElement {
   _overView() {
     const o = this._c.overview, e = this._c.energy || {}, f = (v, d) => this._fmt(v, d), n = (id) => (id ? this._num(id) : null);
     const st = (id) => this._st(id), fn = (id) => { const s = st(id); return (s && s.attributes.friendly_name) || id; };
+    const ap = this._c.palette === "glass";
     const hd = (i, t, sub, a, v) => `<${a ? `button data-a="${a}"${v ? ` data-v="${esc(v)}"` : ""}` : "div"} class="oh"><span class="oi">${ic(i, 20, 2)}</span><b>${esc(t)}</b><small>${esc(sub || "")}</small>${a ? `<span class="mo">${ic("next", 16, 2)}</span>` : ""}</${a ? "button" : "div"}>`;
     // Kopf
     const hr = new Date().getHours(), greet = hr < 5 ? T("Gute Nacht") : hr < 11 ? T("Guten Morgen") : hr < 17 ? T("Guten Tag") : hr < 22 ? T("Guten Abend") : T("Gute Nacht");
@@ -816,7 +882,27 @@ class HausLiveCard extends HTMLElement {
     if (alm) pills.push(`<button class="pill" data-a="info" data-v="${esc(o.alarm)}"><span class="${alCls}">${ic("shield", 18, 2)}</span><span><b>${al.state.startsWith("armed") ? T("Alarm scharf") : al.state === "disarmed" ? T("Alarm unscharf") : T("Alarm")}</b><small>${esc(alm[0].replace(/^Scharf · /, ""))}</small></span></button>`);
     const trp = this._trashHero(); if (trp) pills.unshift(trp);
     if (solar != null) pills.push(`<button class="pill" data-a="energy"><span class="g">${ic("leaf", 18, 2)}</span><span><b>PV ${f(solar, 0)} W</b><small>${soc != null ? `${T("Batterie")} ${f(soc, 0)} %` : T("Solar")}</small></span></button>`);
-    const hero = `<div class="oc hero">${(() => { const dy = this._dayEff(), hs = (dy ? o.hero_day : o.hero_night) || o.hero_image || IMGX()[dy ? "hero_day" : "hero_night"] || IMGX().hero; return o.hero !== false && hs ? `<img src="${esc(hs)}" alt="">` : ""; })()}<div class="hc"><span class="hi">${ic("house", 30, 2)}</span>${this._themeBtn("thb thh")}<h2>${esc(greet)}${uname ? `, ${esc(uname)}` : ""}!</h2><div class="pills">${pills.join("")}</div></div></div>`;
+    let hero = `<div class="oc hero">${(() => { const dy = this._dayEff(), hs = (dy ? o.hero_day : o.hero_night) || o.hero_image || IMGX()[dy ? "hero_day" : "hero_night"] || IMGX().hero; return o.hero !== false && hs ? `<img src="${esc(hs)}" alt="">` : ""; })()}<div class="hc"><span class="hi">${ic("house", 30, 2)}</span>${this._themeBtn("thb thh")}<h2>${esc(greet)}${uname ? `, ${esc(uname)}` : ""}!</h2><div class="pills">${pills.join("")}</div></div></div>`;
+    const drs = (o.doors || []).map((d) => { const s = st(d.entity), op = s && s.state === "on", off = !s || s.state === "unavailable"; return { d, op, off }; });
+    const nOpen = drs.filter((x) => x.op).length;
+    const wst = o.weather && st(o.weather);
+    if (ap) {
+      const chip = (bg, i, b, sm, a, v) => `<${a ? `button data-a="${a}"${v ? ` data-v="${esc(v)}"` : ""}` : "div"} class="hchip"><span class="d" style="background:${bg}">${ic(i, 15, 2.2)}</span><span><b>${esc(b)}</b><small>${esc(sm)}</small></span></${a ? "button" : "div"}>`;
+      const ch = [];
+      if (trp) ch.push(trp);
+      if (alm) ch.push(chip({ g: "#34C759", aor: "#FF9F0A", rd: "#FF3B30" }[alCls] || "#FF9F0A", "shield", al.state.startsWith("armed") ? T("Alarm scharf") : al.state === "disarmed" ? T("Alarm unscharf") : T("Alarm"), [alm[0].includes(" · ") ? alm[0].split(" · ").slice(1).join(" · ") : "", o.doors && o.doors.length ? (nOpen ? T("{n} offen", { n: nOpen }) : T("Alle Türen zu")) : ""].filter(Boolean).join(" · ") || alm[0], "info", o.alarm));
+      const tps = (this._c.rooms || []).map((r) => this._roomTemp(r)).filter((v) => v != null);
+      const cs = o.climate && st(o.climate);
+      if (tps.length) { const a = Math.min(...tps), b = Math.max(...tps); ch.push(chip("#FF9F0A", "thermo", Math.round(a) === Math.round(b) ? `${f(a, 0)}°` : `${f(a, 0)}–${f(b, 0)}°`, T("Innen") + (cs ? " · " + (cs.state === "off" ? T("Heizung aus") : (TX(HVAC[cs.state], 1) || [0, cs.state])[1]) : ""))); }
+      const lon = [...(o.lights || []), ...(o.extra_lights || [])].map((x) => (typeof x === "string" ? { entity: x } : x)).filter((x) => this._on(x.entity));
+      if ((o.lights || []).length) ch.push(chip(lon.length ? "#FFD45A" : "rgba(255,255,255,.35)", "bulb", lon.length ? T(lon.length > 1 ? "{n} Lichter an" : "{n} Licht an", { n: lon.length }) : T("Alle Lichter aus"), lon.length ? lon.slice(0, 2).map((x) => x.name || fn(x.entity)).join(", ") + (lon.length > 2 ? " …" : "") : T("Beleuchtung")));
+      if (soc != null) ch.push(chip("#0A84FF", "battery", `${T("Akku")} ${f(soc, 0)} %`, solar != null ? `PV ${f(solar, 0)} W` : T("Batterie"), "energy"));
+      else if (solar != null) ch.push(chip("#34C759", "leaf", `PV ${f(solar, 0)} W`, T("Solar"), "energy"));
+      const sub = [];
+      if (wst && typeof wst.attributes.temperature === "number") sub.push(T("Draußen {t}° · {w}", { t: f(wst.attributes.temperature), w: (TX(WX[wst.state], 1) || [0, wst.state])[1] }));
+      if (homeW != null) sub.push(T("Haus verbraucht gerade {w} W", { w: f(homeW, 0) }));
+      hero = `<div class="oc hero ap"><div class="hc"><h2>${esc(greet)}${uname ? `, ${esc(uname)}` : ""}</h2>${sub.length ? `<p>${esc(sub.join(" · "))}</p>` : ""}<div class="hchips">${ch.join("")}</div></div></div>`;
+    }
     // Wetter
     let wx = "";
     const w = o.weather && st(o.weather);
@@ -826,7 +912,10 @@ class HausLiveCard extends HTMLElement {
       wx = `<button class="oc wx" data-a="info" data-v="${esc(o.weather)}" style="text-align:left;color:inherit"><div class="oh"><span class="oi">${ic(wm[0], 20, 2)}</span><b>${T("Wetter")}</b><small></small></div><div class="wn2"><span>${ic(wm[0], 52, 1.4)}</span><span class="wt"><b>${f(a.temperature)}°</b><small>${esc(wm[1])}</small></span></div><div class="wm"><span>${T("Feuchte")} <b>${f(a.humidity, 0)} %</b></span><span>Wind <b>${f(a.wind_speed, 0)} km/h</b></span></div>${days ? `<div class="fc">${days}</div>` : ""}</button>`;
     }
     // Licht
-    const lts = (o.lights || []).map((l, k) => {
+    const lts = ap ? (o.lights || []).map((l) => {
+      const s = st(l.entity), on = !!s && s.state === "on", off = !s || s.state === "unavailable", br = on && typeof s.attributes.brightness === "number" ? Math.round(s.attributes.brightness / 2.55) : null;
+      return `<button class="acc ${on ? "on" : ""}" data-a="otog" data-v="${esc(l.entity)}" aria-pressed="${on}" ${off ? "disabled" : ""}><span class="i">${ic(l.icon || "bulb", 19, 2)}</span><span><b>${esc(l.name)}</b><small>${off ? T("offline") : on ? (br != null ? `${T("An")} · ${br} %` : T("An")) : T("Aus")}</small></span></button>`;
+    }).join("") : (o.lights || []).map((l, k) => {
       const s = st(l.entity), on = !!s && s.state === "on", off = !s || s.state === "unavailable";
       const room = l.room ? this._roomObj(l.room) : null;
       const dy = this._dayEff(), im = l.image && (dy ? IMGX()[l.image + "_day"] : IMGX()[l.image]);
@@ -834,7 +923,7 @@ class HausLiveCard extends HTMLElement {
       return `<button class="lt ${on ? "on" : ""}" data-a="otog" data-v="${esc(l.entity)}" aria-pressed="${on}" ${off ? "disabled" : ""}>${pic}<span class="sh"></span><span class="lx"><b>${esc(l.name)}</b><span><small>${off ? T("offline") : on ? T("An") : T("Aus")}</small><span class="ms"><i></i></span></span></span></button>`;
     }).join("");
     const lightsOn = [...(o.lights || []), ...(o.extra_lights || [])].filter((x) => this._on(typeof x === "string" ? x : x.entity)).length;
-    const light = `<div class="oc">${hd("bulb", T("Beleuchtung"), lightsOn ? T("{n} an", { n: lightsOn }) : T("alle aus"))}<div class="lb2"><button class="pri" data-a="lall" data-v="on">${ic("sun", 18, 2)}${T("Alles an")}</button><button data-a="lall" data-v="off">${ic("moon", 18, 2)}${T("Alles aus")}</button></div><div class="lts">${lts}</div></div>`;
+    const light = ap ? `<div class="oc"><div class="oh"><span class="oi">${ic("bulb", 20, 2)}</span><b>${T("Beleuchtung")}</b><small>${lightsOn ? T("{n} an", { n: lightsOn }) : T("alle aus")}</small><button class="allb" data-a="lall" data-v="${lightsOn ? "off" : "on"}">${lightsOn ? T("Alles aus") : T("Alles an")}</button></div><div class="lts ap" style="grid-template-columns:repeat(${(o.lights || []).length > 4 ? 3 : 2},minmax(0,1fr))">${lts}</div></div>` : `<div class="oc">${hd("bulb", T("Beleuchtung"), lightsOn ? T("{n} an", { n: lightsOn }) : T("alle aus"))}<div class="lb2"><button class="pri" data-a="lall" data-v="on">${ic("sun", 18, 2)}${T("Alles an")}</button><button data-a="lall" data-v="off">${ic("moon", 18, 2)}${T("Alles aus")}</button></div><div class="lts">${lts}</div></div>`;
     // Klima
     let clim = "";
     const c = o.climate && st(o.climate);
@@ -844,12 +933,18 @@ class HausLiveCard extends HTMLElement {
       const on = c.state !== "off" && c.state !== "unavailable";
       const modes = ["heat", "cool", "off"].filter((m) => (a.hvac_modes || []).includes(m));
       const mi = { heat: ["flame", T("Heizen")], cool: ["snow", T("Kühlen")], off: ["power", T("Aus")] };
-      clim = `<div class="oc">${hd("thermo", T("Klima"), o.climate_name || fn(o.climate), "info", o.climate)}<div class="cl"><div class="gau"><svg width="140" height="140" viewBox="0 0 140 140" aria-hidden="true"><defs><linearGradient id="ovg" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#7A3E14"/><stop offset="1" stop-color="#F28A3C"/></linearGradient></defs><g transform="rotate(135 70 70)"><circle cx="70" cy="70" r="${R}" fill="none" stroke="#2A2019" stroke-width="10" stroke-linecap="round" stroke-dasharray="${arc.toFixed(1)} ${C.toFixed(1)}"/>${fr > 0 ? `<circle cx="70" cy="70" r="${R}" fill="none" stroke="${on ? "url(#ovg)" : "#5A463A"}" stroke-width="10" stroke-linecap="round" stroke-dasharray="${(arc * fr).toFixed(1)} ${C.toFixed(1)}"/>` : ""}</g></svg><span><b>${typeof tgt === "number" ? f(tgt) + "°" : "–"}</b><small>${typeof a.current_temperature === "number" ? `${T("Ist")} ${f(a.current_temperature)}°` : (TX(HVAC[c.state], 1) || [0, c.state])[1]}</small></span></div><div class="pm"><button data-a="otstep" data-v="${esc(o.climate)}|1" aria-label="${T("Wärmer")}">+</button><button data-a="otstep" data-v="${esc(o.climate)}|-1" aria-label="${T("Kälter")}">–</button></div></div><div class="md3">${modes.map((m) => `<button class="${c.state === m ? "on" : ""}" data-a="ohvac" data-v="${esc(o.climate)}|${m}">${ic(mi[m][0], 16, 2)}${mi[m][1]}</button>`).join("")}</div></div>`;
+      const apG = () => {
+        const S = 150, r = S / 2 - 10, cc = S / 2, a0 = 135, sw = 270, Pt = (a, rr) => [cc + rr * Math.cos(a * Math.PI / 180), cc + rr * Math.sin(a * Math.PI / 180)];
+        const arcD = (fa, ta, rr) => { const [x0, y0] = Pt(fa, rr), [x1, y1] = Pt(ta, rr); return `M${x0.toFixed(1)} ${y0.toFixed(1)}A${rr} ${rr} 0 ${ta - fa > 180 ? 1 : 0} 1 ${x1.toFixed(1)} ${y1.toFixed(1)}`; };
+        const gc = c.state === "cool" ? ["#8AD8FF", "#2F8CFF"] : c.state === "heat" ? ["#FFB24A", "#FF6A3D"] : on ? ["#8AD8FF", "#FF8F4A"] : ["#E6EBF0", "#C9D1DA"];
+        const e = a0 + sw * fr, [kx, ky] = Pt(e, r); let tk = "";
+        for (let k = 0; k <= 40; k++) { const a = a0 + sw * k / 40, [x0, y0] = Pt(a, r - 15), [x1, y1] = Pt(a, r - (k % 5 ? 19 : 23)); tk += `<line x1="${x0.toFixed(1)}" y1="${y0.toFixed(1)}" x2="${x1.toFixed(1)}" y2="${y1.toFixed(1)}" stroke="rgba(255,255,255,${k / 40 <= fr ? .9 : .4})" stroke-width="1.4" stroke-linecap="round"/>`; }
+        return `<svg width="${S}" height="${S}" viewBox="0 0 ${S} ${S}" aria-hidden="true" style="overflow:visible"><defs><linearGradient id="apg" x1="0" x2="1"><stop offset="0" stop-color="${gc[0]}"/><stop offset="1" stop-color="${gc[1]}"/></linearGradient></defs><path d="${arcD(a0, a0 + sw, r)}" stroke="rgba(255,255,255,.28)" stroke-width="12" fill="none" stroke-linecap="round"/>${fr > 0.005 ? `<path d="${arcD(a0, e, r)}" stroke="url(#apg)" stroke-width="12" fill="none" stroke-linecap="round"/>` : ""}${tk}<circle cx="${kx.toFixed(1)}" cy="${ky.toFixed(1)}" r="10" fill="#FFFFFF" class="knob"/></svg>`;
+      };
+      clim = `<div class="oc">${hd("thermo", T("Klima"), o.climate_name || fn(o.climate), "info", o.climate)}<div class="cl"><div class="gau">${ap ? apG() + "<!--" : ""}<svg width="140" height="140" viewBox="0 0 140 140" aria-hidden="true"><defs><linearGradient id="ovg" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#7A3E14"/><stop offset="1" stop-color="#F28A3C"/></linearGradient></defs><g transform="rotate(135 70 70)"><circle cx="70" cy="70" r="${R}" fill="none" stroke="#2A2019" stroke-width="10" stroke-linecap="round" stroke-dasharray="${arc.toFixed(1)} ${C.toFixed(1)}"/>${fr > 0 ? `<circle cx="70" cy="70" r="${R}" fill="none" stroke="${on ? "url(#ovg)" : "#5A463A"}" stroke-width="10" stroke-linecap="round" stroke-dasharray="${(arc * fr).toFixed(1)} ${C.toFixed(1)}"/>` : ""}</g></svg>${ap ? "-->" : ""}<span><b>${typeof tgt === "number" ? f(tgt) + "°" : "–"}</b><small>${typeof a.current_temperature === "number" ? `${T("Ist")} ${f(a.current_temperature)}°` : (TX(HVAC[c.state], 1) || [0, c.state])[1]}</small></span></div><div class="pm"><button data-a="otstep" data-v="${esc(o.climate)}|1" aria-label="${T("Wärmer")}">+</button><button data-a="otstep" data-v="${esc(o.climate)}|-1" aria-label="${T("Kälter")}">–</button></div></div><div class="md3">${modes.map((m) => `<button class="${c.state === m ? "on" : ""}" data-a="ohvac" data-v="${esc(o.climate)}|${m}">${ic(mi[m][0], 16, 2)}${mi[m][1]}</button>`).join("")}</div></div>`;
     }
     // Sicherheit
-    const drs = (o.doors || []).map((d) => { const s = st(d.entity), op = s && s.state === "on", off = !s || s.state === "unavailable"; return { d, op, off }; });
-    const nOpen = drs.filter((x) => x.op).length;
-    const sec = `<div class="oc">${hd("shield", T("Sicherheit"), "", this._c.security ? "sec" : o.alarm ? "info" : "", this._c.security ? "" : o.alarm)}<div class="sc"><span class="${nOpen ? "wn" : alCls || "g"}">${ic("shield", 44, 1.6)}</span><b>${esc(alm ? alm[0] : T("Kein Alarm"))}</b><small>${nOpen ? T("{n} offen", { n: nOpen }) : T("Alle Türen zu")}</small></div><div class="drs">${drs.map((x) => `<button data-a="info" data-v="${esc(x.d.entity)}"><span>${ic("door", 16, 1.8)}</span><span>${esc(x.d.name)}</span><em class="${x.op || x.off ? "wn" : ""}">${x.off ? T("offline") : x.op ? T("Offen") : T("Zu")}</em></button>`).join("")}</div></div>`;
+    const sec = ap ? `<div class="oc">${hd("shield", T("Sicherheit"), "", this._c.security ? "sec" : o.alarm ? "info" : "", this._c.security ? "" : o.alarm)}<div class="sc ap"><span class="sb" style="background:${nOpen ? "#FF9F0A" : { g: "#34C759", aor: "#FF9F0A", rd: "#FF3B30" }[alCls] || "#34C759"}">${ic("shield", 26, 2)}</span><span><b>${esc(alm ? alm[0].split(" · ")[0] : T("Kein Alarm"))}</b><small>${esc((alm && alm[0].includes(" · ") ? alm[0].split(" · ").slice(1).join(" · ") + " · " : "") + (nOpen ? T("{n} offen", { n: nOpen }) : T("Alle Türen zu")))}</small></span></div><div class="drs ap">${drs.map((x) => `<button data-a="info" data-v="${esc(x.d.entity)}"><span>${ic("door", 16, 1.8)}</span><span>${esc(x.d.name)}</span><em class="${x.op || x.off ? "wn" : ""}">${x.off ? T("offline") : x.op ? T("Offen") : T("Zu")}</em></button>`).join("")}</div></div>` : `<div class="oc">${hd("shield", T("Sicherheit"), "", this._c.security ? "sec" : o.alarm ? "info" : "", this._c.security ? "" : o.alarm)}<div class="sc"><span class="${nOpen ? "wn" : alCls || "g"}">${ic("shield", 44, 1.6)}</span><b>${esc(alm ? alm[0] : T("Kein Alarm"))}</b><small>${nOpen ? T("{n} offen", { n: nOpen }) : T("Alle Türen zu")}</small></div><div class="drs">${drs.map((x) => `<button data-a="info" data-v="${esc(x.d.entity)}"><span>${ic("door", 16, 1.8)}</span><span>${esc(x.d.name)}</span><em class="${x.op || x.off ? "wn" : ""}">${x.off ? T("offline") : x.op ? T("Offen") : T("Zu")}</em></button>`).join("")}</div></div>`;
     // Medien
     let med = "";
     const mps = (o.media || []).map((id) => ({ id, s: st(id) })).filter((x) => x.s && x.s.state !== "unavailable");
@@ -857,21 +952,25 @@ class HausLiveCard extends HTMLElement {
     if (mp) {
       const a = mp.s.attributes, pl = mp.s.state === "playing", vol = this._pend[mp.id] != null ? this._pend[mp.id] : Math.round((a.volume_level || 0) * 100);
       const title = a.media_title || a.media_channel || (pl ? T("Spielt") : { paused: T("Pausiert"), idle: T("Bereit"), off: T("Aus") }[mp.s.state] || mp.s.state);
-      med = `<div class="oc">${hd("music", T("Medien"), a.friendly_name || mp.id, "info", mp.id)}<div class="mp"><span class="cv">${a.entity_picture ? `<img src="${esc(a.entity_picture)}" alt="">` : ic("music", 30, 1.6)}</span><span><b>${esc(title)}</b><small>${esc(a.media_artist || "")}</small><small>${pl ? T("Spielt") : { paused: T("Pausiert"), idle: T("Bereit"), off: T("Aus") }[mp.s.state] || ""}</small></span></div><div class="mc"><button data-a="omcmd" data-v="${esc(mp.id)}|media_previous_track" aria-label="${T("Zurück")}">${ic("prev", 22, 2)}</button><button class="pp" data-a="omcmd" data-v="${esc(mp.id)}|media_play_pause" aria-label="${pl ? T("Pause") : T("Abspielen")}">${ic(pl ? "pause" : "play", 24, 2.2)}</button><button data-a="omcmd" data-v="${esc(mp.id)}|media_next_track" aria-label="${T("Weiter")}">${ic("nextt", 22, 2)}</button></div><div class="vl"><button data-a="ovol" data-v="${esc(mp.id)}|-5" aria-label="${T("Leiser")}">–</button><span><i style="width:${vol}%"></i></span><button data-a="ovol" data-v="${esc(mp.id)}|5" aria-label="${T("Lauter")}">+</button><small>${vol} %</small></div></div>`;
+      const dur = a.media_duration, pos0 = a.media_position, upd = a.media_position_updated_at;
+      const pos = typeof pos0 === "number" ? pos0 + (pl && upd ? (Date.now() - new Date(upd).getTime()) / 1000 : 0) : null;
+      const prog = ap && typeof dur === "number" && dur > 0 && pos != null ? `<div class="prg"><i style="width:${Math.max(0, Math.min(100, pos / dur * 100)).toFixed(1)}%"></i></div>` : "";
+      med = `<div class="oc ${ap ? "apm" : ""}">${hd("music", T("Medien"), a.friendly_name || mp.id, "info", mp.id)}<div class="mp"><span class="cv">${a.entity_picture ? `<img src="${esc(a.entity_picture)}" alt="">` : ic("music", 30, 1.6)}</span><span><b>${esc(title)}</b><small>${esc(a.media_artist || "")}</small><small>${pl ? T("Spielt") : { paused: T("Pausiert"), idle: T("Bereit"), off: T("Aus") }[mp.s.state] || ""}</small></span></div>${prog}<div class="mc"><button data-a="omcmd" data-v="${esc(mp.id)}|media_previous_track" aria-label="${T("Zurück")}">${ic("prev", 22, 2)}</button><button class="pp" data-a="omcmd" data-v="${esc(mp.id)}|media_play_pause" aria-label="${pl ? T("Pause") : T("Abspielen")}">${ic(pl ? "pause" : "play", 24, 2.2)}</button><button data-a="omcmd" data-v="${esc(mp.id)}|media_next_track" aria-label="${T("Weiter")}">${ic("nextt", 22, 2)}</button></div><div class="vl"><button data-a="ovol" data-v="${esc(mp.id)}|-5" aria-label="${T("Leiser")}">–</button><span><i style="width:${vol}%"></i></span><button data-a="ovol" data-v="${esc(mp.id)}|5" aria-label="${T("Lauter")}">+</button><small>${vol} %</small></div></div>`;
     } else med = `<div class="oc">${hd("music", T("Medien"), "")}<div class="empty">${T("Kein Player erreichbar")}</div></div>`;
     // Energie
-    const sp = this._spark();
+    const sp = this._spark(ap);
     const en = `<div class="oc">${hd("bolt", T("Energie"), sp ? T("letzte 12 h") : "", "energy")}<div class="eg"><b>${f(homeW, 0)}</b><span>W ${T("Haus")}</span></div>${e.solar_today ? `<span class="esub">${T("PV-Ertrag heute")} <b>${f(n(e.solar_today))} kWh</b></span>` : ""}${sp ? `<div class="spk">${sp}</div>` : ""}<div class="e3"><span><span style="color:#F2C14E">${ic("sun", 18, 2)}</span>${T("Solar")}<b>${f(solar, 0)} W</b></span><span><span>${ic("tower", 18, 2)}</span>${T("Netz")}<b>${f(grid, 0)} W</b></span><span><span style="color:#E8735A">${ic("battery", 18, 2)}</span>${T("Batterie")}<b>${f(soc, 0)} %</b></span></div></div>`;
     // Geräte
-    const dv = `<div class="oc">${hd("dash", T("Geräte"), "")}<div class="dv6">${(o.devices || []).map((d) => { const s = st(d.entity), off = !s || s.state === "unavailable", on = !off && this._isOn(d); return `<button class="${on ? "on" : ""} ${off ? "off" : ""}" data-a="otog" data-v="${esc(d.entity)}" ${off ? "disabled" : ""}>${ic(d.icon || this._icon(d), 22, 1.7)}<span>${esc(d.name)}</span><small>${off ? T("offline") : on ? T("An") : T("Aus")}</small></button>`; }).join("")}</div></div>`;
+    const dv = `<div class="oc">${hd("dash", T("Geräte"), "")}<div class="dv6 ${ap ? "ap" : ""}">${(o.devices || []).map((d) => { const s = st(d.entity), off = !s || s.state === "unavailable", on = !off && this._isOn(d); return ap ? `<button class="acc row ${on ? "on" : ""} ${off ? "off" : ""}" data-a="otog" data-v="${esc(d.entity)}" ${off ? "disabled" : ""}><span class="i">${ic(d.icon || this._icon(d), 19, 2)}</span><span><b>${esc(d.name)}</b><small>${off ? T("offline") : on ? T("An") : T("Aus")}</small></span></button>` : `<button class="${on ? "on" : ""} ${off ? "off" : ""}" data-a="otog" data-v="${esc(d.entity)}" ${off ? "disabled" : ""}>${ic(d.icon || this._icon(d), 22, 1.7)}<span>${esc(d.name)}</span><small>${off ? T("offline") : on ? T("An") : T("Aus")}</small></button>`; }).join("")}</div></div>`;
     // Kamera
     let cam = "";
     if (o.camera) {
       const cs = st(o.camera), pic = cs && cs.attributes.entity_picture;
-      cam = `<div class="oc">${hd("cam", T("Kamera"), o.camera_name || fn(o.camera))}<button class="cam" data-a="info" data-v="${esc(o.camera)}">${pic ? `<img src="${esc(pic)}" alt="${T("Kamerabild")} ${esc(o.camera_name || "")}"><em>${T("Letztes Bild · Antippen für Live")}</em>` : `${ic("cam", 30, 1.5)} ${T("Kamera offline")}`}</button></div>`;
+      if (ap) cam = `<button class="oc camap" data-a="info" data-v="${esc(o.camera)}">${pic ? `<img src="${esc(pic)}" alt="${T("Kamerabild")} ${esc(o.camera_name || "")}">` : ""}<span class="cs"></span><span class="ct"><span class="oh"><span class="oi">${ic("cam", 20, 2)}</span><b>${esc(o.camera_name || fn(o.camera))}</b></span><small>${pic ? T("Letztes Bild · Antippen für Live") : T("Kamera offline")}</small></span></button>`;
+      else cam = `<div class="oc">${hd("cam", T("Kamera"), o.camera_name || fn(o.camera))}<button class="cam" data-a="info" data-v="${esc(o.camera)}">${pic ? `<img src="${esc(pic)}" alt="${T("Kamerabild")} ${esc(o.camera_name || "")}"><em>${T("Letztes Bild · Antippen für Live")}</em>` : `${ic("cam", 30, 1.5)} ${T("Kamera offline")}`}</button></div>`;
     }
     // Schnellaktionen
-    const qa = `<div class="oc">${hd("star", T("Schnellaktionen"), "")}<div class="qa">${(o.actions || []).map((d) => { const on = this._dom(d.entity) !== "script" && this._isOn(d); return `<button class="${on ? "on" : ""}" data-a="otog" data-v="${esc(d.entity)}"><span>${ic(d.icon || this._icon(d), 18, 2)}</span>${esc(d.name)}${on ? ` <small style="margin-left:auto;color:var(--warn)">${T("An")}</small>` : ""}</button>`; }).join("")}</div></div>`;
+    const qa = `<div class="oc">${hd("star", ap ? T("Szenen") : T("Schnellaktionen"), "")}<div class="qa ${ap ? "ap" : ""}">${(o.actions || []).map((d) => { const on = this._dom(d.entity) !== "script" && this._isOn(d); return `<button class="${on ? "on" : ""}" data-a="otog" data-v="${esc(d.entity)}"><span>${ic(d.icon || this._icon(d), 18, 2)}</span>${esc(d.name)}${on ? ` <small style="margin-left:auto;color:var(--warn)">${T("An")}</small>` : ""}</button>`; }).join("")}</div></div>`;
     return `<div class="view ov">${hero}${wx}${light}${clim}${sec}${med}${en}${dv}${cam}${qa}</div>`;
   }
 

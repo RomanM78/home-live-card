@@ -4,7 +4,7 @@ A full-screen dashboard card for Home Assistant: house picture with live figures
 rooms with photo backgrounds, a thermostat dial with a curved scale, light rulers,
 energy and security views. Built for wall tablets and phones.
 
-> Status: early preview (v0.7). English and German; the language follows your Home Assistant profile.
+> Status: early preview (v0.8). English and German; the language follows your Home Assistant profile.
 
 ![Demo](docs/demo.gif)
 
@@ -23,6 +23,8 @@ It always uses the night look. The upper part of the overview stays free so the 
 
 New in 0.7: `palette: glass` – light liquid-glass cards on a soft pastel wallpaper, white type and
 the Inter font (Apple-like). It switches to a dusk wallpaper at night by itself.
+Since 0.8 its overview uses Apple-Home-style tiles: status chips under the greeting, white light tiles
+with a glowing bulb when on, a coloured thermostat arc, a device list and round scene buttons.
 
 | Glass, day | Glass, night | Glass, phone |
 |---|---|---|
