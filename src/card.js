@@ -301,6 +301,53 @@ const CSS_NE_X = `
 .thb,.pill small{color:#F2C9EE!important}
 `;
 
+// glass palette ("sky glass"): light liquid-glass cards on a soft pastel wallpaper, white type, Inter font.
+// Starts from the graphite colours; dark surfaces are replaced by glass in CSS_GL_X.
+const glHex = (c) => {
+  const r = parseInt(c.slice(1, 3), 16) / 255, g = parseInt(c.slice(3, 5), 16) / 255, b = parseInt(c.slice(5, 7), 16) / 255, mx = Math.max(r, g, b), mn = Math.min(r, g, b), L = (mx + mn) / 2, S = mx === mn ? 0 : (L > .5 ? (mx - mn) / (2 - mx - mn) : (mx - mn) / (mx + mn));
+  if (S > .3 && L > .2) return c;
+  return L < .3 ? "#FFFFFF24" : L < .45 ? "#FFFFFF4D" : L < .78 ? "#FFFFFFD1" : "#FFFFFF";
+};
+const glAcc = (t) => grMap(t).replace(/#FF7A1F\b/gi, "#A6F05A").replace(/rgba\(255,122,31,/g, "rgba(166,240,90,");
+const glMap = (t) => grMap(t).replace(/#FF7A1F\b/gi, "#A6F05A").replace(/#FFB074\b/gi, "#FFFFFF").replace(/#FFB57A\b/gi, "#FFFFFF").replace(/#[0-9A-Fa-f]{6}\b/g, glHex)
+  .replace(/rgba\(255,122,31,/g, "rgba(166,240,90,").replace(/rgba\(255,140,60,/g, "rgba(255,255,255,")
+  .replace(/rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)/g, (m, r, g, b, a) => (+r + +g + +b === 0) || Math.max(+r, +g, +b) > 80 ? m : `rgba(255,255,255,${Math.min(.3, +a * .3).toFixed(2)})`);
+const GL_WALL = "radial-gradient(38% 42% at 14% 18%,#a8cbef 0,transparent 70%),radial-gradient(32% 40% at 78% 12%,#c9d9ea 0,transparent 70%),radial-gradient(40% 46% at 82% 82%,#f2c3a8 0,transparent 70%),radial-gradient(36% 40% at 30% 85%,#e9b7c3 0,transparent 70%),radial-gradient(30% 30% at 52% 48%,#8fb3d6 0,transparent 70%),linear-gradient(160deg,#6f8fb0,#9db1c4 50%,#c4a9a8)";
+const GL_WALL_N = "radial-gradient(38% 42% at 14% 18%,#3d5a86 0,transparent 70%),radial-gradient(32% 40% at 78% 12%,#4a5f80 0,transparent 70%),radial-gradient(40% 46% at 82% 82%,#7a5670 0,transparent 70%),radial-gradient(36% 40% at 30% 85%,#6a4a6e 0,transparent 70%),radial-gradient(30% 30% at 52% 48%,#33507a 0,transparent 70%),linear-gradient(160deg,#1d2a44,#2c3a58 50%,#46354d)";
+const GLASS = "linear-gradient(160deg,rgba(255,255,255,.34),rgba(255,255,255,.10) 55%,rgba(255,255,255,.18))";
+const CSS_GL_X = `
+:host{background:#7f97ad!important;--card:rgba(255,255,255,.16);--card2:rgba(255,255,255,.22);--line:rgba(255,255,255,.28);--line2:rgba(255,255,255,.4);--tx:#FFFFFF;--mu:rgba(255,255,255,.82);--mu2:rgba(255,255,255,.9);--ac:#A6F05A;--acbg:rgba(255,255,255,.22);--acln:rgba(255,255,255,.6);--warn:#FFD27A;--cold:#9AD4FF;--inv:#2F4A66;font-family:Inter,Manrope,system-ui,sans-serif!important;letter-spacing:-.01em}
+:host([gln]){background:#24324d!important}
+.app{background:${GL_WALL}!important;background-attachment:fixed!important;color:#fff;text-shadow:0 1px 3px rgba(20,40,70,.28)}
+:host([gln]) .app{background:${GL_WALL_N}!important;background-attachment:fixed!important}
+.side{background:linear-gradient(90deg,rgba(255,255,255,.16),rgba(255,255,255,.06))!important;border-right:1px solid rgba(255,255,255,.3)!important;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.clock b{font-weight:200!important;letter-spacing:-.04em;color:#fff!important}
+.rl.on,.ovb.on{background:linear-gradient(180deg,#fff,#e7eef5)!important;color:#2F4A66!important;text-shadow:none!important;box-shadow:0 10px 20px -8px rgba(20,35,60,.45),inset 0 -2px 3px rgba(20,40,70,.1)!important}
+.rl.on *,.ovb.on *{color:#2F4A66!important}
+.floor{color:rgba(255,255,255,.75)!important}
+.oc,.dev,.flow,.stat,.panel,.ltile,.ldev{background:${GLASS}!important;backdrop-filter:blur(18px) saturate(1.6);-webkit-backdrop-filter:blur(18px) saturate(1.6);border:1px solid rgba(255,255,255,.42)!important;border-radius:28px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -10px 24px -14px rgba(20,40,70,.35),0 14px 28px -10px rgba(20,35,60,.32),0 40px 70px -30px rgba(20,35,60,.42)!important;position:relative}
+.oc::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(120% 60% at 30% -10%,rgba(255,255,255,.32),rgba(255,255,255,0) 60%);z-index:0}
+.view.ov>.oc:nth-child(3n+1){background:linear-gradient(170deg,rgba(120,175,235,.42),rgba(255,255,255,.12) 55%,rgba(245,225,200,.32))!important}
+.view.ov>.oc:nth-child(3n+2){background:linear-gradient(170deg,rgba(235,185,175,.40),rgba(255,255,255,.12) 55%,rgba(170,200,235,.28))!important}
+.dlg{background:rgba(70,95,125,.86)!important;backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.4)!important;border-radius:28px!important}
+.hero{background:transparent!important;border:none!important;box-shadow:none!important}
+.hero::after,.hero::before{display:none!important}
+.hero>img{-webkit-mask-image:linear-gradient(90deg,transparent 10%,rgba(0,0,0,.85) 60%)!important;mask-image:linear-gradient(90deg,transparent 10%,rgba(0,0,0,.85) 60%)!important;border-radius:28px;opacity:.9}
+.hero h2{font-weight:700!important;letter-spacing:-.03em!important;color:#fff!important;text-shadow:0 2px 12px rgba(20,40,70,.35)!important}
+.pill{background:linear-gradient(180deg,rgba(255,255,255,.38),rgba(255,255,255,.14))!important;border:1px solid rgba(255,255,255,.5)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 6px 14px -6px rgba(20,35,60,.35)!important;backdrop-filter:blur(14px)}
+.wt,.eg b,.eg strong,.eg big,.stat b,.stat strong{font-weight:300!important;letter-spacing:-.04em!important;color:#fff!important}
+.dev.on,.lt.on{border-color:rgba(255,255,255,.85)!important;box-shadow:0 0 0 1px rgba(255,255,255,.6),0 14px 28px -10px rgba(20,35,60,.4),inset 0 0 22px rgba(255,255,255,.25)!important}
+.lt{border-radius:22px!important;border-color:rgba(255,255,255,.35)!important}
+.nav,.navw nav{background:${GLASS}!important;backdrop-filter:blur(20px) saturate(1.6);-webkit-backdrop-filter:blur(20px) saturate(1.6);border:1px solid rgba(255,255,255,.45)!important;box-shadow:0 20px 40px -14px rgba(20,35,60,.5)!important}
+.nitem.on{color:#2F4A66!important;text-shadow:none}
+circle[fill="#1A1D23"],circle[fill="#2A1C12"]{fill:rgba(255,255,255,.28)}
+button.pw,.lic{background:rgba(255,255,255,.26)!important;color:#fff!important}
+.rl em,.bub{color:#22381F!important;text-shadow:none!important;box-shadow:0 2px 6px rgba(20,35,60,.3)}
+.ltile .ln,.lt .lx,.lt .lx small{text-shadow:0 1px 4px rgba(0,0,0,.6)}
+button.ok,.btn.on{background:linear-gradient(180deg,#fff,#e7eef5)!important;color:#2F4A66!important;text-shadow:none!important}
+@media (prefers-reduced-transparency: reduce){.oc,.dev,.flow,.stat,.panel,.ltile,.ldev,.nav,.navw nav,.side,.pill{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
+`;
+
 const dayMap = (t) => t.replace(/#[0-9A-Fa-f]{6}\b/g, (c) => DAYC[c.toUpperCase()] || c).replace(/rgba\([^)]*\)/g, (c) => DAYR[c] || c);
 const CSS_DAY_X = `
 :host{--inv:#FFF8F0}
@@ -367,6 +414,11 @@ class HausLiveCard extends HTMLElement {
     if (this._c && this._c.palette === "neon" && this._c.load_font !== false && !document.getElementById("wz-neon")) {
       const l = document.createElement("link"); l.id = "wz-neon"; l.rel = "stylesheet";
       l.href = "https://fonts.googleapis.com/css2?family=Bungee&family=Monoton&family=Rajdhani:wght@500;600;700&family=Yellowtail&display=swap";
+      document.head.appendChild(l);
+    }
+    if (this._c && this._c.palette === "glass" && this._c.load_font !== false && !document.getElementById("wz-glass")) {
+      const l = document.createElement("link"); l.id = "wz-glass"; l.rel = "stylesheet";
+      l.href = "https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap";
       document.head.appendChild(l);
     }
     this._tick = setInterval(() => { this._clock(); if (this._dayOn !== null && this._dayEff() !== this._dayB) this._render(); }, 20000);
@@ -570,13 +622,13 @@ class HausLiveCard extends HTMLElement {
   }
 
   _themeMode() { let m = null; try { m = localStorage.getItem("home-live-theme"); } catch (x) {} return m === "day" || m === "night" ? m : (this._c.theme === "day" || this._c.theme === "night" ? this._c.theme : "auto"); }
-  _dayEff() { return this._c.palette !== "neon" && this._isDay(); }
+  _dayEff() { return this._c.palette !== "neon" && this._c.palette !== "glass" && this._isDay(); }
   _isDay() {
     const m = this._themeMode(); if (m !== "auto") return m === "day";
     const sun = this._st("sun.sun"); if (sun && sun.state !== "unavailable") return sun.state === "above_horizon";
     const h = new Date().getHours(); return h >= 7 && h < 19;
   }
-  _themeBtn(cls) { if (this._c.palette === "neon") return ""; const m = this._themeMode(), d = this._isDay(); return `<button class="${cls}" data-a="theme" aria-label="${T("Darstellung")}: ${m === "auto" ? T("automatisch") : m === "day" ? T("Tag") : T("Abend")}">${ic(d ? "sun" : "moon", 16, 2)}<span>${m === "auto" ? T("Auto") : m === "day" ? T("Tag") : T("Abend")}</span></button>`; }
+  _themeBtn(cls) { if (this._c.palette === "neon" || this._c.palette === "glass") return ""; const m = this._themeMode(), d = this._isDay(); return `<button class="${cls}" data-a="theme" aria-label="${T("Darstellung")}: ${m === "auto" ? T("automatisch") : m === "day" ? T("Tag") : T("Abend")}">${ic(d ? "sun" : "moon", 16, 2)}<span>${m === "auto" ? T("Auto") : m === "day" ? T("Tag") : T("Abend")}</span></button>`; }
   _render() {
     if (!this.shadowRoot || !this._hass) return;
     const r = this._roomObj();
@@ -595,9 +647,10 @@ class HausLiveCard extends HTMLElement {
       this._buildNav(this.shadowRoot.querySelector(".navw"));
     }
     const day = this._dayEff();
-    const ne = this._c.palette === "neon", gr = !day && this._c.palette === "graphite", mk = ne ? "ne" : day ? "day" : gr ? "gr" : "amber"; this._dayB = day;
-    const pm = ne ? neMap : day ? dayMap : gr ? grMap : (x) => x;
-    if (mk !== this._dayOn) { this._dayOn = mk; this._styEl.textContent = ne ? neMap(CSS) + CSS_NE_X : day ? dayMap(CSS) + CSS_DAY_X : gr ? grMap(CSS) + CSS_GR_X : CSS; this.toggleAttribute("day", day); this.style.background = ne ? "#12021E" : day ? "#F2EBE2" : gr ? "#0E1014" : ""; }
+    const ne = this._c.palette === "neon", gl = this._c.palette === "glass", gr = !day && this._c.palette === "graphite", mk = ne ? "ne" : gl ? "gl" : day ? "day" : gr ? "gr" : "amber"; this._dayB = day;
+    const pm = ne ? neMap : gl ? glAcc : day ? dayMap : gr ? grMap : (x) => x;
+    if (gl) this.toggleAttribute("gln", !this._isDay()); else this.removeAttribute("gln");
+    if (mk !== this._dayOn) { this._dayOn = mk; this._styEl.textContent = ne ? neMap(CSS) + CSS_NE_X : gl ? glMap(CSS) + CSS_GR_X.replace(/:host\{[^}]*\}/, "") + CSS_GL_X : day ? dayMap(CSS) + CSS_DAY_X : gr ? grMap(CSS) + CSS_GR_X : CSS; this.toggleAttribute("day", day); this.style.background = ne ? "#12021E" : gl ? "" : day ? "#F2EBE2" : gr ? "#0E1014" : ""; }
     const html = `${side}<div class="main">${body}</div>`;
     this._appEl.innerHTML = pm(html);
     this._dlgEl.innerHTML = pm(dlg);

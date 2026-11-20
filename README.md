@@ -4,7 +4,7 @@ A full-screen dashboard card for Home Assistant: house picture with live figures
 rooms with photo backgrounds, a thermostat dial with a curved scale, light rulers,
 energy and security views. Built for wall tablets and phones.
 
-> Status: early preview (v0.6). English and German; the language follows your Home Assistant profile.
+> Status: early preview (v0.7). English and German; the language follows your Home Assistant profile.
 
 ![Demo](docs/demo.gif)
 
@@ -21,6 +21,13 @@ It always uses the night look. The upper part of the overview stays free so the 
 |---|---|
 | ![Overview, neon](docs/overview-neon.webp) | ![Phone, neon](docs/phone-neon.webp) |
 
+New in 0.7: `palette: glass` – light liquid-glass cards on a soft pastel wallpaper, white type and
+the Inter font (Apple-like). It switches to a dusk wallpaper at night by itself.
+
+| Glass, day | Glass, night | Glass, phone |
+|---|---|---|
+| ![Overview, glass](docs/overview-glass.webp) | ![Overview, glass, night](docs/overview-glass-night.webp) | ![Phone, glass](docs/phone-glass.webp) |
+
 New in 0.6: background animations, chosen per colour scheme with `animation`
 (off by default):
 
@@ -28,7 +35,7 @@ New in 0.6: background animations, chosen per colour scheme with `animation`
 |---|---|---|
 | `city` | neon | car lights on the roads, glittering sea, windows and neon signs in the skyline, a boat |
 | `weather` | all | rain, snow, fog, clouds or stars, following your weather entity (`overview.weather`) |
-| `daycycle` | amber, graphite | sky colour, sun and stars following `sun.sun` |
+| `daycycle` | amber, graphite, glass | sky colour, sun and stars following `sun.sun` |
 
 ![Background animations](docs/animations.webp)
 
@@ -86,7 +93,7 @@ through the jsDelivr CDN (see Privacy); it was created with Google Gemini for th
 ## Privacy
 
 By default the card loads the Manrope font from Google Fonts (with `palette: neon` also
-Bungee, Monoton, Rajdhani and Yellowtail, all under the SIL Open Font License). Set
+Bungee, Monoton, Rajdhani and Yellowtail, with `palette: glass` Inter, all under the SIL Open Font License). Set
 `load_font: false` to use the system fonts instead and make no request to Google.
 
 With `palette: neon` the background picture is loaded from `cdn.jsdelivr.net`. To avoid that,
