@@ -1,6 +1,6 @@
-/*! home-live-card v0.8.0 | MIT License | https://github.com/RomanM78/home-live-card */
+/*! home-live-card v0.8.1 | MIT License | https://github.com/RomanM78/home-live-card */
 
-window.HOME_LIVE_VERSION = "0.8.0";
+window.HOME_LIVE_VERSION = "0.8.1";
 
 // Home Live Card – translations. Keys are the German source texts; {x} are placeholders.
 const EN = {
@@ -494,6 +494,60 @@ div.hchip{cursor:default}
 .rl .rtp,.rl .ron{margin-left:auto;font-style:normal;font-size:12px;font-weight:600;opacity:.9}
 .rl .ron{display:inline-flex;align-items:center;gap:6px;opacity:1}
 .rl .ron::before{content:"";width:7px;height:7px;border-radius:50%;background:#FFD45A;box-shadow:0 0 8px #FFD45A}
+/* Apple-Stil auf allen Seiten (nur glass) */
+.dtx{display:inline-block;font-weight:300;letter-spacing:-.03em;line-height:1;color:#fff;font-variant-numeric:tabular-nums}
+.ltile:not(.on) .dtx,.lvis:not(.on) .dtx{color:rgba(255,255,255,.7)}
+text[fill="#8C94A1" i],text[fill="#6E7684" i]{fill:rgba(255,255,255,.9)}text[fill="#8FB8E8" i]{fill:#fff}g[stroke="#8FB8E8" i]{stroke:#fff}text[font-family]{font-family:Inter,system-ui,sans-serif}
+path[stroke="#343A44" i],circle[stroke="#343A44" i],path[stroke="#3A414C" i],circle[stroke="#3A414C" i],circle[stroke="#6B3A16" i]{stroke:rgba(255,255,255,.4)}
+circle[fill="#2B3038" i],circle[fill="#20242B" i]{fill:rgba(255,255,255,.28)}circle[fill="#1A0F07" i]{fill:#fff}
+.ring{background:rgba(255,255,255,.22)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 8px 16px -8px rgba(20,35,60,.4);color:#fff}
+.ico{background:rgba(255,255,255,.25)!important;color:#fff!important}
+.dev.on:not(.clim):not(.dim){background:linear-gradient(180deg,#fff,#eef3f8)!important;color:#1f2f42!important;text-shadow:none!important}
+.dev.on:not(.clim):not(.dim) small,.dev.on:not(.clim):not(.dim) b,.dev.on:not(.clim):not(.dim) .nm{color:inherit!important}.dev.on:not(.clim):not(.dim) small{color:#4d5f73!important}
+.dev.on:not(.clim):not(.dim) .ico,.ltile.on .lic{background:#FFD45A!important;color:#5a3d00!important;box-shadow:0 0 16px rgba(255,212,90,.85)!important}
+.ltile .lic{background:rgba(255,255,255,.25)!important;color:#fff!important}
+.ltile .lgl{background:radial-gradient(circle,rgba(255,240,190,.75),rgba(255,212,90,.22) 45%,transparent 70%)!important}
+.ltile.on:not(.dim) .dtx{color:#1f2f42}
+.lpre button{background:rgba(255,255,255,.22)!important;border:none!important;color:#fff!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 6px 12px -8px rgba(20,35,60,.4)}
+.lpre button.on{background:linear-gradient(180deg,#fff,#eef3f8)!important;color:#1f2f42!important;text-shadow:none}
+.lpre button.pw.on,.lbig button.on{background:#FFD45A!important;color:#5a3d00!important;box-shadow:0 0 24px rgba(255,212,90,.7)!important}
+.lbig button{background:rgba(255,255,255,.22)!important;border:none!important;color:#fff!important}
+.trul:before{display:none!important}
+.trul .rt{stroke:rgba(255,255,255,.7)!important}.trul .rt.mj{stroke:#fff!important}.trul .rlb{fill:rgba(255,255,255,.9)!important}
+.trul .gl{stroke:rgba(255,255,255,.55)!important}.trul .gk{fill:#fff!important;stroke:#fff!important;filter:drop-shadow(0 2px 4px rgba(20,35,60,.45))}
+.trul .ptr{fill:#FFD45A!important}.dev.clim .trul .ptr{fill:#FF9F45!important}.dev.clim.m-cool .trul .ptr{fill:#4FA8FF!important}
+.lvis .lglow{background:radial-gradient(circle,rgba(255,240,190,.8),rgba(255,212,90,.25) 38%,transparent 68%)!important}
+.lvis .lamp .sh{fill:rgba(255,255,255,.4)!important;stroke:rgba(255,255,255,.7)!important}.lvis .lamp .cd{stroke:rgba(255,255,255,.7)!important}.lvis .lamp .bl{fill:rgba(255,255,255,.5)!important}.lvis.on .lamp .bl{fill:#FFF3C4!important}
+.lvis small,.trw .rl,.trw .rl em{color:rgba(255,255,255,.92)!important}
+.dev.clim{background:${GLASS}!important}
+.dev.clim .ico{background:rgba(255,255,255,.25)!important;color:#fff!important}
+.dev.clim.on .ico{background:#FF9F0A!important;color:#fff!important;box-shadow:0 6px 14px -4px rgba(255,140,40,.6)!important}.dev.clim.m-cool .ico{background:#0A84FF!important;box-shadow:0 6px 14px -4px rgba(10,132,255,.6)!important}
+.tgau .tk{stroke:#fff!important;opacity:.35!important}.tgau .tk.on{stroke:#FF9F45!important;opacity:1!important}.dev.clim.m-cool .tgau .tk.on{stroke:#4FA8FF!important}.dev.clim.idle .tgau .tk.on{stroke:#fff!important;opacity:.7!important}
+.tgau .tk.rm{stroke:#fff!important;opacity:1!important}
+.tgau .mk{stroke:#fff!important;filter:drop-shadow(0 2px 4px rgba(20,35,60,.45))}.tgau .md,.tgau .cap{fill:#fff!important}.tgau .cap.dim{opacity:.4}.tgau .lb{fill:rgba(255,255,255,.9)!important}
+.tgau .tc small{color:rgba(255,255,255,.92)!important}
+.tmod button{background:rgba(255,255,255,.22)!important;border:none!important;color:#fff!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 6px 12px -8px rgba(20,35,60,.4)!important}
+.tmod button.on{background:linear-gradient(180deg,#fff,#eef3f8)!important;color:#E8590C!important}.tmod button.on[data-v$="|cool"]{color:#1b62c4!important}.tmod button.on[data-v$="|off"]{color:#2F4A66!important}
+.ctl button,.modes button,.three button,.rbtn,.tabs button:not(.on){background:rgba(255,255,255,.22)!important;border:none!important;color:#fff!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 8px 16px -10px rgba(20,35,60,.45)}
+.ctl button.pri,.ctl button.on,.modes button.on,.seg button.on,.tabs button.on{background:linear-gradient(180deg,#fff,#eef3f8)!important;color:#1f2f42!important;text-shadow:none!important}
+.seg{background:rgba(255,255,255,.18)!important;border:none!important}.seg button{color:#fff}
+.bigbtn{background:rgba(255,255,255,.22)!important;border:none!important;color:#fff!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 14px 26px -12px rgba(20,35,60,.5)!important}
+.bigbtn.on{background:#FFD45A!important;color:#5a3d00!important;box-shadow:0 0 40px rgba(255,212,90,.65)!important}
+.dialbox{background:none!important}.dialbox path[stroke="#A6F05A" i]{stroke:#fff}.dialbox circle[fill="#A6F05A" i]{fill:#fff;filter:drop-shadow(0 2px 5px rgba(20,35,60,.45))}.dialbox circle[fill="#fff"]+circle,.dialbox circle[fill="#A6F05A" i]+circle{fill:#FF9F45}.dval b{font-weight:200!important;letter-spacing:-.04em;color:#fff!important}.dval small,.hint{color:rgba(255,255,255,.9)!important}
+.sbig{border:none!important;color:#fff!important;background:rgba(255,255,255,.3)!important;box-shadow:0 14px 28px -10px rgba(20,35,60,.5)}
+.sbig.g{background:#34C759!important}.sbig.wn{background:#FF9F0A!important}.sbig.rd{background:#FF3B30!important}
+.sht small,.sht span{color:rgba(255,255,255,.92)!important}.sht b{font-weight:700!important;letter-spacing:-.03em;color:#fff!important}
+.amodes button{background:rgba(255,255,255,.22)!important;border:none!important;color:#fff!important;border-radius:16px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}
+.amodes button.on{background:linear-gradient(180deg,#fff,#eef3f8)!important;color:#1f2f42!important;opacity:1!important;text-shadow:none}
+.sgh{color:rgba(255,255,255,.85)!important;font-weight:700}
+.srow{border-bottom:none!important;border-top:1px solid rgba(255,255,255,.25)!important;color:#fff!important;padding:9px 4px!important}
+.srow>span{color:#fff!important}.srow small{color:rgba(255,255,255,.85)!important}
+.srow b{background:rgba(255,255,255,.9)!important;color:#1f6b2f!important;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:600;text-shadow:none}.srow.op b{color:#9A5200!important}
+.grow .gi{background:rgba(255,255,255,.25)!important;color:#fff!important}.grow button{background:linear-gradient(180deg,#fff,#eef3f8)!important;color:#1f2f42!important;border:none!important;text-shadow:none}
+.flow .fchips span{background:rgba(255,255,255,.2)!important;color:rgba(255,255,255,.9)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}
+.stat small,.stat em{color:rgba(255,255,255,.9)!important}.ph{color:rgba(255,255,255,.95)!important}
+.bar .bt{background:rgba(255,255,255,.25)!important}.bar .bt i{background:#fff!important}
+.boost{background:rgba(255,255,255,.22)!important;border:none!important;color:#fff!important}.boost.on{background:#FF9F0A!important}
 @media (prefers-reduced-transparency: reduce){.oc,.dev,.flow,.stat,.panel,.ltile,.ldev,.nav,.navw nav,.side,.pill{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
 `;
 
@@ -1247,7 +1301,8 @@ window.customCards.push({ type: "home-live-card", name: "Home Live Card", descri
 const PX = 14, KA = 1.8, VIS = 20;
 const FONT = { "0": "01110100011000110001100011000101110", "1": "00100011000010000100001000010001110", "2": "01110100010000100010001000100011111", "3": "11110000010000101110000010000111110", "4": "00010001100101010010111110001000010", "5": "11111100001111000001000011000101110", "6": "00110010001000011110100011000101110", "7": "11111000010001000100010000100001000", "8": "01110100011000101110100011000101110", "9": "01110100011000101111000010001001100", "C": "01110100011000010000100001000101110", ",": "00000000000000000000000000100010000", ".": "00000000000000000000000000000010000", "-": "00000000000000011111000000000000000", "°": "01000101000100000000000000000000000", "%": "11001110100001000100010000101110011", "A": "01110100011000111111100011000110001", "N": "10001110011010110011100011000110001", "U": "10001100011000110001100011000101110", "S": "01111100001000001110000010000111110", "O": "01110100011000110001100011000101110", "F": "11111100001000011110100001000010000" };
 const W = { ",": 2, "°": 3, ".": 2 };
-const dots = (txt, h, cls) => { let x = 0, c = ""; for (const ch of txt) { const g = FONT[ch]; if (!g) { x += 3; continue; } const w = W[ch] || 5; for (let r = 0; r < 7; r++) for (let k = 0; k < w; k++) if (g[r * 5 + k] === "1") c += `<circle cx="${x + k * 1 + 0.5}" cy="${r + 0.5}" r=".36"/>`; x += w + 1; } x -= 1; return `<svg class="${cls}" viewBox="0 0 ${x} 7" style="height:${h}px;width:${(h * x / 7).toFixed(1)}px" aria-hidden="true">${c}</svg>`; };
+let GLX = false;
+const dots = (txt, h, cls) => { if (GLX) return `<span class="${cls} dtx" style="font-size:${Math.round(h * 1.05)}px">${esc(txt)}</span>`; let x = 0, c = ""; for (const ch of txt) { const g = FONT[ch]; if (!g) { x += 3; continue; } const w = W[ch] || 5; for (let r = 0; r < 7; r++) for (let k = 0; k < w; k++) if (g[r * 5 + k] === "1") c += `<circle cx="${x + k * 1 + 0.5}" cy="${r + 0.5}" r=".36"/>`; x += w + 1; } x -= 1; return `<svg class="${cls}" viewBox="0 0 ${x} 7" style="height:${h}px;width:${(h * x / 7).toFixed(1)}px" aria-hidden="true">${c}</svg>`; };
 const TDCSS = `.dev.clim{grid-column:1/-1;min-height:470px;gap:0;justify-content:flex-start;background:radial-gradient(ellipse 70% 55% at 50% 38%,rgba(242,138,60,.10),transparent 70%),var(--card);overflow:hidden}.dev.clim .top{align-items:center}.dev.clim .top .nm{flex:1;min-width:0}.dev.clim .nm b,.dev.clim .nm small{display:block}
 .tgau{position:relative;width:100%;max-width:340px;margin:2px auto 0;aspect-ratio:300/185;flex:none}.tgau>svg{position:absolute;inset:0;width:100%;height:100%}
 .tgau .tk{stroke:#F28A3C;stroke-width:2.2;stroke-linecap:round;opacity:.2}.tgau .tk.on{opacity:.9}.tgau .tk.rm{stroke:#F3ECE4;opacity:1}.tgau .mk{stroke:#F28A3C;stroke-width:11;stroke-linecap:round}.tgau .md{fill:#F28A3C}.tgau .cap{fill:#F28A3C}.tgau .cap.dim{opacity:.3}.tgau .lb{fill:#9C9086;font-size:11px;font-weight:500;font-family:inherit}
@@ -1297,15 +1352,17 @@ const M = {
     return `<svg viewBox="0 0 340 96" aria-hidden="true"><defs><linearGradient id="tglw" x1="0" x2="1"><stop offset="0" stop-color="#F28A3C" stop-opacity="0"/><stop offset=".5" stop-color="#F28A3C"/><stop offset="1" stop-color="#F28A3C" stop-opacity="0"/></linearGradient></defs><path class="ptr" d="M164 4h12l-6 8z"/>${t}<path class="gl" d="M${gx0} ${gy0}A${R - 7} ${R - 7} 0 0 1 ${gx1} ${gy1}"/><circle class="gk" cx="170" cy="${(cy - R + 7).toFixed(1)}" r="5"/></svg>`;
   },
   _tdTile(d) {
+    GLX = this._c.palette === "glass";
     const s = this._st(d.entity), at = s.attributes, off = s.state === "off", na = s.state === "unavailable", st = at.target_temp_step || 0.5;
     const [lo, hi] = this._tdRange(at), tgt = this._pend[d.entity] != null ? this._pend[d.entity] : at.temperature, cur = at.current_temperature;
     const modes = [...(at.hvac_modes || []).filter((m) => m !== "off"), "off"], tv = typeof tgt === "number" ? Math.max(lo, Math.min(hi, tgt)) : lo;
     const mb = na ? "" : `<div class="tmod">${modes.map((m) => `<button class="${s.state === m ? "on" : ""}" data-a="ohvac" data-v="${esc(d.entity)}|${esc(m)}" aria-label="${esc(T(HVAC[m] || m))}" title="${esc(T(HVAC[m] || m))}">${IC[m] || IC.heat}</button>`).join("")}</div>`;
-    return `<style>${TDCSS}</style><div class="dev clim ${off || na ? "idle" : "on"} ${na ? "off" : ""}" data-id="${esc(d.entity)}" data-lo="${lo}" data-hi="${hi}" data-st="${st}"><div class="top"><span class="ico">${TH}</span><div class="nm"><b>${esc(d.name)}</b><small>${na ? T("offline") : off ? T("Aus") : esc(T(HVAC[s.state] || s.state))}</small></div></div>
+    return `<style>${TDCSS}</style><div class="dev clim m-${esc(s.state)} ${off || na ? "idle" : "on"} ${na ? "off" : ""}" data-id="${esc(d.entity)}" data-lo="${lo}" data-hi="${hi}" data-st="${st}"><div class="top"><span class="ico">${TH}</span><div class="nm"><b>${esc(d.name)}</b><small>${na ? T("offline") : off ? T("Aus") : esc(T(HVAC[s.state] || s.state))}</small></div></div>
       <div class="tgau">${this._tdGauge(typeof tgt === "number" ? tv : null, lo, hi, cur)}<div class="tc"><span class="tvw">${dots(typeof tgt === "number" ? this._f1(tgt) + TU : "--", 40, "dm")}</span><small>${T("Solltemperatur")}</small></div></div>${mb}
       <div class="trw">${typeof cur === "number" ? `<span class="rl">${T("Raum")} ${dots(this._f1(cur) + TU, 14, "dm")}</span>` : ""}<div class="trul" aria-label="${T("Temperatur wischen")}">${this._tdRuler(tv, lo, hi, st)}</div></div></div>`;
   },
   _ltView(r, d, s, hdr) {
+    GLX = this._c.palette === "glass";
     const id = d.entity, na = !s || s.state === "unavailable", on = !!s && s.state === "on", dim = !!s && (s.attributes.supported_color_modes || []).some((m) => m !== "onoff");
     const pct = this._pend[id] != null ? this._pend[id] : on ? (dim ? Math.round((s.attributes.brightness || 0) / 2.55) : 100) : 0, lvl = on ? (dim ? pct / 100 : 1) : 0;
     const lamp = `<svg class="lamp" viewBox="0 0 150 150" aria-hidden="true"><defs><linearGradient id="lbeam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFC28A" stop-opacity=".55"/><stop offset="1" stop-color="#FFC28A" stop-opacity="0"/></linearGradient></defs><line class="cd" x1="75" y1="0" x2="75" y2="44"/><path class="bm" d="M52 86 L20 150 H130 L98 86Z"/><path class="sh" d="M60 44h30l20 42H40z"/><circle class="bl" cx="75" cy="88" r="11"/></svg>`;
@@ -1317,6 +1374,7 @@ const M = {
     return `<style>${TDCSS}${LTCSS}</style><div class="view det lt">${hdr(d.name)}<div class="ltb ${on ? "" : "off"}">${vis}<div class="lctl">${ctl}</div></div></div>`;
   },
   _ltTile(d) {
+    GLX = this._c.palette === "glass";
     const id = d.entity, s = this._st(id), na = !s || s.state === "unavailable", on = !!s && s.state === "on", dim = !!s && (s.attributes.supported_color_modes || []).some((m) => m !== "onoff");
     const pct = this._pend[id] != null ? this._pend[id] : on ? (dim ? Math.round((s.attributes.brightness || 0) / 2.55) : 100) : 0, g = on ? (dim ? 0.25 + 0.75 * pct / 100 : 1) : 0;
     const bulb = SV('<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1 2V16h5.2v-.2c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/>', 20);
@@ -1341,6 +1399,7 @@ const M = {
   },
   _lset(id, v) { v = Math.max(0, Math.min(100, Math.round(v))); this._pendSet(id, v); this._render(); return this._call("light", v > 0 ? "turn_on" : "turn_off", v > 0 ? { entity_id: id, brightness_pct: v } : { entity_id: id }); },
   _tdShow(t, v, raw) {
+    GLX = this._c.palette === "glass";
     const el = t.el, lo = +el.dataset.lo, hi = +el.dataset.hi, st = +el.dataset.st, s = this._st(t.id);
     if (v != null) { el.querySelector(".tgau>svg").outerHTML = this._tdGauge(v, lo, hi, s && s.attributes.current_temperature); el.querySelector(".tvw").innerHTML = dots(this._f1(v) + TU, 40, "dm"); }
     t.r.querySelector("svg").outerHTML = this._tdRuler(raw, lo, hi, st);
@@ -1355,6 +1414,7 @@ const M = {
     try { r.setPointerCapture(e.pointerId); } catch (x) {} r.classList.add("drag");
   },
   _tdMove(e) {
+    GLX = this._c.palette === "glass";
     const t = this._td; if (!t || e.pointerId !== t.pid) return; const dx = e.clientX - t.x0; if (!t.mv && Math.abs(dx) < 4) return; t.mv = true; e.preventDefault();
     if (t.lt) { const raw = Math.max(0, Math.min(100, t.v0 - (dx / PX) * 5)), v = Math.round(raw); t.r.querySelector("svg").outerHTML = this._tdRuler(raw, 0, 100, 5, 20, 10); if (v !== t.v) { t.v = v; const w = t.r.closest(".ltile") || t.r.closest(".view"), lv = w && w.querySelector(".lvw"), g = w && w.querySelector(".lglow"); const tl = w && w.classList.contains("ltile"); if (lv) lv.innerHTML = dots(v + "%", tl ? 18 : 40, "dm"); const gg = w && w.querySelector(tl ? ".lgl" : ".lglow"); if (gg) gg.style.opacity = v > 0 ? ((tl ? 0.25 : 0.15) + (tl ? 0.75 : 0.85) * v / 100).toFixed(2) : 0; } return; }
     const lo = +t.el.dataset.lo, hi = +t.el.dataset.hi, st = +t.el.dataset.st, raw = Math.max(lo, Math.min(hi, t.v0 - (dx / PX) * st)), v = Math.round(raw / st) * st;
