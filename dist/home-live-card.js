@@ -1,6 +1,6 @@
-/*! home-live-card v0.7.0 | MIT License | https://github.com/RomanM78/home-live-card */
+/*! home-live-card v0.7.1 | MIT License | https://github.com/RomanM78/home-live-card */
 
-window.HOME_LIVE_VERSION = "0.7.0";
+window.HOME_LIVE_VERSION = "0.7.1";
 
 // Home Live Card – translations. Keys are the German source texts; {x} are placeholders.
 const EN = {
@@ -389,16 +389,20 @@ const glHex = (c) => {
   if (S > .3 && L > .2) return c;
   return L < .3 ? "#FFFFFF24" : L < .45 ? "#FFFFFF4D" : L < .78 ? "#FFFFFFD1" : "#FFFFFF";
 };
-const glAcc = (t) => grMap(t).replace(/#FF7A1F\b/gi, "#A6F05A").replace(/rgba\(255,122,31,/g, "rgba(166,240,90,");
-const glMap = (t) => grMap(t).replace(/#FF7A1F\b/gi, "#A6F05A").replace(/#FFB074\b/gi, "#FFFFFF").replace(/#FFB57A\b/gi, "#FFFFFF").replace(/#[0-9A-Fa-f]{6}\b/g, glHex)
+const glTx = (t) => t.replace(/([^-]|^)color:\s*#A6F05A/gi, "$1color:var(--actx)").replace(/([^-]|^)color:\s*var\(--ac\)/g, "$1color:var(--actx)").replace(/([^-]|^)color:\s*var\(--warn\)/g, "$1color:var(--wntx)").replace(/([^-]|^)color:\s*#FFD27A/gi, "$1color:var(--wntx)").replace(/([^-]|^)color:\s*#3DDC84/gi, "$1color:var(--actx)").replace(/([^-]|^)color:\s*#F2C14E/gi, "$1color:var(--wntx)");
+const glAcc = (t) => glTx(grMap(t).replace(/#FF7A1F\b/gi, "#A6F05A").replace(/rgba\(255,122,31,/g, "rgba(166,240,90,"));
+const glMap = (t) => glTx(grMap(t).replace(/#FF7A1F\b/gi, "#A6F05A").replace(/#FFB074\b/gi, "#FFFFFF").replace(/#FFB57A\b/gi, "#FFFFFF").replace(/#[0-9A-Fa-f]{6}\b/g, glHex)
   .replace(/rgba\(255,122,31,/g, "rgba(166,240,90,").replace(/rgba\(255,140,60,/g, "rgba(255,255,255,")
-  .replace(/rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)/g, (m, r, g, b, a) => (+r + +g + +b === 0) || Math.max(+r, +g, +b) > 80 ? m : `rgba(255,255,255,${Math.min(.3, +a * .3).toFixed(2)})`);
+  .replace(/rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)/g, (m, r, g, b, a) => (+r + +g + +b === 0) || Math.max(+r, +g, +b) > 80 ? m : `rgba(255,255,255,${Math.min(.3, +a * .3).toFixed(2)})`));
 const GL_WALL = "radial-gradient(38% 42% at 14% 18%,#a8cbef 0,transparent 70%),radial-gradient(32% 40% at 78% 12%,#c9d9ea 0,transparent 70%),radial-gradient(40% 46% at 82% 82%,#f2c3a8 0,transparent 70%),radial-gradient(36% 40% at 30% 85%,#e9b7c3 0,transparent 70%),radial-gradient(30% 30% at 52% 48%,#8fb3d6 0,transparent 70%),linear-gradient(160deg,#6f8fb0,#9db1c4 50%,#c4a9a8)";
 const GL_WALL_N = "radial-gradient(38% 42% at 14% 18%,#3d5a86 0,transparent 70%),radial-gradient(32% 40% at 78% 12%,#4a5f80 0,transparent 70%),radial-gradient(40% 46% at 82% 82%,#7a5670 0,transparent 70%),radial-gradient(36% 40% at 30% 85%,#6a4a6e 0,transparent 70%),radial-gradient(30% 30% at 52% 48%,#33507a 0,transparent 70%),linear-gradient(160deg,#1d2a44,#2c3a58 50%,#46354d)";
 const GLASS = "linear-gradient(160deg,rgba(255,255,255,.34),rgba(255,255,255,.10) 55%,rgba(255,255,255,.18))";
 const CSS_GL_X = `
 :host{background:#7f97ad!important;--card:rgba(255,255,255,.16);--card2:rgba(255,255,255,.22);--line:rgba(255,255,255,.28);--line2:rgba(255,255,255,.4);--tx:#FFFFFF;--mu:rgba(255,255,255,.82);--mu2:rgba(255,255,255,.9);--ac:#A6F05A;--acbg:rgba(255,255,255,.22);--acln:rgba(255,255,255,.6);--warn:#FFD27A;--cold:#9AD4FF;--inv:#2F4A66;font-family:Inter,Manrope,system-ui,sans-serif!important;letter-spacing:-.01em}
-:host([gln]){background:#24324d!important}
+:host{--actx:#17692C;--wntx:#9A5200}
+text[fill="#3DDC84" i],text[fill="#A6F05A" i],tspan[fill="#3DDC84" i],tspan[fill="#A6F05A" i]{fill:var(--actx)}
+text[fill="#FFD27A" i],text[fill="#F2C14E" i]{fill:var(--wntx)}
+:host([gln]){background:#24324d!important;--actx:#B8F57A;--wntx:#FFD27A}
 .app{background:${GL_WALL}!important;background-attachment:fixed!important;color:#fff;text-shadow:0 1px 3px rgba(20,40,70,.28)}
 :host([gln]) .app{background:${GL_WALL_N}!important;background-attachment:fixed!important}
 .side{background:linear-gradient(90deg,rgba(255,255,255,.16),rgba(255,255,255,.06))!important;border-right:1px solid rgba(255,255,255,.3)!important;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
