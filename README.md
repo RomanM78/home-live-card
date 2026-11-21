@@ -32,9 +32,14 @@ Since 0.8.1 rooms, light and thermostat controls, security, energy and the detai
 | ![Overview, glass](docs/overview-glass.webp) | ![Overview, glass, night](docs/overview-glass-night.webp) | ![Phone, glass](docs/phone-glass.webp) |
 
 New in 0.9: `palette: liquid` – the glass layout with real refraction: the edges of every tile bend the
-wallpaper behind them like a lens. Tiles and buttons give way when pressed and spring back, a glass drop
-slides behind the active entry of the side bar, and a glass drop in the greeting shows the home
-consumption – drag it or tap it. Switched-on devices glow in a tinted glass colour.
+picture behind them like a lens. There is always a picture behind the glass: your `background_image`,
+otherwise your house picture (`overview.hero_day` / `hero_night` / `hero_image`), otherwise a bundled default
+picture. Two glass drops sit on every page; the larger one shows the value of the page (home consumption,
+room temperature, open windows and doors, self-sufficiency). Drag or flick them, pull them together and they
+merge; they stay where you leave them. Tiles give way when pressed and spring back, and switched-on devices
+glow in a tinted glass colour.
+
+![Liquid palette in motion](docs/liquid-promo.webp)
 
 | Liquid, day | Liquid, night | Liquid, phone |
 |---|---|---|
@@ -43,11 +48,12 @@ consumption – drag it or tap it. Switched-on devices glow in a tinted glass co
 | Option | Default | What it does |
 |---|---|---|
 | `on_color` | `auto` | colour of switched-on tiles: `auto` (by device type: lights amber, sockets blue, TV violet, fans teal, climate orange, covers and gates green, scripts rose) or one of `amber`, `blue`, `violet`, `green`, `rose`, `cyan`, `orange` |
-| `liquid_drop` | `true` | the glass drop with the home consumption (needs `energy.home`) |
+| `liquid_drop` | `true` | the two glass drops on every page |
 | `refraction` | `true` | the lens effect at the edges; set `false` on slow wall tablets |
 
 Refraction needs a Chromium-based browser (Chrome, Edge, the Home Assistant app on Android, Fully Kiosk).
-Safari, the iPhone and Firefox show frosted glass instead; the elastic tiles and the drop work everywhere.
+Safari, the iPhone and Firefox show frosted glass instead; the elastic tiles and the drops work everywhere.
+Set `background_image: none` to use the drawn wallpaper instead of a picture.
 With "reduce motion" on the device the tiles do not wobble.
 
 New in 0.6: background animations, chosen per colour scheme with `animation`
