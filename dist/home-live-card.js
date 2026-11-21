@@ -1641,7 +1641,7 @@ const LEAF = ".acc,.hchip,.rl,.dev,.ltile,.stat,.qa.ap button,.md3 button,.lpre 
 const BOX = ".oc,.panel,.flow";
 const PRESS = ".acc,.hchip,.rl,.qa.ap button,.md3 button,.lpre button,.tmod button,.amodes button,.allb,.pm button,.mc button";
 const LQCSS = `
-:host([lq]) .app{background:var(--lqw) 0 0/100% 100% no-repeat fixed!important}
+:host([lq]) .app{background:var(--lqw) center/var(--lqs,100% 100%) no-repeat fixed!important}
 :host([lq]) .oc,:host([lq]) .panel,:host([lq]) .flow{background:transparent!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;isolation:isolate}
 :host([lq]) .lqg{position:absolute;inset:0;border-radius:inherit;z-index:-1;pointer-events:none;background:linear-gradient(160deg,rgba(255,255,255,.22),rgba(255,255,255,.06) 55%,rgba(255,255,255,.12));-webkit-backdrop-filter:blur(16px) saturate(1.3);backdrop-filter:blur(16px) saturate(1.3)}
 :host([lq][gln]) .lqg{background:linear-gradient(160deg,rgba(255,255,255,.14),rgba(255,255,255,.04) 55%,rgba(255,255,255,.08))}
@@ -1695,13 +1695,21 @@ const M = {
     const own = (night ? o.hero_night : o.hero_day) || o.hero_image; if (own) return String(own);
     const v = window.HOME_LIVE_VERSION; return `https://cdn.jsdelivr.net/gh/RomanM78/home-live-card@${v ? "v" + v : "main"}/docs/bg/liquid-${night ? "night" : "day"}.webp`;
   },
+  // load a picture so it can be drawn into a canvas: fetch as blob first (works through the HA service worker and on any same-origin path), then a plain <img> as last resort
+  _lqImg(src, cb) {
+    const I = this._lqImgs || (this._lqImgs = {}); let e = I[src]; if (e) { if (!e.done) e.cbs.push(cb); return e; }
+    e = I[src] = { im: null, ok: false, taint: false, done: false, cbs: [cb] }; const fin = () => { e.done = true; e.cbs.forEach((f) => f && f()); e.cbs = []; };
+    const plain = () => { const im = new Image(); im.onload = () => { e.im = im; e.ok = true; e.taint = true; fin(); }; im.onerror = () => fin(); im.src = src; };
+    const viaImg = (u, cors) => new Promise((res, rej) => { const im = new Image(); if (cors) im.crossOrigin = "anonymous"; im.onload = () => res(im); im.onerror = rej; im.src = u; });
+    const alt = /cdn\.jsdelivr\.net/.test(src) && !/@main\//.test(src) ? src.replace(/@[^/]+\//, "@main/") : null;
+    const get = (u) => fetch(u, { credentials: "same-origin" }).then((r) => { if (!r.ok) throw new Error(r.status); return r.blob(); }).then((b) => viaImg(URL.createObjectURL(b)));
+    get(src).catch(() => (alt ? get(alt) : Promise.reject())).catch(() => viaImg(src, true)).then((im) => { e.im = im; e.ok = true; fin(); }, plain);
+    return e;
+  },
   _lqWall() {
     const W = Math.max(320, Math.min(innerWidth || 1280, 2400)), H = Math.max(320, Math.min(innerHeight || 800, 1600)), night = !this._isDay(), src = this._lqWallSrc(), key = W + "x" + H + night + src; if (this._lqWk === key) return;
-    const I = this._lqImgs || (this._lqImgs = {}); let im = src && I[src];
-    if (src && !im) { im = I[src] = new Image(); im.crossOrigin = "anonymous"; im.decoding = "async"; const alt = /cdn\.jsdelivr\.net/.test(src) && !/@main\//.test(src) ? src.replace(/@[^/]+\//, "@main/") : null;
-      im.onload = () => { this._lqWk = null; this._lqWall(); }; im.onerror = () => { if (alt && im.src !== alt) { im.src = alt; return; } im.bad = true; this._lqWk = null; this._lqWall(); }; im.src = src; }
-    const ok = im && im.complete && im.naturalWidth && !im.bad, wait = src && !ok && !(im && im.bad);
-    if (wait && this._lqWk) return; this._lqWk = wait ? "" : key;
+    const e = src ? this._lqImg(src, () => { this._lqWk = null; this._lqWall(); }) : null, im = e && e.ok && !e.taint ? e.im : null, wait = e && !e.done;
+    if (wait && this._lqWk === "") return; this._lqWk = wait ? "" : key; const ok = !!im;
     const c = this._lqCv || (this._lqCv = document.createElement("canvas")); c.width = W; c.height = H; const g = c.getContext("2d");
     if (ok) { const s = Math.max(W / im.naturalWidth, H / im.naturalHeight), dw = im.naturalWidth * s, dh = im.naturalHeight * s; g.drawImage(im, (W - dw) / 2, (H - dh) / 2, dw, dh);
       // light veil so text on the glass stays readable on busy photos
@@ -1714,7 +1722,7 @@ const M = {
       g.lineWidth = 1; for (const [cx, cy, a] of [[W * .2, H * .32, night ? .2 : .3], [W * .85, H * .8, night ? .16 : .24]]) for (let i = 1; i < 46; i++) { const r = i * m / 38; g.strokeStyle = `rgba(255,255,255,${(a * (1 - i / 60)).toFixed(3)})`; g.beginPath(); for (let k = 0; k <= 120; k++) { const t = k / 120 * 6.2832, rr = r * (1 + .07 * Math.sin(t * 3 + i * .35) + .04 * Math.sin(t * 5 - i * .2)), x = cx + Math.cos(t) * rr, y = cy + Math.sin(t) * rr * .82; k ? g.lineTo(x, y) : g.moveTo(x, y); } g.stroke(); }
     }
     let u; try { u = c.toDataURL("image/jpeg", .9); } catch (e) { u = ""; }
-    this.style.setProperty("--lqw", u ? `url(${u})` : "none"); this._lqWv = (this._lqWv || 0) + 1;
+    const tn = e && e.ok && e.taint; this.style.setProperty("--lqw", tn ? `url("${src}")` : u ? `url(${u})` : "none"); this.style.setProperty("--lqs", tn ? "cover" : "100% 100%"); this._lqWv = (this._lqWv || 0) + 1;
   },
   // ---------- refraction: one displacement map per element size, shared between elements of the same size
   _lqMap(w, h, rad, bez) {
@@ -1789,7 +1797,7 @@ const M = {
     const D = this._lqD, H = this._lqHost(); if (D.el.parentElement !== main) { main.prepend(D.el); D.w = 0; }
     const cs = getComputedStyle(main); D.el.style.marginLeft = `-${cs.paddingLeft}`; D.el.style.marginRight = `-${cs.paddingRight}`;
     if (D.kind !== H.kind) { D.kind = H.kind; D.w = 0; } D.tint = H.tint || [0, 0, 0, 0]; D.photo = null;
-    if (H.photo) { const I = this._lqImgs || (this._lqImgs = {}); let im = I[H.photo]; if (!im) { im = I[H.photo] = new Image(); im.crossOrigin = "anonymous"; im.onerror = () => (im.bad = true); im.src = H.photo; } D.photo = im; D.fixed = getComputedStyle(main, "::before").position === "fixed"; D.main = main; }
+    if (H.photo) { const pe = this._lqImg(H.photo, null); D.photo = pe; D.fixed = getComputedStyle(main, "::before").position === "fixed"; D.main = main; }
     const d0 = D.drops[0].el; d0.innerHTML = H.lab ? `<b>${esc(H.lab.b)}</b><small>${esc(H.lab.sm)}</small>` : ""; d0.setAttribute("aria-label", H.lab ? H.lab.aria : T("Tropfen"));
     this._lqDHomes(); this._lqKick();
   },
@@ -1849,10 +1857,10 @@ gl_FragColor=vec4(c*a,a);}`));
     for (const d of ds) d.el.style.transform = `translate(${(d.x - d.r).toFixed(1)}px,${(d.y - d.r).toFixed(1)}px)`;
     const gl = D.gl; if (gl) { const cv = D.cv, r = cv.getBoundingClientRect(); let pr = Math.min(1.5, devicePixelRatio || 1); if (r.width * r.height * pr * pr > 1.6e6) pr = Math.sqrt(1.6e6 / (r.width * r.height)); const w = Math.round(r.width * pr), hh = Math.round(r.height * pr); if (cv.width !== w || cv.height !== hh) { cv.width = w; cv.height = hh; }
       // texture: the room photo when the page shows one, else the wallpaper
-      let src = this._lqCv, tk = "w" + this._lqWv, TR = [0, 0, innerWidth, innerHeight], K = [0, 0, 0, 0]; const im = D.photo;
-      if (im && im.complete && im.naturalWidth && !im.bad) { const br = D.fixed || !D.main ? { left: 0, top: 0, width: innerWidth, height: innerHeight } : D.main.getBoundingClientRect(), s = Math.max(br.width / im.naturalWidth, br.height / im.naturalHeight), dw = im.naturalWidth * s, dh = im.naturalHeight * s;
-        src = im; tk = "p" + im.src; K = D.tint; TR = [br.left + (br.width - dw) / 2, br.top + (br.height - dh) / 2, dw, dh]; }
-      if (src && D.tk !== tk) { gl.bindTexture(gl.TEXTURE_2D, D.tex); try { gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, src); D.tk = tk; } catch (e) { if (src === im) im.bad = true; } for (const [k, v] of [[gl.TEXTURE_MIN_FILTER, gl.LINEAR], [gl.TEXTURE_MAG_FILTER, gl.LINEAR], [gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE]]) gl.texParameteri(gl.TEXTURE_2D, k, v); }
+      let src = this._lqCv, tk = "w" + this._lqWv, TR = [0, 0, innerWidth, innerHeight], K = [0, 0, 0, 0]; const pe = D.photo, im = pe && pe.ok && !pe.taint && !pe.bad ? pe.im : null;
+      if (im) { const br = D.fixed || !D.main ? { left: 0, top: 0, width: innerWidth, height: innerHeight } : D.main.getBoundingClientRect(), s = Math.max(br.width / im.naturalWidth, br.height / im.naturalHeight), dw = im.naturalWidth * s, dh = im.naturalHeight * s;
+        src = im; tk = "p" + pe.im.src; K = D.tint; TR = [br.left + (br.width - dw) / 2, br.top + (br.height - dh) / 2, dw, dh]; }
+      if (src && D.tk !== tk) { gl.bindTexture(gl.TEXTURE_2D, D.tex); try { gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, src); D.tk = tk; } catch (e) { if (src === im) pe.bad = true; } for (const [k, v] of [[gl.TEXTURE_MIN_FILTER, gl.LINEAR], [gl.TEXTURE_MAG_FILTER, gl.LINEAR], [gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE]]) gl.texParameteri(gl.TEXTURE_2D, k, v); }
       if (w && hh) { const U = D.U; gl.viewport(0, 0, w, hh); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); gl.uniform1i(U.T, 0); gl.uniform4f(U.R, r.left, r.top, r.width, r.height); gl.uniform4f(U.V, TR[0], TR[1], TR[2], TR[3]); gl.uniform4f(U.K, K[0], K[1], K[2], K[3]); gl.uniform1f(U.t, rm ? 1.5 : ms / 1000);
         const DD = [], EE = []; for (let i = 0; i < 6; i++) { const q = D.drops[i]; if (i < D.n) { DD.push(q.x, q.y, q.r, q.amp); EE.push(q.ca, q.sa, q.s, q.ph); } else { DD.push(0, 0, 0, 0); EE.push(1, 0, 1, 0); } }
         gl.uniform4fv(U.D, DD); gl.uniform4fv(U.E, EE); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); } }
