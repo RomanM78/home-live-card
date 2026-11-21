@@ -1832,10 +1832,10 @@ gl_FragColor=vec4(c*a,a);}`));
   },
   _lqDHomes() {
     const D = this._lqD, el = D.el, H = Math.round(innerHeight || 800); el.style.height = H + "px"; el.style.marginBottom = -H + "px";
-    const W = el.clientWidth; if (!W) return; const wide = W >= 700, n = wide ? 5 : 3, R = Math.max(34, Math.min(72, Math.min(W, H) * (wide ? .095 : .13)));
-    const HM = wide ? [[.82, .22], [.34, .74], [.62, .86], [.14, .4], [.93, .64]] : [[.8, .2], [.24, .6], [.72, .84]], F = [1, .78, .64, .54, .46];
+    const W = el.clientWidth; if (!W) return; const wide = W >= 700, n = 2, R = Math.max(34, Math.min(72, Math.min(W, H) * (wide ? .095 : .13)));
+    const HM = wide ? [[.84, .78], [.73, .86]] : [[.78, .74], [.6, .82]], F = [1, .55];
     D.n = n; D.drops.forEach((d, i) => { const on = i < n; d.el.style.display = on ? "" : "none"; if (!on) { d.r = 0; return; }
-      d.r = R * F[i]; d.hx = HM[i][0] * W; d.hy = HM[i][1] * H; d.f1 = .09 + i * .023; d.f2 = .07 + i * .019; d.p0 = i * 1.7;
+      d.r = R * F[i]; d.hx = (d.uf ? d.uf[0] : HM[i][0]) * W; d.hy = (d.uf ? d.uf[1] : HM[i][1]) * H; d.f1 = .09 + i * .023; d.f2 = .07 + i * .019; d.p0 = i * 1.7;
       if (!d.init || D.w === 0) { d.x = d.hx; d.y = d.hy; d.vx = d.vy = 0; d.init = true; } d.el.style.width = d.el.style.height = d.r * 2 + "px"; });
     D.w = W; D.h = H; el.classList.toggle("lqn", !wide);
   },
@@ -1845,15 +1845,16 @@ gl_FragColor=vec4(c*a,a);}`));
     const ds = D.drops.slice(0, D.n), p = ms / 1000, rm = RM();
     for (let s = 0; s < 2; s++) { const h = dt / 2;
       for (const d of ds) { let tx = d.hx, ty = d.hy;
-        if (d.drag) { tx = d.tx; ty = d.ty; } else if (!rm && ms - (d.touch || 0) > 2500) { tx += Math.sin(p * d.f1 + d.p0) * W * .13 + Math.sin(p * d.f2 * 2.3 + d.p0) * W * .03; ty += Math.cos(p * d.f2 + d.p0 * 1.3) * H * .11; }
+        if (d.drag) { tx = d.tx; ty = d.ty; }
         const m = d.r * 1.05; tx = Math.max(m, Math.min(W - m, tx)); ty = Math.max(m, Math.min(H - m, ty));
-        const k = d.drag ? 260 : 9, c = d.drag ? 22 : 4.2; d.vx += ((tx - d.x) * k - d.vx * c) * h; d.vy += ((ty - d.y) * k - d.vy * c) * h; }
+        const k = d.drag ? 260 : 0, c = d.drag ? 22 : 3.2; d.vx += ((tx - d.x) * k - d.vx * c) * h; d.vy += ((ty - d.y) * k - d.vy * c) * h; }
       // touching drops wobble when they flow together or tear apart
       for (let i = 0; i < ds.length; i++) for (let j = i + 1; j < ds.length; j++) { const a = ds[i], b = ds[j], key = i * 8 + j, near = Math.hypot(a.x - b.x, a.y - b.y) < (a.r + b.r) * 1.15; D.nr = D.nr || {}; if (near !== !!D.nr[key]) { D.nr[key] = near; D.kick(a, .05); D.kick(b, .09); } }
       for (const d of ds) { d.x += d.vx * h; d.y += d.vy * h; const m = d.r * .9;
         for (const [ax, lo, hi] of [["x", m, W - m], ["y", m, H - m]]) { const v = "v" + ax; if (d[ax] < lo) { d[ax] = lo; if (d[v] < 0) { D.kick(d, Math.min(.14, -d[v] / 3000)); d[v] *= -.45; } } else if (d[ax] > hi) { d[ax] = hi; if (d[v] > 0) { D.kick(d, Math.min(.14, d[v] / 3000)); d[v] *= -.45; } } }
         const sp = Math.hypot(d.vx, d.vy), ts = 1 + Math.min(.32, sp / 1500); d.s += (ts - d.s) * Math.min(1, h * 14); if (sp > 20) { const q = Math.min(1, h * 16); d.ca += (d.vx / sp - d.ca) * q; d.sa += (d.vy / sp - d.sa) * q; const nn = Math.hypot(d.ca, d.sa) || 1; d.ca /= nn; d.sa /= nn; }
         d.amp *= Math.exp(-2.6 * h); d.ph += h * 15; } }
+    for (const d of ds) if (!d.drag && Math.hypot(d.vx, d.vy) < 4) d.uf = [d.x / W, d.y / H];
     for (const d of ds) d.el.style.transform = `translate(${(d.x - d.r).toFixed(1)}px,${(d.y - d.r).toFixed(1)}px)`;
     const gl = D.gl; if (gl) { const cv = D.cv, r = cv.getBoundingClientRect(); let pr = Math.min(1.5, devicePixelRatio || 1); if (r.width * r.height * pr * pr > 1.6e6) pr = Math.sqrt(1.6e6 / (r.width * r.height)); const w = Math.round(r.width * pr), hh = Math.round(r.height * pr); if (cv.width !== w || cv.height !== hh) { cv.width = w; cv.height = hh; }
       // texture: the room photo when the page shows one, else the wallpaper
