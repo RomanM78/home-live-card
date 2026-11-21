@@ -54,7 +54,7 @@ const M = {
     return `<svg viewBox="0 0 340 96" aria-hidden="true"><defs><linearGradient id="tglw" x1="0" x2="1"><stop offset="0" stop-color="#F28A3C" stop-opacity="0"/><stop offset=".5" stop-color="#F28A3C"/><stop offset="1" stop-color="#F28A3C" stop-opacity="0"/></linearGradient></defs><path class="ptr" d="M164 4h12l-6 8z"/>${t}<path class="gl" d="M${gx0} ${gy0}A${R - 7} ${R - 7} 0 0 1 ${gx1} ${gy1}"/><circle class="gk" cx="170" cy="${(cy - R + 7).toFixed(1)}" r="5"/></svg>`;
   },
   _tdTile(d) {
-    GLX = this._c.palette === "glass";
+    GLX = /^(glass|liquid)$/.test(this._c.palette);
     const s = this._st(d.entity), at = s.attributes, off = s.state === "off", na = s.state === "unavailable", st = at.target_temp_step || 0.5;
     const [lo, hi] = this._tdRange(at), tgt = this._pend[d.entity] != null ? this._pend[d.entity] : at.temperature, cur = at.current_temperature;
     const modes = [...(at.hvac_modes || []).filter((m) => m !== "off"), "off"], tv = typeof tgt === "number" ? Math.max(lo, Math.min(hi, tgt)) : lo;
@@ -64,7 +64,7 @@ const M = {
       <div class="trw">${typeof cur === "number" ? `<span class="rl">${T("Raum")} ${dots(this._f1(cur) + TU, 14, "dm")}</span>` : ""}<div class="trul" aria-label="${T("Temperatur wischen")}">${this._tdRuler(tv, lo, hi, st)}</div></div></div>`;
   },
   _ltView(r, d, s, hdr) {
-    GLX = this._c.palette === "glass";
+    GLX = /^(glass|liquid)$/.test(this._c.palette);
     const id = d.entity, na = !s || s.state === "unavailable", on = !!s && s.state === "on", dim = !!s && (s.attributes.supported_color_modes || []).some((m) => m !== "onoff");
     const pct = this._pend[id] != null ? this._pend[id] : on ? (dim ? Math.round((s.attributes.brightness || 0) / 2.55) : 100) : 0, lvl = on ? (dim ? pct / 100 : 1) : 0;
     const lamp = `<svg class="lamp" viewBox="0 0 150 150" aria-hidden="true"><defs><linearGradient id="lbeam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFC28A" stop-opacity=".55"/><stop offset="1" stop-color="#FFC28A" stop-opacity="0"/></linearGradient></defs><line class="cd" x1="75" y1="0" x2="75" y2="44"/><path class="bm" d="M52 86 L20 150 H130 L98 86Z"/><path class="sh" d="M60 44h30l20 42H40z"/><circle class="bl" cx="75" cy="88" r="11"/></svg>`;
@@ -76,7 +76,7 @@ const M = {
     return `<style>${TDCSS}${LTCSS}</style><div class="view det lt">${hdr(d.name)}<div class="ltb ${on ? "" : "off"}">${vis}<div class="lctl">${ctl}</div></div></div>`;
   },
   _ltTile(d) {
-    GLX = this._c.palette === "glass";
+    GLX = /^(glass|liquid)$/.test(this._c.palette);
     const id = d.entity, s = this._st(id), na = !s || s.state === "unavailable", on = !!s && s.state === "on", dim = !!s && (s.attributes.supported_color_modes || []).some((m) => m !== "onoff");
     const pct = this._pend[id] != null ? this._pend[id] : on ? (dim ? Math.round((s.attributes.brightness || 0) / 2.55) : 100) : 0, g = on ? (dim ? 0.25 + 0.75 * pct / 100 : 1) : 0;
     const bulb = SV('<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1 2V16h5.2v-.2c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/>', 20);
@@ -101,7 +101,7 @@ const M = {
   },
   _lset(id, v) { v = Math.max(0, Math.min(100, Math.round(v))); this._pendSet(id, v); this._render(); return this._call("light", v > 0 ? "turn_on" : "turn_off", v > 0 ? { entity_id: id, brightness_pct: v } : { entity_id: id }); },
   _tdShow(t, v, raw) {
-    GLX = this._c.palette === "glass";
+    GLX = /^(glass|liquid)$/.test(this._c.palette);
     const el = t.el, lo = +el.dataset.lo, hi = +el.dataset.hi, st = +el.dataset.st, s = this._st(t.id);
     if (v != null) { el.querySelector(".tgau>svg").outerHTML = this._tdGauge(v, lo, hi, s && s.attributes.current_temperature); el.querySelector(".tvw").innerHTML = dots(this._f1(v) + TU, 40, "dm"); }
     t.r.querySelector("svg").outerHTML = this._tdRuler(raw, lo, hi, st);
@@ -116,7 +116,7 @@ const M = {
     try { r.setPointerCapture(e.pointerId); } catch (x) {} r.classList.add("drag");
   },
   _tdMove(e) {
-    GLX = this._c.palette === "glass";
+    GLX = /^(glass|liquid)$/.test(this._c.palette);
     const t = this._td; if (!t || e.pointerId !== t.pid) return; const dx = e.clientX - t.x0; if (!t.mv && Math.abs(dx) < 4) return; t.mv = true; e.preventDefault();
     if (t.lt) { const raw = Math.max(0, Math.min(100, t.v0 - (dx / PX) * 5)), v = Math.round(raw); t.r.querySelector("svg").outerHTML = this._tdRuler(raw, 0, 100, 5, 20, 10); if (v !== t.v) { t.v = v; const w = t.r.closest(".ltile") || t.r.closest(".view"), lv = w && w.querySelector(".lvw"), g = w && w.querySelector(".lglow"); const tl = w && w.classList.contains("ltile"); if (lv) lv.innerHTML = dots(v + "%", tl ? 18 : 40, "dm"); const gg = w && w.querySelector(tl ? ".lgl" : ".lglow"); if (gg) gg.style.opacity = v > 0 ? ((tl ? 0.25 : 0.15) + (tl ? 0.75 : 0.85) * v / 100).toFixed(2) : 0; } return; }
     const lo = +t.el.dataset.lo, hi = +t.el.dataset.hi, st = +t.el.dataset.st, raw = Math.max(lo, Math.min(hi, t.v0 - (dx / PX) * st)), v = Math.round(raw / st) * st;

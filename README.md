@@ -4,7 +4,7 @@ A full-screen dashboard card for Home Assistant: house picture with live figures
 rooms with photo backgrounds, a thermostat dial with a curved scale, light rulers,
 energy and security views. Built for wall tablets and phones.
 
-> Status: early preview (v0.8). English and German; the language follows your Home Assistant profile.
+> Status: early preview (v0.9). English and German; the language follows your Home Assistant profile.
 
 ![Demo](docs/demo.gif)
 
@@ -21,15 +21,34 @@ It always uses the night look. The upper part of the overview stays free so the 
 |---|---|
 | ![Overview, neon](docs/overview-neon.webp) | ![Phone, neon](docs/phone-neon.webp) |
 
-New in 0.7: `palette: glass` – light liquid-glass cards on a soft pastel wallpaper, white type and
-the Inter font (Apple-like). It switches to a dusk wallpaper at night by itself.
-Since 0.8 it uses Apple-Home-style tiles: status chips under the greeting, white light tiles
+New in 0.7: `palette: glass` – light frosted-glass cards on a soft pastel wallpaper, white type and
+the Inter font. It switches to a dusk wallpaper at night by itself.
+Since 0.8 it uses large rounded tiles: status chips under the greeting, white light tiles
 with a glowing bulb when on, a coloured thermostat arc, a device list and round scene buttons.
 Since 0.8.1 rooms, light and thermostat controls, security, energy and the detail pages follow the same style.
 
 | Glass, day | Glass, night | Glass, phone |
 |---|---|---|
 | ![Overview, glass](docs/overview-glass.webp) | ![Overview, glass, night](docs/overview-glass-night.webp) | ![Phone, glass](docs/phone-glass.webp) |
+
+New in 0.9: `palette: liquid` – the glass layout with real refraction: the edges of every tile bend the
+wallpaper behind them like a lens. Tiles and buttons give way when pressed and spring back, a glass drop
+slides behind the active entry of the side bar, and a glass drop in the greeting shows the home
+consumption – drag it or tap it. Switched-on devices glow in a tinted glass colour.
+
+| Liquid, day | Liquid, night | Liquid, phone |
+|---|---|---|
+| ![Overview, liquid](docs/overview-liquid.webp) | ![Overview, liquid, night](docs/overview-liquid-night.webp) | ![Phone, liquid](docs/phone-liquid.webp) |
+
+| Option | Default | What it does |
+|---|---|---|
+| `on_color` | `auto` | colour of switched-on tiles: `auto` (by device type: lights amber, sockets blue, TV violet, fans teal, climate orange, covers and gates green, scripts rose) or one of `amber`, `blue`, `violet`, `green`, `rose`, `cyan`, `orange` |
+| `liquid_drop` | `true` | the glass drop with the home consumption (needs `energy.home`) |
+| `refraction` | `true` | the lens effect at the edges; set `false` on slow wall tablets |
+
+Refraction needs a Chromium-based browser (Chrome, Edge, the Home Assistant app on Android, Fully Kiosk).
+Safari, the iPhone and Firefox show frosted glass instead; the elastic tiles and the drop work everywhere.
+With "reduce motion" on the device the tiles do not wobble.
 
 New in 0.6: background animations, chosen per colour scheme with `animation`
 (off by default):

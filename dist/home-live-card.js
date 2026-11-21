@@ -1,6 +1,6 @@
-/*! home-live-card v0.8.1 | MIT License | https://github.com/RomanM78/home-live-card */
+/*! home-live-card v0.9.0 | MIT License | https://github.com/RomanM78/home-live-card */
 
-window.HOME_LIVE_VERSION = "0.8.1";
+window.HOME_LIVE_VERSION = "0.9.0";
 
 // Home Live Card – translations. Keys are the German source texts; {x} are placeholders.
 const EN = {
@@ -430,7 +430,7 @@ button.pw,.lic{background:rgba(255,255,255,.26)!important;color:#fff!important}
 .rl em,.bub{color:#22381F!important;text-shadow:none!important;box-shadow:0 2px 6px rgba(20,35,60,.3)}
 .ltile .ln,.lt .lx,.lt .lx small{text-shadow:0 1px 4px rgba(0,0,0,.6)}
 button.ok,.btn.on{background:linear-gradient(180deg,#fff,#e7eef5)!important;color:#2F4A66!important;text-shadow:none!important}
-/* Apple-Home-Kacheln (nur glass) */
+/* Grosse Kacheln (glass) */
 .view.ov>.oc{background:${GLASS}!important}
 .hero.ap .hc{justify-content:center;gap:4px}.hero.ap h2{font-size:30px!important}
 .hero.ap p{color:rgba(255,255,255,.94)!important;font-size:14px;font-weight:500}
@@ -494,7 +494,7 @@ div.hchip{cursor:default}
 .rl .rtp,.rl .ron{margin-left:auto;font-style:normal;font-size:12px;font-weight:600;opacity:.9}
 .rl .ron{display:inline-flex;align-items:center;gap:6px;opacity:1}
 .rl .ron::before{content:"";width:7px;height:7px;border-radius:50%;background:#FFD45A;box-shadow:0 0 8px #FFD45A}
-/* Apple-Stil auf allen Seiten (nur glass) */
+/* Glass-Stil auf allen Seiten */
 .dtx{display:inline-block;font-weight:300;letter-spacing:-.03em;line-height:1;color:#fff;font-variant-numeric:tabular-nums}
 .ltile:not(.on) .dtx,.lvis:not(.on) .dtx{color:rgba(255,255,255,.7)}
 text[fill="#8C94A1" i],text[fill="#6E7684" i]{fill:rgba(255,255,255,.9)}text[fill="#8FB8E8" i]{fill:#fff}g[stroke="#8FB8E8" i]{stroke:#fff}text[font-family]{font-family:Inter,system-ui,sans-serif}
@@ -619,7 +619,7 @@ class HausLiveCard extends HTMLElement {
       l.href = "https://fonts.googleapis.com/css2?family=Bungee&family=Monoton&family=Rajdhani:wght@500;600;700&family=Yellowtail&display=swap";
       document.head.appendChild(l);
     }
-    if (this._c && this._c.palette === "glass" && this._c.load_font !== false && !document.getElementById("wz-glass")) {
+    if (this._c && /^(glass|liquid)$/.test(this._c.palette) && this._c.load_font !== false && !document.getElementById("wz-glass")) {
       const l = document.createElement("link"); l.id = "wz-glass"; l.rel = "stylesheet";
       l.href = "https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap";
       document.head.appendChild(l);
@@ -826,13 +826,13 @@ class HausLiveCard extends HTMLElement {
   }
 
   _themeMode() { let m = null; try { m = localStorage.getItem("home-live-theme"); } catch (x) {} return m === "day" || m === "night" ? m : (this._c.theme === "day" || this._c.theme === "night" ? this._c.theme : "auto"); }
-  _dayEff() { return this._c.palette !== "neon" && this._c.palette !== "glass" && this._isDay(); }
+  _dayEff() { return this._c.palette !== "neon" && !/^(glass|liquid)$/.test(this._c.palette) && this._isDay(); }
   _isDay() {
     const m = this._themeMode(); if (m !== "auto") return m === "day";
     const sun = this._st("sun.sun"); if (sun && sun.state !== "unavailable") return sun.state === "above_horizon";
     const h = new Date().getHours(); return h >= 7 && h < 19;
   }
-  _themeBtn(cls) { if (this._c.palette === "neon" || this._c.palette === "glass") return ""; const m = this._themeMode(), d = this._isDay(); return `<button class="${cls}" data-a="theme" aria-label="${T("Darstellung")}: ${m === "auto" ? T("automatisch") : m === "day" ? T("Tag") : T("Abend")}">${ic(d ? "sun" : "moon", 16, 2)}<span>${m === "auto" ? T("Auto") : m === "day" ? T("Tag") : T("Abend")}</span></button>`; }
+  _themeBtn(cls) { if (this._c.palette === "neon" || /^(glass|liquid)$/.test(this._c.palette)) return ""; const m = this._themeMode(), d = this._isDay(); return `<button class="${cls}" data-a="theme" aria-label="${T("Darstellung")}: ${m === "auto" ? T("automatisch") : m === "day" ? T("Tag") : T("Abend")}">${ic(d ? "sun" : "moon", 16, 2)}<span>${m === "auto" ? T("Auto") : m === "day" ? T("Tag") : T("Abend")}</span></button>`; }
   _render() {
     if (!this.shadowRoot || !this._hass) return;
     const r = this._roomObj();
@@ -842,7 +842,7 @@ class HausLiveCard extends HTMLElement {
     const floors = [];
     for (const x of this._c.rooms) { const f = x.floor || ""; let g = floors.find((y) => y.f === f); if (!g) floors.push(g = { f, rs: [] }); g.rs.push(x); }
     const en = !!this._c.energy, ov = this._view === "overview" && !!this._c.overview, sv = this._view === "sec" && !!this._c.security, ev = this._view === "energy" || ov || sv;
-    const side = `<aside class="side"><div class="clock" id="clk"></div>${this._themeBtn("thb")}${this._c.overview ? `<button class="rl ovb ${ov ? "on" : ""}" data-a="ov">${ic("dash", 16, 2)}${T("Übersicht")}</button>` : ""}${this._c.security ? `<button class="rl ovb ${sv ? "on" : ""}" data-a="sec">${ic("shield", 16, 2)}${T("Sicherheit")}</button>` : ""}${en ? `<button class="rl en ${this._view === "energy" ? "on" : ""}" data-a="energy">${ic("bolt", 16, 2)}${T("Energie")}</button>` : ""}${floors.map((g) => `${g.f ? `<div class="floor">${esc(g.f)}</div>` : ""}${g.rs.map((x) => { const n = this._roomCount(x); let badge = n ? `<em>${n}</em>` : ""; if (this._c.palette === "glass") { const tp = this._roomTemp(x); badge = n ? `<i class="ron">${T("{n} an", { n })}</i>` : tp != null ? `<i class="rtp">${this._fmt(tp, 0)}°</i>` : ""; } return `<button class="rl ${!ev && x.id === this._room ? "on" : ""}" data-a="room" data-v="${esc(x.id)}">${esc(x.name)}${badge}</button>`; }).join("")}`).join("")}
+    const side = `<aside class="side"><div class="clock" id="clk"></div>${this._themeBtn("thb")}${this._c.overview ? `<button class="rl ovb ${ov ? "on" : ""}" data-a="ov">${ic("dash", 16, 2)}${T("Übersicht")}</button>` : ""}${this._c.security ? `<button class="rl ovb ${sv ? "on" : ""}" data-a="sec">${ic("shield", 16, 2)}${T("Sicherheit")}</button>` : ""}${en ? `<button class="rl en ${this._view === "energy" ? "on" : ""}" data-a="energy">${ic("bolt", 16, 2)}${T("Energie")}</button>` : ""}${floors.map((g) => `${g.f ? `<div class="floor">${esc(g.f)}</div>` : ""}${g.rs.map((x) => { const n = this._roomCount(x); let badge = n ? `<em>${n}</em>` : ""; if (/^(glass|liquid)$/.test(this._c.palette)) { const tp = this._roomTemp(x); badge = n ? `<i class="ron">${T("{n} an", { n })}</i>` : tp != null ? `<i class="rtp">${this._fmt(tp, 0)}°</i>` : ""; } return `<button class="rl ${!ev && x.id === this._room ? "on" : ""}" data-a="room" data-v="${esc(x.id)}">${esc(x.name)}${badge}</button>`; }).join("")}`).join("")}
       <div class="sidenav">${this._c.home_path ? `<button data-a="nav" data-v="${esc(this._c.home_path)}">${ic("dash", 16)}${T("Zuhause")}</button>` : ""}${this._c.energy || this._c.energy_path ? `<button data-a="nav" data-v="${esc(this._c.energy_path || "/energy")}">${ic("bolt", 16)}${T("Details")}</button>` : ""}</div></aside>`;
     const dlg = this._pin ? this._pinDlg() : this._confirm ? `<div class="ovl"><div class="dlg" role="dialog"><b>${esc(this._confirm.text)}</b><p>${esc(this._confirm.sub)}</p><div class="row"><button data-a="cancel">${T("Abbrechen")}</button><button class="ok" data-a="ok">${T("Ja")}</button></div></div></div>` : "";
     if (!this._appEl) {
@@ -851,7 +851,7 @@ class HausLiveCard extends HTMLElement {
       this._buildNav(this.shadowRoot.querySelector(".navw"));
     }
     const day = this._dayEff();
-    const ne = this._c.palette === "neon", gl = this._c.palette === "glass", gr = !day && this._c.palette === "graphite", mk = ne ? "ne" : gl ? "gl" : day ? "day" : gr ? "gr" : "amber"; this._dayB = day;
+    const ne = this._c.palette === "neon", gl = /^(glass|liquid)$/.test(this._c.palette), gr = !day && this._c.palette === "graphite", mk = ne ? "ne" : gl ? "gl" : day ? "day" : gr ? "gr" : "amber"; this._dayB = day;
     const pm = ne ? neMap : gl ? glAcc : day ? dayMap : gr ? grMap : (x) => x;
     if (gl) this.toggleAttribute("gln", !this._isDay()); else this.removeAttribute("gln");
     if (mk !== this._dayOn) { this._dayOn = mk; this._styEl.textContent = ne ? neMap(CSS) + CSS_NE_X : gl ? glMap(CSS) + CSS_GR_X.replace(/:host\{[^}]*\}/, "") + CSS_GL_X : day ? dayMap(CSS) + CSS_DAY_X : gr ? grMap(CSS) + CSS_GR_X : CSS; this.toggleAttribute("day", day); this.style.background = ne ? "#12021E" : gl ? "" : day ? "#F2EBE2" : gr ? "#0E1014" : ""; }
@@ -861,6 +861,7 @@ class HausLiveCard extends HTMLElement {
     this._navSync();
     this._clock();
     if (this._bgSync) this._bgSync();
+    if (this._lqSync) this._lqSync();
     requestAnimationFrame(() => { try { const t = Math.max(0, Math.round(this.getBoundingClientRect().top + (window.scrollY || 0))); if (t !== this._off) { this._off = t; this.style.setProperty("--off", t + "px"); } const tb = this.shadowRoot.querySelector(".tabs"), on = tb && tb.querySelector(".on"); if (on) tb.scrollLeft = Math.max(0, on.offsetLeft - 20); } catch (x) {} });
   }
 
@@ -1004,7 +1005,7 @@ class HausLiveCard extends HTMLElement {
   _overView() {
     const o = this._c.overview, e = this._c.energy || {}, f = (v, d) => this._fmt(v, d), n = (id) => (id ? this._num(id) : null);
     const st = (id) => this._st(id), fn = (id) => { const s = st(id); return (s && s.attributes.friendly_name) || id; };
-    const ap = this._c.palette === "glass";
+    const ap = /^(glass|liquid)$/.test(this._c.palette);
     const hd = (i, t, sub, a, v) => `<${a ? `button data-a="${a}"${v ? ` data-v="${esc(v)}"` : ""}` : "div"} class="oh"><span class="oi">${ic(i, 20, 2)}</span><b>${esc(t)}</b><small>${esc(sub || "")}</small>${a ? `<span class="mo">${ic("next", 16, 2)}</span>` : ""}</${a ? "button" : "div"}>`;
     // Kopf
     const hr = new Date().getHours(), greet = hr < 5 ? T("Gute Nacht") : hr < 11 ? T("Guten Morgen") : hr < 17 ? T("Guten Tag") : hr < 22 ? T("Guten Abend") : T("Gute Nacht");
@@ -1352,7 +1353,7 @@ const M = {
     return `<svg viewBox="0 0 340 96" aria-hidden="true"><defs><linearGradient id="tglw" x1="0" x2="1"><stop offset="0" stop-color="#F28A3C" stop-opacity="0"/><stop offset=".5" stop-color="#F28A3C"/><stop offset="1" stop-color="#F28A3C" stop-opacity="0"/></linearGradient></defs><path class="ptr" d="M164 4h12l-6 8z"/>${t}<path class="gl" d="M${gx0} ${gy0}A${R - 7} ${R - 7} 0 0 1 ${gx1} ${gy1}"/><circle class="gk" cx="170" cy="${(cy - R + 7).toFixed(1)}" r="5"/></svg>`;
   },
   _tdTile(d) {
-    GLX = this._c.palette === "glass";
+    GLX = /^(glass|liquid)$/.test(this._c.palette);
     const s = this._st(d.entity), at = s.attributes, off = s.state === "off", na = s.state === "unavailable", st = at.target_temp_step || 0.5;
     const [lo, hi] = this._tdRange(at), tgt = this._pend[d.entity] != null ? this._pend[d.entity] : at.temperature, cur = at.current_temperature;
     const modes = [...(at.hvac_modes || []).filter((m) => m !== "off"), "off"], tv = typeof tgt === "number" ? Math.max(lo, Math.min(hi, tgt)) : lo;
@@ -1362,7 +1363,7 @@ const M = {
       <div class="trw">${typeof cur === "number" ? `<span class="rl">${T("Raum")} ${dots(this._f1(cur) + TU, 14, "dm")}</span>` : ""}<div class="trul" aria-label="${T("Temperatur wischen")}">${this._tdRuler(tv, lo, hi, st)}</div></div></div>`;
   },
   _ltView(r, d, s, hdr) {
-    GLX = this._c.palette === "glass";
+    GLX = /^(glass|liquid)$/.test(this._c.palette);
     const id = d.entity, na = !s || s.state === "unavailable", on = !!s && s.state === "on", dim = !!s && (s.attributes.supported_color_modes || []).some((m) => m !== "onoff");
     const pct = this._pend[id] != null ? this._pend[id] : on ? (dim ? Math.round((s.attributes.brightness || 0) / 2.55) : 100) : 0, lvl = on ? (dim ? pct / 100 : 1) : 0;
     const lamp = `<svg class="lamp" viewBox="0 0 150 150" aria-hidden="true"><defs><linearGradient id="lbeam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFC28A" stop-opacity=".55"/><stop offset="1" stop-color="#FFC28A" stop-opacity="0"/></linearGradient></defs><line class="cd" x1="75" y1="0" x2="75" y2="44"/><path class="bm" d="M52 86 L20 150 H130 L98 86Z"/><path class="sh" d="M60 44h30l20 42H40z"/><circle class="bl" cx="75" cy="88" r="11"/></svg>`;
@@ -1374,7 +1375,7 @@ const M = {
     return `<style>${TDCSS}${LTCSS}</style><div class="view det lt">${hdr(d.name)}<div class="ltb ${on ? "" : "off"}">${vis}<div class="lctl">${ctl}</div></div></div>`;
   },
   _ltTile(d) {
-    GLX = this._c.palette === "glass";
+    GLX = /^(glass|liquid)$/.test(this._c.palette);
     const id = d.entity, s = this._st(id), na = !s || s.state === "unavailable", on = !!s && s.state === "on", dim = !!s && (s.attributes.supported_color_modes || []).some((m) => m !== "onoff");
     const pct = this._pend[id] != null ? this._pend[id] : on ? (dim ? Math.round((s.attributes.brightness || 0) / 2.55) : 100) : 0, g = on ? (dim ? 0.25 + 0.75 * pct / 100 : 1) : 0;
     const bulb = SV('<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1 2V16h5.2v-.2c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/>', 20);
@@ -1399,7 +1400,7 @@ const M = {
   },
   _lset(id, v) { v = Math.max(0, Math.min(100, Math.round(v))); this._pendSet(id, v); this._render(); return this._call("light", v > 0 ? "turn_on" : "turn_off", v > 0 ? { entity_id: id, brightness_pct: v } : { entity_id: id }); },
   _tdShow(t, v, raw) {
-    GLX = this._c.palette === "glass";
+    GLX = /^(glass|liquid)$/.test(this._c.palette);
     const el = t.el, lo = +el.dataset.lo, hi = +el.dataset.hi, st = +el.dataset.st, s = this._st(t.id);
     if (v != null) { el.querySelector(".tgau>svg").outerHTML = this._tdGauge(v, lo, hi, s && s.attributes.current_temperature); el.querySelector(".tvw").innerHTML = dots(this._f1(v) + TU, 40, "dm"); }
     t.r.querySelector("svg").outerHTML = this._tdRuler(raw, lo, hi, st);
@@ -1414,7 +1415,7 @@ const M = {
     try { r.setPointerCapture(e.pointerId); } catch (x) {} r.classList.add("drag");
   },
   _tdMove(e) {
-    GLX = this._c.palette === "glass";
+    GLX = /^(glass|liquid)$/.test(this._c.palette);
     const t = this._td; if (!t || e.pointerId !== t.pid) return; const dx = e.clientX - t.x0; if (!t.mv && Math.abs(dx) < 4) return; t.mv = true; e.preventDefault();
     if (t.lt) { const raw = Math.max(0, Math.min(100, t.v0 - (dx / PX) * 5)), v = Math.round(raw); t.r.querySelector("svg").outerHTML = this._tdRuler(raw, 0, 100, 5, 20, 10); if (v !== t.v) { t.v = v; const w = t.r.closest(".ltile") || t.r.closest(".view"), lv = w && w.querySelector(".lvw"), g = w && w.querySelector(".lglow"); const tl = w && w.classList.contains("ltile"); if (lv) lv.innerHTML = dots(v + "%", tl ? 18 : 40, "dm"); const gg = w && w.querySelector(tl ? ".lgl" : ".lglow"); if (gg) gg.style.opacity = v > 0 ? ((tl ? 0.25 : 0.15) + (tl ? 0.75 : 0.85) * v / 100).toFixed(2) : 0; } return; }
     const lo = +t.el.dataset.lo, hi = +t.el.dataset.hi, st = +t.el.dataset.st, raw = Math.max(lo, Math.min(hi, t.v0 - (dx / PX) * st)), v = Math.round(raw / st) * st;
@@ -1437,7 +1438,7 @@ customElements.whenDefined("home-live-card").then(() => { const C = customElemen
 const CITY = "docs/bg/neon-city.webp";
 const cdn = (ref) => `https://cdn.jsdelivr.net/gh/RomanM78/home-live-card@${ref}/${CITY}`;
 // animations offered per colour scheme
-const ANIMS = { neon: ["off", "city", "weather"], amber: ["off", "weather", "daycycle"], graphite: ["off", "weather", "daycycle"], glass: ["off", "weather", "daycycle"] };
+const ANIMS = { neon: ["off", "city", "weather"], amber: ["off", "weather", "daycycle"], graphite: ["off", "weather", "daycycle"], glass: ["off", "weather", "daycycle"], liquid: ["off", "weather", "daycycle"] };
 const rnd = (seed) => { let s = seed; return (a, b) => { s = (s * 16807) % 2147483647; return a + ((s - 1) / 2147483646) * (b - a); }; };
 const pct = (v) => v.toFixed(2) + "%";
 
@@ -1628,12 +1629,203 @@ window.HOME_LIVE_ANIMS = ANIMS;
 customElements.whenDefined("home-live-card").then(() => { const C = customElements.get("home-live-card"); Object.assign(C.prototype, M); });
 })();
 
+// Home Live Card – palette "liquid": glass with refraction, elastic surfaces, a glass drop and tinted on-states
+(() => {
+// colours for switched-on tiles: [light tint, deep tint, icon colour]
+const TINTS = { amber: ["255,214,110", "255,150,50", "90,55,0"], blue: ["150,215,255", "60,140,255", "10,45,100"], violet: ["205,170,255", "140,90,255", "45,20,100"], green: ["150,240,180", "40,190,110", "5,70,35"], rose: ["255,180,210", "240,90,150", "100,15,50"], cyan: ["150,245,240", "30,190,200", "0,70,75"], orange: ["255,196,150", "255,110,50", "100,35,0"] };
+const kindOf = (id, icon) => { const d = String(id || "").split(".")[0], i = icon || ""; if (d === "light" || i === "bulb") return "amber"; if (i === "tv" || d === "media_player") return "violet"; if (d === "fan" || i === "fan") return "cyan"; if (d === "climate" || d === "water_heater") return "orange"; if (d === "cover" || i === "gate" || i === "car") return "green"; if (d === "script" || d === "scene" || i === "robot") return "rose"; return "blue"; };
+// refraction (SVG displacement on backdrop) works in Chromium-based browsers only
+const UA = navigator.userAgent, REFRACT = /Chrome\/|Chromium\//.test(UA) && !/Firefox\//.test(UA);
+const RM = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+const LEAF = ".acc,.hchip,.rl,.dev,.ltile,.stat,.qa.ap button,.md3 button,.lpre button,.tmod button,.amodes button,.allb";
+const BOX = ".oc,.panel,.flow";
+const PRESS = ".acc,.hchip,.rl,.qa.ap button,.md3 button,.lpre button,.tmod button,.amodes button,.allb,.pm button,.mc button";
+const LQCSS = `
+:host([lq]) .app{background:var(--lqw) 0 0/100% 100% no-repeat fixed!important}
+:host([lq]) .oc,:host([lq]) .panel,:host([lq]) .flow{background:transparent!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;isolation:isolate}
+:host([lq]) .lqg{position:absolute;inset:0;border-radius:inherit;z-index:-1;pointer-events:none;background:linear-gradient(160deg,rgba(255,255,255,.22),rgba(255,255,255,.06) 55%,rgba(255,255,255,.12));-webkit-backdrop-filter:blur(16px) saturate(1.3);backdrop-filter:blur(16px) saturate(1.3)}
+:host([lq][gln]) .lqg{background:linear-gradient(160deg,rgba(255,255,255,.14),rgba(255,255,255,.04) 55%,rgba(255,255,255,.08))}
+:host([lq]) .acc.on,:host([lq]) .dv6.ap .acc.on,:host([lq]) .dev.on:not(.clim):not(.dim),:host([lq]) .ltile.on,:host([lq]) .qa.ap button.on{background:linear-gradient(160deg,rgba(var(--t1,255,214,110),.6),rgba(var(--t2,255,150,50),.38))!important;color:#fff!important;text-shadow:0 1px 8px rgba(0,15,40,.55)!important;box-shadow:0 14px 32px -12px rgba(var(--t2,255,150,50),.8),inset 0 0 24px rgba(var(--t1,255,214,110),.55),inset 0 1px 0 rgba(255,255,255,.65)!important}
+:host([lq]) .acc.on small,:host([lq]) .dv6.ap .acc.on small,:host([lq]) .dev.on:not(.clim):not(.dim) small,:host([lq]) .ltile.on small,:host([lq]) .dev.on:not(.clim):not(.dim) b,:host([lq]) .dev.on:not(.clim):not(.dim) .nm{color:rgba(255,255,255,.92)!important}
+:host([lq]) .acc.on .i,:host([lq]) .dv6.ap .acc.on .i,:host([lq]) .dev.on:not(.clim):not(.dim) .ico,:host([lq]) .ltile.on .lic,:host([lq]) .qa.ap button.on>span{background:rgb(var(--t1,255,214,110))!important;color:rgb(var(--ti,90,55,0))!important;box-shadow:0 0 20px rgba(var(--t1,255,214,110),.95)!important}
+:host([lq]) .ltile.on:not(.dim) .dtx{color:#fff}
+:host([lq]) .rl.on,:host([lq]) .ovb.on{background:transparent!important;color:#fff!important;text-shadow:0 1px 8px rgba(0,15,40,.5)}
+:host([lq]) .rl.on *{color:inherit!important}
+:host([lq]) .side{position:relative}
+:host([lq]) .lqi{position:absolute;left:0;top:0;border-radius:999px;pointer-events:none;background:linear-gradient(160deg,rgba(255,255,255,.62),rgba(255,255,255,.34));box-shadow:0 10px 24px -10px rgba(10,30,70,.45),inset 0 1px 0 rgba(255,255,255,.9),inset 0 0 0 1px rgba(255,255,255,.5);transform-origin:50% 0;z-index:0}
+:host([lq][gln]) .lqi{background:linear-gradient(160deg,rgba(255,255,255,.34),rgba(255,255,255,.16))}
+:host([lq]) .hero.ap.lqn .hc>h2,:host([lq]) .hero.ap.lqn .hc>p{padding-right:86px}
+:host([lq]) .side .rl{position:relative;z-index:1}
+:host([lq]) .lqd{position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:2}
+:host([lq]) .lqd canvas{position:absolute;inset:0;width:100%;height:100%;border-radius:inherit}
+:host([lq]) .lqh{position:absolute;left:0;top:0;border-radius:50%;pointer-events:auto;touch-action:none;cursor:grab;display:grid;place-content:center;text-align:center;color:#fff;text-shadow:0 2px 14px rgba(0,10,30,.6);-webkit-user-select:none;user-select:none}
+:host([lq]) .lqn .lqh b{font-size:17px}:host([lq]) .lqn .lqh small{font-size:9.5px}
+:host([lq]) .lqh b{font-size:26px;font-weight:300;letter-spacing:-.04em;font-variant-numeric:tabular-nums}:host([lq]) .lqh small{font-size:11.5px;font-weight:600;opacity:.85}
+:host([lq]) .lqh:focus-visible{outline:2px solid #fff;outline-offset:2px}
+`;
+const M = {
+  _lqOn() { return this._c && this._c.palette === "liquid"; },
+  // ---------- called after every render
+  _lqSync() {
+    const on = this._lqOn(); this.toggleAttribute("lq", on);
+    if (!on) { if (this._lqStyle) { this._lqStyle.remove(); this._lqStyle = null; } if (this._lqRaf) cancelAnimationFrame(this._lqRaf); this._lqRaf = 0; return; }
+    const R = this.shadowRoot;
+    if (!this._lqStyle || !this._lqStyle.isConnected) { this._lqStyle = document.createElement("style"); this._lqStyle.textContent = LQCSS; R.appendChild(this._lqStyle); }
+    if (!this._lqSvg || !this._lqSvg.isConnected) { this._lqSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); this._lqSvg.setAttribute("width", "0"); this._lqSvg.setAttribute("height", "0"); this._lqSvg.style.position = "absolute"; this._lqSvg.innerHTML = "<defs></defs>"; R.appendChild(this._lqSvg); this._lqMaps = new Map(); }
+    if (!this._lqBound) { this._lqBound = true; this._lqEvents(); }
+    this._lqWall();
+    const app = this._appEl; if (!app) return;
+    // layers for containers, tints for switched-on tiles
+    app.querySelectorAll(BOX).forEach((el) => { if (!el.querySelector(":scope>.lqg")) el.insertAdjacentHTML("afterbegin", '<i class="lqg"></i>'); });
+    const fixed = this._c.on_color && this._c.on_color !== "auto" && TINTS[this._c.on_color] ? this._c.on_color : null, icons = this._lqIcons();
+    app.querySelectorAll(".acc.on,.dev.on,.ltile.on,.qa.ap button.on").forEach((el) => { const id = el.dataset.v || el.dataset.id || (el.querySelector("[data-v]") || {}).dataset?.v || ""; const t = TINTS[fixed || kindOf(id, icons[id])]; el.style.setProperty("--t1", t[0]); el.style.setProperty("--t2", t[1]); el.style.setProperty("--ti", t[2]); });
+    // sliding glass drop behind the active entry of the side bar
+    const side = app.querySelector(".side"); if (side) { const ind = document.createElement("i"); ind.className = "lqi"; side.prepend(ind); this._lqInd = ind; }
+    this._lqDrop();
+    // springs survive the re-render: hand them to the new elements
+    if (this._lqJ) for (const [old, q] of [...this._lqJ]) { if (old.isConnected) continue; this._lqJ.delete(old); const n = q.key && app.querySelector(q.key); if (n) this._lqJ.set(n, q); }
+    cancelAnimationFrame(this._lqGT); this._lqGT = requestAnimationFrame(() => this._lqGlass());
+    if (!this._lqRaf) { this._lqLast = 0; this._lqRaf = requestAnimationFrame((t) => this._lqFrame(t)); }
+  },
+  _lqIcons() { if (this._lqIc && this._lqIc.c === this._c) return this._lqIc.m; const m = {}, add = (x) => { if (x && typeof x === "object" && x.entity && x.icon) m[x.entity] = x.icon; }; const o = this._c.overview || {}; [...(o.lights || []), ...(o.devices || []), ...(o.actions || [])].forEach(add); (this._c.rooms || []).forEach((r) => (r.devices || []).forEach(add)); this._lqIc = { c: this._c, m }; return m; },
+  // ---------- wallpaper with contour lines (drawn here, also the texture of the drop)
+  _lqWall() {
+    const W = Math.max(320, Math.min(innerWidth || 1280, 2400)), H = Math.max(320, Math.min(innerHeight || 800, 1600)), night = !this._isDay(), key = W + "x" + H + night; if (this._lqWk === key) return; this._lqWk = key;
+    const c = this._lqCv || (this._lqCv = document.createElement("canvas")); c.width = W; c.height = H; const g = c.getContext("2d");
+    const P = night ? ["#12243f", "#22406a", "#4b4a7a", "#8a6276"] : ["#6f93bb", "#93b2d2", "#b9b7d4", "#e2b9ab"], B = night ? ["rgba(70,150,190,.35)", "rgba(200,120,110,.3)", "rgba(110,120,230,.3)"] : ["rgba(150,215,240,.55)", "rgba(255,190,160,.5)", "rgba(170,180,255,.4)"];
+    const gr = g.createLinearGradient(0, 0, W * .4, H); P.forEach((p, i) => gr.addColorStop(i / 3, p)); g.fillStyle = gr; g.fillRect(0, 0, W, H);
+    const m = Math.max(W, H), blob = (x, y, r, col) => { const q = g.createRadialGradient(x, y, 0, x, y, r); q.addColorStop(0, col); q.addColorStop(1, "rgba(0,0,0,0)"); g.fillStyle = q; g.fillRect(0, 0, W, H); };
+    blob(W * .15, H * .2, m * .5, B[0]); blob(W * .9, H * .78, m * .55, B[1]); blob(W * .7, H * .08, m * .4, B[2]);
+    g.lineWidth = 1; for (const [cx, cy, a] of [[W * .2, H * .32, night ? .2 : .3], [W * .85, H * .8, night ? .16 : .24]]) for (let i = 1; i < 46; i++) { const r = i * m / 38; g.strokeStyle = `rgba(255,255,255,${(a * (1 - i / 60)).toFixed(3)})`; g.beginPath(); for (let k = 0; k <= 120; k++) { const t = k / 120 * 6.2832, rr = r * (1 + .07 * Math.sin(t * 3 + i * .35) + .04 * Math.sin(t * 5 - i * .2)), x = cx + Math.cos(t) * rr, y = cy + Math.sin(t) * rr * .82; k ? g.lineTo(x, y) : g.moveTo(x, y); } g.stroke(); }
+    this.style.setProperty("--lqw", `url(${c.toDataURL("image/jpeg", .88)})`); this._lqTex = true;
+  },
+  // ---------- refraction: one displacement map per element size, shared between elements of the same size
+  _lqMap(w, h, rad, bez) {
+    const c = document.createElement("canvas"); c.width = w; c.height = h; const g = c.getContext("2d"), id = g.createImageData(w, h), d = id.data, hx = w / 2, hy = h / 2, r = Math.min(rad, hx, hy);
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) { const px = x + .5 - hx, py = y + .5 - hy, qx = Math.abs(px) - (hx - r), qy = Math.abs(py) - (hy - r); let dist, nx, ny;
+      if (qx > 0 && qy > 0) { const l = Math.hypot(qx, qy) || 1; dist = l - r; nx = qx / l * Math.sign(px); ny = qy / l * Math.sign(py); } else if (qx > qy) { dist = qx - r; nx = Math.sign(px); ny = 0; } else { dist = qy - r; nx = 0; ny = Math.sign(py); }
+      const t = Math.max(0, 1 + dist / bez), m = t * t * (3 - 2 * t) * t, i = (y * w + x) * 4; d[i] = 128 - nx * m * 127; d[i + 1] = 128 - ny * m * 127; d[i + 2] = 128; d[i + 3] = 255; }
+    g.putImageData(id, 0, 0); return c.toDataURL();
+  },
+  _lqFilter(w, h, rad) {
+    const small = Math.min(w, h) < 70, key = `${w}x${h}x${Math.round(rad)}`; let id = this._lqMaps.get(key); if (id) return id;
+    id = "lqf" + this._lqMaps.size; const bez = small ? Math.min(w, h) * .42 : 26, S = small ? 30 : 56, f = document.createElementNS("http://www.w3.org/2000/svg", "filter");
+    for (const [k, v] of Object.entries({ id, x: 0, y: 0, width: w, height: h, filterUnits: "userSpaceOnUse", primitiveUnits: "userSpaceOnUse", "color-interpolation-filters": "sRGB" })) f.setAttribute(k, v);
+    const ch = (n, s, mx) => `<feDisplacementMap in="b" in2="m" scale="${s}" xChannelSelector="R" yChannelSelector="G" result="d${n}"/><feColorMatrix in="d${n}" type="matrix" values="${mx}" result="c${n}"/>`;
+    f.innerHTML = `<feGaussianBlur in="SourceGraphic" stdDeviation="${small ? .6 : 1.4}" result="b"/><feImage href="${this._lqMap(w, h, rad, bez)}" x="0" y="0" width="${w}" height="${h}" preserveAspectRatio="none" result="m"/>` + ch("r", S, "1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0") + ch("g", S * 1.1, "0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0") + ch("b", S * 1.2, "0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0") + `<feBlend in="cr" in2="cg" mode="screen" result="rg"/><feBlend in="rg" in2="cb" mode="screen"/>`;
+    this._lqSvg.firstChild.appendChild(f); this._lqMaps.set(key, id); return id;
+  },
+  _lqGlass() {
+    if (!this._lqOn() || !this._appEl || !REFRACT || this._c.refraction === false) return;
+    const els = [...this._appEl.querySelectorAll(LEAF), ...this._appEl.querySelectorAll(".lqg")];
+    for (const el of els) { const w = Math.round(el.offsetWidth), h = Math.round(el.offsetHeight); if (!w || !h || w * h > 900000) continue; const k = w + "x" + h; if (el._lqk === k) continue; el._lqk = k;
+      const rad = parseFloat(getComputedStyle(el).borderTopLeftRadius) || 0, v = `url(#${this._lqFilter(w, h, rad)}) saturate(1.25) brightness(1.04)`; el.style.setProperty("backdrop-filter", v, "important"); el.style.setProperty("-webkit-backdrop-filter", v, "important"); }
+  },
+  // ---------- touch: elastic surfaces and the drop
+  _lqEvents() {
+    const R = this.shadowRoot; this._lqJ = new Map();
+    const keyOf = (el) => { if (el.dataset.a) return `[data-a="${window.CSS.escape(el.dataset.a)}"]${el.dataset.v ? `[data-v="${window.CSS.escape(el.dataset.v)}"]` : ""}`; if (el.classList.contains("oc")) { const i = [...el.parentElement.children].filter((x) => x.classList.contains("oc")).indexOf(el); return `.main .oc:nth-of-type(${i + 1})`; } return null; };
+    const jst = (el) => { let q = this._lqJ.get(el); if (!q) { q = { v: [1, 0, 0, 0], d: [0, 0, 0, 0], t: [1, 0, 0, 0], soft: el.classList.contains("oc"), key: keyOf(el) }; this._lqJ.set(el, q); } return q; };
+    R.addEventListener("pointerdown", (e) => { if (!this._lqOn() || e.target.closest(".lqh")) return; let el = e.target.closest(PRESS); if (!el) { if (e.target.closest("button,[data-a],input,.trul,.tgau,.dialbox,.vl")) return; el = e.target.closest(".oc"); } if (!el) return;
+      this._lqP = el; const q = jst(el), r = el.getBoundingClientRect(); q.cx = r.left + r.width / 2; q.cy = r.top + r.height / 2; q.t[0] = q.soft ? .988 : .95; if (!RM()) q.d[1] += q.soft ? .12 : .45; this._lqKick(); });
+    R.addEventListener("pointermove", (e) => { const el = this._lqP; if (!el || !this._lqJ.has(el)) return; const q = this._lqJ.get(el), m = q.soft ? 3 : 8, cl = (v) => Math.max(-m, Math.min(m, v)); q.t[2] = cl((e.clientX - q.cx) * .14); q.t[3] = cl((e.clientY - q.cy) * .14); });
+    const up = () => { const el = this._lqP; if (!el) return; this._lqP = null; const q = this._lqJ.get(el); if (q) { q.t = [1, 0, 0, 0]; if (!RM()) q.d[1] -= q.soft ? .2 : 1.1; } };
+    window.addEventListener("pointerup", up); window.addEventListener("pointercancel", up);
+    addEventListener("resize", () => { if (this._lqOn()) { this._lqWall(); cancelAnimationFrame(this._lqGT); this._lqGT = requestAnimationFrame(() => this._lqGlass()); } });
+  },
+  _lqKick() { if (!this._lqRaf && this._lqOn()) { this._lqLast = 0; this._lqRaf = requestAnimationFrame((t) => this._lqFrame(t)); } },
+  _lqSprings(dt) {
+    for (const [el, q] of this._lqJ) { let e = 0; const k = q.soft ? 300 : 420, c = RM() ? 60 : q.soft ? 18 : 13; for (let i = 0; i < 4; i++) { q.d[i] += ((q.t[i] - q.v[i]) * k - q.d[i] * c) * dt; q.v[i] += q.d[i] * dt; e += (Math.abs(q.t[i] - q.v[i]) + Math.abs(q.d[i]) * .05) * (i < 2 ? 100 : 1); }
+      if (e < .03 && el !== this._lqP) { el.style.transform = ""; this._lqJ.delete(el); } else if (el.isConnected) el.style.transform = `translate(${q.v[2].toFixed(2)}px,${q.v[3].toFixed(2)}px) scale(${(q.v[0] + q.v[1]).toFixed(4)},${(q.v[0] - q.v[1]).toFixed(4)})`; }
+  },
+  _lqIndStep(dt) {
+    const ind = this._lqInd; if (!ind || !ind.isConnected) return false; const side = ind.parentElement, on = side.querySelector(".rl.on"); if (!on) { ind.style.opacity = 0; return false; } ind.style.opacity = 1;
+    const ty = on.offsetTop, th = on.offsetHeight, tx = on.offsetLeft, tw = on.offsetWidth, N = this._lqN || (this._lqN = { y: ty, v: 0, h: th });
+    const c = RM() ? 40 : 15; N.v += ((ty - N.y) * 230 - N.v * c) * dt; N.y += N.v * dt; N.h += (th - N.h) * Math.min(1, dt * 12);
+    const st = Math.min(.5, Math.abs(N.v) / 1200); ind.style.width = tw + "px"; ind.style.height = N.h + "px"; ind.style.transform = `translate(${tx}px,${(N.y - N.h * st * .5).toFixed(2)}px) scale(${(1 - st * .25).toFixed(4)},${(1 + st).toFixed(4)})`;
+    return Math.abs(ty - N.y) > .3 || Math.abs(N.v) > .5;
+  },
+  _lqFrame(t) {
+    this._lqRaf = 0; if (!this._lqOn() || !this.isConnected) return;
+    const dt = Math.min(.033, this._lqLast ? (t - this._lqLast) / 1000 : .016); this._lqLast = t;
+    this._lqSprings(dt / 2); this._lqSprings(dt / 2); const nav = this._lqIndStep(dt); const drop = this._lqDropStep(dt, t);
+    if (this._lqJ.size || nav || drop || this._lqP) this._lqRaf = requestAnimationFrame((x) => this._lqFrame(x));
+  },
+  // ---------- glass drop in the greeting tile: shows the house consumption, can be dragged and tapped
+  _lqDrop() {
+    const hero = this._appEl.querySelector(".hero.ap"), want = hero && this._c.liquid_drop !== false && (this._c.energy || {}).home;
+    if (!want) { if (this._lqD) this._lqD.el.remove(); return; }
+    if (!this._lqD) this._lqDInit();
+    const D = this._lqD; if (D.el.parentElement !== hero) { hero.appendChild(D.el); D.w = 0; }
+    const s = this._hass.states[this._c.energy.home], w = s ? parseFloat(s.state) : NaN, lab = isNaN(w) ? "–" : Math.abs(w) >= 1000 ? this._fmt(w / 1000, 1) : this._fmt(w, 0), u = isNaN(w) ? "" : Math.abs(w) >= 1000 ? "kW" : "W";
+    D.drops[0].el.innerHTML = `<b>${lab}</b><small>${u} ${T("Haus")}</small>`; D.drops[0].el.setAttribute("aria-label", `${T("Haus")} ${lab} ${u}`);
+    this._lqDHomes(); D.vis = true; this._lqKick();
+  },
+  _lqDInit() {
+    const el = document.createElement("div"); el.className = "lqd"; el.innerHTML = '<canvas aria-hidden="true"></canvas><div class="lqh" tabindex="0" role="button"></div><div class="lqh" tabindex="0" role="button" aria-label="Tropfen"></div>';
+    const cv = el.querySelector("canvas"), gl = cv.getContext("webgl", { premultipliedAlpha: true, antialias: true }), D = this._lqD = { el, cv, gl, drops: [...el.querySelectorAll(".lqh")].map((h) => ({ el: h, x: 0, y: 0, vx: 0, vy: 0, hx: 0, hy: 0, r: 0, s: 1, ca: 1, sa: 0, amp: 0, ph: 0, drag: null, tx: 0, ty: 0, init: false })), near: false };
+    if (gl) {
+      const sh = (ty, src) => { const o = gl.createShader(ty); gl.shaderSource(o, src); gl.compileShader(o); return o; }, p = gl.createProgram();
+      gl.attachShader(p, sh(gl.VERTEX_SHADER, "attribute vec2 a;varying vec2 v;void main(){v=a*.5+.5;gl_Position=vec4(a,0.,1.);}"));
+      gl.attachShader(p, sh(gl.FRAGMENT_SHADER, `precision highp float;varying vec2 v;uniform sampler2D T;uniform vec4 R;uniform vec2 V;uniform float t;uniform vec4 D[2];uniform vec4 E[2];
+float fld(vec2 p,out float re){float F=0.;float wr=0.;for(int i=0;i<2;i++){vec2 q=p-D[i].xy;vec2 e=E[i].xy;q=vec2(q.x*e.x+q.y*e.y,-q.x*e.y+q.y*e.x);q.x/=E[i].z;q.y*=E[i].z;float an=atan(q.y,q.x);float rad=D[i].z*(1.+D[i].w*cos(2.*an)*sin(E[i].w)+.5*D[i].w*cos(3.*an+1.)*sin(E[i].w*1.6)+.012*sin(an*3.+t*.8+float(i)*2.));float d=length(q)/rad;float f=1./(d*d*d*d+1e-4);F+=f;wr+=f*D[i].z;}re=wr/F;return F;}
+float hgt(float F){return sqrt(max(0.,1.-inversesqrt(F)));}
+vec3 smp(vec3 N,float ior,vec2 css,float re){vec3 r=refract(vec3(0.,0.,-1.),N,1./ior);return texture2D(T,clamp((css+r.xy*re*.8)/V,0.,1.)).rgb;}
+void main(){vec2 l=vec2(v.x,1.-v.y)*R.zw;float re;float F=fld(l,re);float a=smoothstep(1.,1.12,F);if(a<=0.){gl_FragColor=vec4(0.);return;}
+float z=hgt(F);float r2;float zx=hgt(fld(l+vec2(1.,0.),r2));float zy=hgt(fld(l+vec2(0.,1.),r2));vec3 N=normalize(vec3(-(zx-z)*re,-(zy-z)*re,1.));
+vec2 css=R.xy+l;vec3 c=vec3(smp(N,1.38,css,re).r,smp(N,1.5,css,re).g,smp(N,1.64,css,re).b);
+float f=pow(1.-N.z,2.2);c=mix(c,c*vec3(.72,1.,.96),.22);c+=f*.3*(.5+.5*cos(6.2832*(f*1.4+vec3(0.,.33,.67))+t*.6));c=mix(c,vec3(.86,.95,1.),f*.38);
+vec3 M=vec3(N.x,-N.y,N.z);vec3 L=normalize(vec3(-.55,.65,.55));float s=pow(max(dot(reflect(-L,M),vec3(0.,0.,1.)),0.),48.);float s2=pow(max(dot(reflect(-normalize(vec3(.6,-.5,.5)),M),vec3(0.,0.,1.)),0.),20.);c+=s*.95+s2*.18;c=c*(.96+.1*M.y)*1.12+.03;
+gl_FragColor=vec4(c*a,a);}`));
+      gl.linkProgram(p); gl.useProgram(p); const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW); const loc = gl.getAttribLocation(p, "a"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+      D.U = {}; for (const k of ["T", "R", "V", "t", "D", "E"]) D.U[k] = gl.getUniformLocation(p, k); D.tex = gl.createTexture(); this._lqTex = true;
+    }
+    const kick = (d, a) => { d.amp = Math.min(.22, d.amp + a); };
+    D.drops.forEach((d) => { const h = d.el;
+      h.addEventListener("pointerdown", (e) => { const c = el.getBoundingClientRect(); d.drag = { ox: e.clientX - c.left - d.x, oy: e.clientY - c.top - d.y, moved: 0 }; d.tx = d.x; d.ty = d.y; h.setPointerCapture(e.pointerId); kick(d, .07); this._lqKick(); e.preventDefault(); e.stopPropagation(); });
+      h.addEventListener("pointermove", (e) => { if (!d.drag) return; const c = el.getBoundingClientRect(), nx = e.clientX - c.left - d.drag.ox, ny = e.clientY - c.top - d.drag.oy; d.drag.moved += Math.abs(nx - d.tx) + Math.abs(ny - d.ty); d.tx = nx; d.ty = ny; });
+      const up = () => { if (!d.drag) return; kick(d, d.drag.moved < 6 ? .12 : Math.min(.16, Math.hypot(d.vx, d.vy) / 4000 + .05)); d.drag = null; };
+      h.addEventListener("pointerup", up); h.addEventListener("pointercancel", up); h.addEventListener("click", (e) => e.stopPropagation());
+      h.addEventListener("keydown", (e) => { const k = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key]; if (k) { d.vx += k[0] * 500; d.vy += k[1] * 500; kick(d, .06); e.preventDefault(); } else if (e.key === "Enter" || e.key === " ") { kick(d, .14); e.preventDefault(); } this._lqKick(); });
+    });
+    D.kick = kick;
+  },
+  _lqDHomes() {
+    const D = this._lqD, W = D.el.clientWidth, H = D.el.clientHeight; if (!W || !H) return; const a = D.drops[0], b = D.drops[1], narrow = W < 560;
+    a.r = narrow ? Math.min(36, W * .11) : Math.max(30, Math.min(H * .36, 88)); a.hx = W - a.r - (narrow ? 12 : 34); a.hy = narrow ? a.r + 14 : H / 2; b.r = Math.max(10, a.r * .3); b.hx = a.hx - a.r * .7; b.hy = a.hy + a.r * 1.05; D.el.parentElement && D.el.parentElement.classList.toggle("lqn", narrow);
+    for (const d of D.drops) { if (!d.init) { d.x = d.hx; d.y = d.hy; d.init = true; } d.el.style.width = d.el.style.height = d.r * 2 + "px"; }
+  },
+  _lqDropStep(dt, ms) {
+    const D = this._lqD; if (!D || !D.el.isConnected) return false; const W = D.el.clientWidth, H = D.el.clientHeight; if (!W || !H) return false;
+    if (D.w !== W || D.h !== H) { D.w = W; D.h = H; this._lqDHomes(); }
+    let moving = false; const [a, b] = D.drops;
+    for (let n = 0; n < 2; n++) { const h = dt / 2;
+      for (const d of D.drops) { const tx = d.drag ? d.tx : d.hx, ty = d.drag ? d.ty : d.hy, k = d.drag ? 260 : 46, c = d.drag ? 22 : 7.5; d.vx += ((tx - d.x) * k - d.vx * c) * h; d.vy += ((ty - d.y) * k - d.vy * c) * h; }
+      const dx = a.x - b.x, dy = a.y - b.y, dist = Math.hypot(dx, dy) || 1, reach = (a.r + b.r) * 1.25, near = dist < reach;
+      if (near) { const f = (1 - dist / reach) * 900; for (const [d, sg, m] of [[a, -1, .25], [b, 1, 1]]) if (!d.drag) { d.vx += sg * dx / dist * f * m * h; d.vy += sg * dy / dist * f * m * h; } }
+      if (near !== D.near) { D.near = near; D.kick(a, .05); D.kick(b, .1); }
+      for (const d of D.drops) { d.x += d.vx * h; d.y += d.vy * h; const m = d.r * .55;
+        for (const [ax, lo, hi] of [["x", m, W - m], ["y", m, H - m]]) { const v = "v" + ax; if (d[ax] < lo) { d[ax] = lo; if (d[v] < 0) { D.kick(d, Math.min(.14, -d[v] / 3000)); d[v] *= -.45; } } else if (d[ax] > hi) { d[ax] = hi; if (d[v] > 0) { D.kick(d, Math.min(.14, d[v] / 3000)); d[v] *= -.45; } } }
+        const sp = Math.hypot(d.vx, d.vy), ts = 1 + Math.min(.32, sp / 1500); d.s += (ts - d.s) * Math.min(1, h * 14); if (sp > 20) { const q = Math.min(1, h * 16); d.ca += (d.vx / sp - d.ca) * q; d.sa += (d.vy / sp - d.sa) * q; const nn = Math.hypot(d.ca, d.sa) || 1; d.ca /= nn; d.sa /= nn; }
+        d.amp *= Math.exp(-2.6 * h); d.ph += h * 15; } }
+    for (const d of D.drops) { d.el.style.transform = `translate(${(d.x - d.r).toFixed(1)}px,${(d.y - d.r).toFixed(1)}px)`; if (d.drag || d.amp > .004 || Math.hypot(d.vx, d.vy) > 2 || Math.hypot(d.x - d.hx, d.y - d.hy) > .5) moving = true; }
+    const gl = D.gl; if (gl) { const cv = D.cv, r = cv.getBoundingClientRect(), pr = Math.min(2, devicePixelRatio || 1), w = Math.round(r.width * pr), hh = Math.round(r.height * pr); if (cv.width !== w || cv.height !== hh) { cv.width = w; cv.height = hh; }
+      if (this._lqTex && this._lqCv) { gl.bindTexture(gl.TEXTURE_2D, D.tex); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this._lqCv); for (const [k, v] of [[gl.TEXTURE_MIN_FILTER, gl.LINEAR], [gl.TEXTURE_MAG_FILTER, gl.LINEAR], [gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE]]) gl.texParameteri(gl.TEXTURE_2D, k, v); this._lqTex = false; }
+      if (w && hh && r.bottom > 0 && r.top < innerHeight) { const U = D.U; gl.viewport(0, 0, w, hh); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); gl.uniform1i(U.T, 0); gl.uniform4f(U.R, r.left, r.top, r.width, r.height); gl.uniform2f(U.V, innerWidth, innerHeight); gl.uniform1f(U.t, RM() ? 1.5 : ms / 1000);
+        gl.uniform4fv(U.D, D.drops.flatMap((q) => [q.x, q.y, q.r, q.amp])); gl.uniform4fv(U.E, D.drops.flatMap((q) => [q.ca, q.sa, q.s, q.ph])); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); } }
+    // the gentle wobble of the surface keeps running while the drop is visible (paused with reduced motion)
+    return moving || !RM();
+  }
+};
+customElements.whenDefined("home-live-card").then(() => { const C = customElements.get("home-live-card"); Object.assign(C.prototype, M); });
+})();
+
 // Home Live Card – visual editor and starter configuration
 (() => {
 const ROOM_TYPES = ["living", "dining", "kitchen", "office", "bath", "hall", "utility", "bed", "closet", "kids", "outdoor", "garage"];
 const DEV_DOMAINS = ["light", "switch", "cover", "climate", "media_player", "script", "fan"];
 const ED = {
-  de: { general: "Allgemein", language: "Sprache", theme: "Darstellung", palette: "Farbschema", amber: "Amber (warm)", graphite: "Graphit (kühl, orange)", neon: "Neon Sunset (Synthwave)", glass: "Himmelglas (hell, Apple-Stil)", animation: "Hintergrund-Animation", an_off: "Aus", an_city: "Stadtlichter (Neon-Stadtbild)", an_weather: "Wetter (Regen, Schnee, Wolken)", an_daycycle: "Tageslauf (Sonnenstand)", background_image: "Hintergrundbild (URL, leer = Standard, none = keins)", start_view: "Startansicht", default_room: "Startraum", image_path: "Ordner der Raumfotos", energy_path: "Ziel des Knopfs „Details“", load_font: "Schrift Manrope von Google laden",
+  de: { general: "Allgemein", language: "Sprache", theme: "Darstellung", palette: "Farbschema", amber: "Amber (warm)", graphite: "Graphit (kühl, orange)", neon: "Neon Sunset (Synthwave)", glass: "Himmelglas (hell)", liquid: "Flüssigglas (Lichtbrechung, elastisch)", on_color: "Farbe bei „An“ (Flüssigglas)", oc_auto: "Je Gerätetyp", oc_amber: "Bernstein", oc_blue: "Blau", oc_violet: "Violett", oc_green: "Grün", oc_rose: "Rosa", oc_cyan: "Türkis", oc_orange: "Orange", liquid_drop: "Glastropfen mit Hausverbrauch (Flüssigglas)", refraction: "Lichtbrechung (Flüssigglas, nur Chrome-Browser)", animation: "Hintergrund-Animation", an_off: "Aus", an_city: "Stadtlichter (Neon-Stadtbild)", an_weather: "Wetter (Regen, Schnee, Wolken)", an_daycycle: "Tageslauf (Sonnenstand)", background_image: "Hintergrundbild (URL, leer = Standard, none = keins)", start_view: "Startansicht", default_room: "Startraum", image_path: "Ordner der Raumfotos", energy_path: "Ziel des Knopfs „Details“", load_font: "Schrift Manrope von Google laden",
     rooms: "Räume", add_room: "Raum hinzufügen", from_areas: "Aus Home-Assistant-Bereichen übernehmen", from_areas_done: "{n} Räume übernommen", from_areas_none: "Keine neuen Bereiche gefunden",
     name: "Name", id: "Kennung (für Fotos)", floor: "Etage", type: "Raumtyp", temp: "Temperatursensor", hum: "Feuchtesensor", image: "Fotoname (leer = Kennung)",
     devices: "Geräte", add_device: "Gerät hinzufügen", entity: "Entität", confirm: "Nachfragen vor dem Schalten", sensors: "Fenster und Türen", add_sensor: "Kontakt hinzufügen",
@@ -1641,7 +1833,7 @@ const ED = {
     more: "Übersicht, Sicherheit und Müllkalender richtest du im Code-Editor ein (Beispiele im README).", up: "Nach oben", down: "Nach unten", remove: "Entfernen", edit: "Bearbeiten",
     auto: "Automatisch", day: "Tag", night: "Abend", overview: "Übersicht", room: "Räume", sec: "Sicherheit", none: "–",
     t_living: "Wohnzimmer", t_dining: "Esszimmer", t_kitchen: "Küche", t_office: "Arbeitszimmer", t_bath: "Bad", t_hall: "Flur", t_utility: "Hauswirtschaft", t_bed: "Schlafzimmer", t_closet: "Ankleide", t_kids: "Kinderzimmer", t_outdoor: "Außen", t_garage: "Garage" },
-  en: { general: "General", language: "Language", theme: "Appearance", palette: "Colour scheme", amber: "Amber (warm)", graphite: "Graphite (cool, orange)", neon: "Neon Sunset (synthwave)", glass: "Sky glass (light, Apple style)", animation: "Background animation", an_off: "Off", an_city: "City lights (neon city picture)", an_weather: "Weather (rain, snow, clouds)", an_daycycle: "Day cycle (sun position)", background_image: "Background picture (URL, empty = default, none = no picture)", start_view: "Start view", default_room: "Start room", image_path: "Room photo folder", energy_path: "Target of the “Details” button", load_font: "Load the Manrope font from Google",
+  en: { general: "General", language: "Language", theme: "Appearance", palette: "Colour scheme", amber: "Amber (warm)", graphite: "Graphite (cool, orange)", neon: "Neon Sunset (synthwave)", glass: "Sky glass (light)", liquid: "Liquid (refraction, elastic)", on_color: "Colour when on (liquid)", oc_auto: "By device type", oc_amber: "Amber", oc_blue: "Blue", oc_violet: "Violet", oc_green: "Green", oc_rose: "Rose", oc_cyan: "Teal", oc_orange: "Orange", liquid_drop: "Glass drop with home consumption (liquid)", refraction: "Refraction (liquid, Chrome-based browsers only)", animation: "Background animation", an_off: "Off", an_city: "City lights (neon city picture)", an_weather: "Weather (rain, snow, clouds)", an_daycycle: "Day cycle (sun position)", background_image: "Background picture (URL, empty = default, none = no picture)", start_view: "Start view", default_room: "Start room", image_path: "Room photo folder", energy_path: "Target of the “Details” button", load_font: "Load the Manrope font from Google",
     rooms: "Rooms", add_room: "Add room", from_areas: "Import Home Assistant areas", from_areas_done: "{n} rooms imported", from_areas_none: "No new areas found",
     name: "Name", id: "ID (used for photos)", floor: "Floor", type: "Room type", temp: "Temperature sensor", hum: "Humidity sensor", image: "Photo name (empty = ID)",
     devices: "Devices", add_device: "Add device", entity: "Entity", confirm: "Ask before switching", sensors: "Windows and doors", add_sensor: "Add contact",
@@ -1734,7 +1926,10 @@ class HomeLiveCardEditor extends HTMLElement {
     g.appendChild(this._form([
       { name: "language", selector: this._sel([{ value: "auto", label: L("auto") }, { value: "de", label: "Deutsch" }, { value: "en", label: "English" }]) },
       { name: "theme", selector: this._sel([{ value: "auto", label: L("auto") }, { value: "day", label: L("day") }, { value: "night", label: L("night") }]) },
-      { name: "palette", selector: this._sel([{ value: "amber", label: L("amber") }, { value: "graphite", label: L("graphite") }, { value: "neon", label: L("neon") }, { value: "glass", label: L("glass") }]) },
+      { name: "palette", selector: this._sel([{ value: "amber", label: L("amber") }, { value: "graphite", label: L("graphite") }, { value: "neon", label: L("neon") }, { value: "glass", label: L("glass") }, { value: "liquid", label: L("liquid") }]) },
+      { name: "on_color", selector: this._sel(["auto", "amber", "blue", "violet", "green", "rose", "cyan", "orange"].map((v) => ({ value: v, label: L("oc_" + v) }))) },
+      { name: "liquid_drop", selector: { boolean: {} } },
+      { name: "refraction", selector: { boolean: {} } },
       { name: "animation", selector: this._sel(((window.HOME_LIVE_ANIMS || {})[c.palette || "amber"] || ["off"]).map((a) => ({ value: a, label: L("an_" + a) }))) },
       { name: "background_image", selector: { text: {} } },
       { name: "start_view", selector: this._sel([{ value: "room", label: L("room") }, { value: "overview", label: L("overview") }]) },
@@ -1742,8 +1937,8 @@ class HomeLiveCardEditor extends HTMLElement {
       { name: "image_path", selector: { text: {} } },
       { name: "energy_path", selector: { text: {} } },
       { name: "load_font", selector: { boolean: {} } }
-    ], { language: c.language || "auto", theme: c.theme || "auto", palette: c.palette || "amber", animation: (() => { const al = (window.HOME_LIVE_ANIMS || {})[c.palette || "amber"] || ["off"], a = typeof c.animation === "object" && c.animation ? c.animation[c.palette || "amber"] : c.animation; return al.includes(a) ? a : "off"; })(), background_image: c.background_image || "", start_view: c.start_view || "room", default_room: c.default_room || "", image_path: c.image_path || "", energy_path: c.energy_path || "", load_font: c.load_font !== false },
-    (v) => { const pp = c.palette || "amber"; Object.assign(c, v); if (v.load_font === true) delete c.load_font; if (c.palette === "amber") delete c.palette; const np = c.palette || "amber", al = (window.HOME_LIVE_ANIMS || {})[np] || ["off"]; if (np !== pp && !al.includes(c.animation)) c.animation = "off"; if (c.animation === "off") delete c.animation; if (!c.background_image) delete c.background_image; this._clean(c); this._emit(); if (np !== pp) setTimeout(() => this._build(), 0); }));
+    ], { language: c.language || "auto", theme: c.theme || "auto", palette: c.palette || "amber", animation: (() => { const al = (window.HOME_LIVE_ANIMS || {})[c.palette || "amber"] || ["off"], a = typeof c.animation === "object" && c.animation ? c.animation[c.palette || "amber"] : c.animation; return al.includes(a) ? a : "off"; })(), background_image: c.background_image || "", start_view: c.start_view || "room", default_room: c.default_room || "", image_path: c.image_path || "", energy_path: c.energy_path || "", load_font: c.load_font !== false, on_color: c.on_color || "auto", liquid_drop: c.liquid_drop !== false, refraction: c.refraction !== false },
+    (v) => { const pp = c.palette || "amber"; Object.assign(c, v); if (v.load_font === true) delete c.load_font; if (c.on_color === "auto") delete c.on_color; if (v.liquid_drop === true) delete c.liquid_drop; if (v.refraction === true) delete c.refraction; if (c.palette === "amber") delete c.palette; const np = c.palette || "amber", al = (window.HOME_LIVE_ANIMS || {})[np] || ["off"]; if (np !== pp && !al.includes(c.animation)) c.animation = "off"; if (c.animation === "off") delete c.animation; if (!c.background_image) delete c.background_image; this._clean(c); this._emit(); if (np !== pp) setTimeout(() => this._build(), 0); }));
     R.appendChild(g.parentNode);
     // rooms
     const rs = this._section(L("rooms"));

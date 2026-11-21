@@ -3,7 +3,7 @@
 const CITY = "docs/bg/neon-city.webp";
 const cdn = (ref) => `https://cdn.jsdelivr.net/gh/RomanM78/home-live-card@${ref}/${CITY}`;
 // animations offered per colour scheme
-const ANIMS = { neon: ["off", "city", "weather"], amber: ["off", "weather", "daycycle"], graphite: ["off", "weather", "daycycle"], glass: ["off", "weather", "daycycle"] };
+const ANIMS = { neon: ["off", "city", "weather"], amber: ["off", "weather", "daycycle"], graphite: ["off", "weather", "daycycle"], glass: ["off", "weather", "daycycle"], liquid: ["off", "weather", "daycycle"] };
 const rnd = (seed) => { let s = seed; return (a, b) => { s = (s * 16807) % 2147483647; return a + ((s - 1) / 2147483646) * (b - a); }; };
 const pct = (v) => v.toFixed(2) + "%";
 

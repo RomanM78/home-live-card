@@ -5,7 +5,10 @@ language: auto              # auto (follows your Home Assistant language) | de |
 image_path: /local/home-live/rooms/   # folder with the room photos
 load_font: true             # false = no request to Google Fonts, system font instead
 theme: auto                 # auto (follows the sun) | light | dark
-palette: amber              # amber (warm brown) | graphite (cool charcoal, orange accent) – dark mode | neon (city at sunset, always dark) | glass (light liquid glass, Inter font)
+palette: amber              # amber (warm brown) | graphite (cool charcoal, orange accent) – dark mode | neon (city at sunset, always dark) | glass (light frosted glass, Inter font) | liquid (glass with refraction, elastic tiles)
+on_color: auto             # liquid only: auto (by device type) | amber | blue | violet | green | rose | cyan | orange
+# liquid_drop: false        # liquid only: hide the glass drop with the home consumption
+# refraction: false         # liquid only: no lens effect (for slow wall tablets)
 animation: off              # off | city (neon only) | weather (all) | daycycle (amber, graphite, glass)
 # background_image: /local/my-picture.webp   # own picture; "synthwave" = 0.5 neon scene; "none" = no picture
 start_view: overview        # overview | room | energy | security

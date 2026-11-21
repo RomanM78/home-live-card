@@ -347,7 +347,7 @@ button.pw,.lic{background:rgba(255,255,255,.26)!important;color:#fff!important}
 .rl em,.bub{color:#22381F!important;text-shadow:none!important;box-shadow:0 2px 6px rgba(20,35,60,.3)}
 .ltile .ln,.lt .lx,.lt .lx small{text-shadow:0 1px 4px rgba(0,0,0,.6)}
 button.ok,.btn.on{background:linear-gradient(180deg,#fff,#e7eef5)!important;color:#2F4A66!important;text-shadow:none!important}
-/* Apple-Home-Kacheln (nur glass) */
+/* Grosse Kacheln (glass) */
 .view.ov>.oc{background:${GLASS}!important}
 .hero.ap .hc{justify-content:center;gap:4px}.hero.ap h2{font-size:30px!important}
 .hero.ap p{color:rgba(255,255,255,.94)!important;font-size:14px;font-weight:500}
@@ -411,7 +411,7 @@ div.hchip{cursor:default}
 .rl .rtp,.rl .ron{margin-left:auto;font-style:normal;font-size:12px;font-weight:600;opacity:.9}
 .rl .ron{display:inline-flex;align-items:center;gap:6px;opacity:1}
 .rl .ron::before{content:"";width:7px;height:7px;border-radius:50%;background:#FFD45A;box-shadow:0 0 8px #FFD45A}
-/* Apple-Stil auf allen Seiten (nur glass) */
+/* Glass-Stil auf allen Seiten */
 .dtx{display:inline-block;font-weight:300;letter-spacing:-.03em;line-height:1;color:#fff;font-variant-numeric:tabular-nums}
 .ltile:not(.on) .dtx,.lvis:not(.on) .dtx{color:rgba(255,255,255,.7)}
 text[fill="#8C94A1" i],text[fill="#6E7684" i]{fill:rgba(255,255,255,.9)}text[fill="#8FB8E8" i]{fill:#fff}g[stroke="#8FB8E8" i]{stroke:#fff}text[font-family]{font-family:Inter,system-ui,sans-serif}
@@ -536,7 +536,7 @@ class HausLiveCard extends HTMLElement {
       l.href = "https://fonts.googleapis.com/css2?family=Bungee&family=Monoton&family=Rajdhani:wght@500;600;700&family=Yellowtail&display=swap";
       document.head.appendChild(l);
     }
-    if (this._c && this._c.palette === "glass" && this._c.load_font !== false && !document.getElementById("wz-glass")) {
+    if (this._c && /^(glass|liquid)$/.test(this._c.palette) && this._c.load_font !== false && !document.getElementById("wz-glass")) {
       const l = document.createElement("link"); l.id = "wz-glass"; l.rel = "stylesheet";
       l.href = "https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap";
       document.head.appendChild(l);
@@ -743,13 +743,13 @@ class HausLiveCard extends HTMLElement {
   }
 
   _themeMode() { let m = null; try { m = localStorage.getItem("home-live-theme"); } catch (x) {} return m === "day" || m === "night" ? m : (this._c.theme === "day" || this._c.theme === "night" ? this._c.theme : "auto"); }
-  _dayEff() { return this._c.palette !== "neon" && this._c.palette !== "glass" && this._isDay(); }
+  _dayEff() { return this._c.palette !== "neon" && !/^(glass|liquid)$/.test(this._c.palette) && this._isDay(); }
   _isDay() {
     const m = this._themeMode(); if (m !== "auto") return m === "day";
     const sun = this._st("sun.sun"); if (sun && sun.state !== "unavailable") return sun.state === "above_horizon";
     const h = new Date().getHours(); return h >= 7 && h < 19;
   }
-  _themeBtn(cls) { if (this._c.palette === "neon" || this._c.palette === "glass") return ""; const m = this._themeMode(), d = this._isDay(); return `<button class="${cls}" data-a="theme" aria-label="${T("Darstellung")}: ${m === "auto" ? T("automatisch") : m === "day" ? T("Tag") : T("Abend")}">${ic(d ? "sun" : "moon", 16, 2)}<span>${m === "auto" ? T("Auto") : m === "day" ? T("Tag") : T("Abend")}</span></button>`; }
+  _themeBtn(cls) { if (this._c.palette === "neon" || /^(glass|liquid)$/.test(this._c.palette)) return ""; const m = this._themeMode(), d = this._isDay(); return `<button class="${cls}" data-a="theme" aria-label="${T("Darstellung")}: ${m === "auto" ? T("automatisch") : m === "day" ? T("Tag") : T("Abend")}">${ic(d ? "sun" : "moon", 16, 2)}<span>${m === "auto" ? T("Auto") : m === "day" ? T("Tag") : T("Abend")}</span></button>`; }
   _render() {
     if (!this.shadowRoot || !this._hass) return;
     const r = this._roomObj();
@@ -759,7 +759,7 @@ class HausLiveCard extends HTMLElement {
     const floors = [];
     for (const x of this._c.rooms) { const f = x.floor || ""; let g = floors.find((y) => y.f === f); if (!g) floors.push(g = { f, rs: [] }); g.rs.push(x); }
     const en = !!this._c.energy, ov = this._view === "overview" && !!this._c.overview, sv = this._view === "sec" && !!this._c.security, ev = this._view === "energy" || ov || sv;
-    const side = `<aside class="side"><div class="clock" id="clk"></div>${this._themeBtn("thb")}${this._c.overview ? `<button class="rl ovb ${ov ? "on" : ""}" data-a="ov">${ic("dash", 16, 2)}${T("Übersicht")}</button>` : ""}${this._c.security ? `<button class="rl ovb ${sv ? "on" : ""}" data-a="sec">${ic("shield", 16, 2)}${T("Sicherheit")}</button>` : ""}${en ? `<button class="rl en ${this._view === "energy" ? "on" : ""}" data-a="energy">${ic("bolt", 16, 2)}${T("Energie")}</button>` : ""}${floors.map((g) => `${g.f ? `<div class="floor">${esc(g.f)}</div>` : ""}${g.rs.map((x) => { const n = this._roomCount(x); let badge = n ? `<em>${n}</em>` : ""; if (this._c.palette === "glass") { const tp = this._roomTemp(x); badge = n ? `<i class="ron">${T("{n} an", { n })}</i>` : tp != null ? `<i class="rtp">${this._fmt(tp, 0)}°</i>` : ""; } return `<button class="rl ${!ev && x.id === this._room ? "on" : ""}" data-a="room" data-v="${esc(x.id)}">${esc(x.name)}${badge}</button>`; }).join("")}`).join("")}
+    const side = `<aside class="side"><div class="clock" id="clk"></div>${this._themeBtn("thb")}${this._c.overview ? `<button class="rl ovb ${ov ? "on" : ""}" data-a="ov">${ic("dash", 16, 2)}${T("Übersicht")}</button>` : ""}${this._c.security ? `<button class="rl ovb ${sv ? "on" : ""}" data-a="sec">${ic("shield", 16, 2)}${T("Sicherheit")}</button>` : ""}${en ? `<button class="rl en ${this._view === "energy" ? "on" : ""}" data-a="energy">${ic("bolt", 16, 2)}${T("Energie")}</button>` : ""}${floors.map((g) => `${g.f ? `<div class="floor">${esc(g.f)}</div>` : ""}${g.rs.map((x) => { const n = this._roomCount(x); let badge = n ? `<em>${n}</em>` : ""; if (/^(glass|liquid)$/.test(this._c.palette)) { const tp = this._roomTemp(x); badge = n ? `<i class="ron">${T("{n} an", { n })}</i>` : tp != null ? `<i class="rtp">${this._fmt(tp, 0)}°</i>` : ""; } return `<button class="rl ${!ev && x.id === this._room ? "on" : ""}" data-a="room" data-v="${esc(x.id)}">${esc(x.name)}${badge}</button>`; }).join("")}`).join("")}
       <div class="sidenav">${this._c.home_path ? `<button data-a="nav" data-v="${esc(this._c.home_path)}">${ic("dash", 16)}${T("Zuhause")}</button>` : ""}${this._c.energy || this._c.energy_path ? `<button data-a="nav" data-v="${esc(this._c.energy_path || "/energy")}">${ic("bolt", 16)}${T("Details")}</button>` : ""}</div></aside>`;
     const dlg = this._pin ? this._pinDlg() : this._confirm ? `<div class="ovl"><div class="dlg" role="dialog"><b>${esc(this._confirm.text)}</b><p>${esc(this._confirm.sub)}</p><div class="row"><button data-a="cancel">${T("Abbrechen")}</button><button class="ok" data-a="ok">${T("Ja")}</button></div></div></div>` : "";
     if (!this._appEl) {
@@ -768,7 +768,7 @@ class HausLiveCard extends HTMLElement {
       this._buildNav(this.shadowRoot.querySelector(".navw"));
     }
     const day = this._dayEff();
-    const ne = this._c.palette === "neon", gl = this._c.palette === "glass", gr = !day && this._c.palette === "graphite", mk = ne ? "ne" : gl ? "gl" : day ? "day" : gr ? "gr" : "amber"; this._dayB = day;
+    const ne = this._c.palette === "neon", gl = /^(glass|liquid)$/.test(this._c.palette), gr = !day && this._c.palette === "graphite", mk = ne ? "ne" : gl ? "gl" : day ? "day" : gr ? "gr" : "amber"; this._dayB = day;
     const pm = ne ? neMap : gl ? glAcc : day ? dayMap : gr ? grMap : (x) => x;
     if (gl) this.toggleAttribute("gln", !this._isDay()); else this.removeAttribute("gln");
     if (mk !== this._dayOn) { this._dayOn = mk; this._styEl.textContent = ne ? neMap(CSS) + CSS_NE_X : gl ? glMap(CSS) + CSS_GR_X.replace(/:host\{[^}]*\}/, "") + CSS_GL_X : day ? dayMap(CSS) + CSS_DAY_X : gr ? grMap(CSS) + CSS_GR_X : CSS; this.toggleAttribute("day", day); this.style.background = ne ? "#12021E" : gl ? "" : day ? "#F2EBE2" : gr ? "#0E1014" : ""; }
@@ -778,6 +778,7 @@ class HausLiveCard extends HTMLElement {
     this._navSync();
     this._clock();
     if (this._bgSync) this._bgSync();
+    if (this._lqSync) this._lqSync();
     requestAnimationFrame(() => { try { const t = Math.max(0, Math.round(this.getBoundingClientRect().top + (window.scrollY || 0))); if (t !== this._off) { this._off = t; this.style.setProperty("--off", t + "px"); } const tb = this.shadowRoot.querySelector(".tabs"), on = tb && tb.querySelector(".on"); if (on) tb.scrollLeft = Math.max(0, on.offsetLeft - 20); } catch (x) {} });
   }
 
@@ -921,7 +922,7 @@ class HausLiveCard extends HTMLElement {
   _overView() {
     const o = this._c.overview, e = this._c.energy || {}, f = (v, d) => this._fmt(v, d), n = (id) => (id ? this._num(id) : null);
     const st = (id) => this._st(id), fn = (id) => { const s = st(id); return (s && s.attributes.friendly_name) || id; };
-    const ap = this._c.palette === "glass";
+    const ap = /^(glass|liquid)$/.test(this._c.palette);
     const hd = (i, t, sub, a, v) => `<${a ? `button data-a="${a}"${v ? ` data-v="${esc(v)}"` : ""}` : "div"} class="oh"><span class="oi">${ic(i, 20, 2)}</span><b>${esc(t)}</b><small>${esc(sub || "")}</small>${a ? `<span class="mo">${ic("next", 16, 2)}</span>` : ""}</${a ? "button" : "div"}>`;
     // Kopf
     const hr = new Date().getHours(), greet = hr < 5 ? T("Gute Nacht") : hr < 11 ? T("Guten Morgen") : hr < 17 ? T("Guten Tag") : hr < 22 ? T("Guten Abend") : T("Gute Nacht");
