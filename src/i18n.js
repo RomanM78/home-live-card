@@ -36,7 +36,7 @@ const EN = {
   "Nur Ein/Aus": "On/off only", "Nur Ein/Aus steuerbar": "On/off control only", "Offen": "Open",
   "Offen · seit {t}": "Open · since {t}", "PV-Ertrag heute": "Solar today", "Pause": "Pause", "Pausiert": "Paused",
   "Prognose": "Forecast", "Prognose morgen": "Forecast tomorrow", "Prozent": "percent", "Quelle": "Source",
-  "Raum": "Room", "Regen": "Rain", "Rolläden": "Blinds", "Räume": "Rooms", "Schalten": "Toggle", "Scharf": "Armed",
+  "Raum": "Room", "autark": "self-sufficient", "Tropfen": "Drop", "Regen": "Rain", "Rolläden": "Blinds", "Räume": "Rooms", "Schalten": "Toggle", "Scharf": "Armed",
   "Scharf schalten": "Arm", "Scharf · Abwesend": "Armed · away", "Scharf · Nacht": "Armed · night",
   "Scharf · Urlaub": "Armed · vacation", "Scharf · Zuhause": "Armed · home", "Schließen": "Close", "Schnee": "Snow",
   "Schneeregen": "Sleet", "Schnellaktionen": "Quick actions", "Sensor offline": "Sensor offline",
