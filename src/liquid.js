@@ -23,14 +23,11 @@ const LQCSS = `
 :host([lq]) .side{position:relative}
 :host([lq]) .lqi{position:absolute;left:0;top:0;border-radius:999px;pointer-events:none;background:linear-gradient(160deg,rgba(255,255,255,.62),rgba(255,255,255,.34));box-shadow:0 10px 24px -10px rgba(10,30,70,.45),inset 0 1px 0 rgba(255,255,255,.9),inset 0 0 0 1px rgba(255,255,255,.5);transform-origin:50% 0;z-index:0}
 :host([lq][gln]) .lqi{background:linear-gradient(160deg,rgba(255,255,255,.34),rgba(255,255,255,.16))}
-:host([lq]) .hero.ap.lqn .hc>h2,:host([lq]) .hero.ap.lqn .hc>p{padding-right:86px}
 :host([lq]) .side .rl{position:relative;z-index:1}
-:host([lq]) .lqd{position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:2}
-:host([lq]) .lqd canvas{position:absolute;inset:0;width:100%;height:100%;border-radius:inherit}
+:host([lq]) .lqd{position:sticky;top:0;display:block;pointer-events:none;z-index:6;overflow:hidden}
+:host([lq]) .lqd canvas{position:absolute;inset:0;width:100%;height:100%}
 :host([lq]) .lqh{position:absolute;left:0;top:0;border-radius:50%;pointer-events:auto;touch-action:none;cursor:grab;display:grid;place-content:center;text-align:center;color:#fff;text-shadow:0 2px 14px rgba(0,10,30,.6);-webkit-user-select:none;user-select:none}
-:host([lq]) .shero.lqn .sht{padding-right:72px}
-:host([lq]) .lqd[data-k=bar] .lqh b{font-size:13px;font-weight:500}:host([lq]) .lqd[data-k=bar] .lqh small{display:none}
-:host([lq]) .lqn .lqh b{font-size:17px}:host([lq]) .lqn .lqh small{font-size:9.5px}
+:host([lq]) .lqn .lqh b{font-size:19px}:host([lq]) .lqn .lqh small{font-size:10px}
 :host([lq]) .lqh b{font-size:26px;font-weight:300;letter-spacing:-.04em;font-variant-numeric:tabular-nums}:host([lq]) .lqh small{font-size:11.5px;font-weight:600;opacity:.85}
 :host([lq]) .lqh:focus-visible{outline:2px solid #fff;outline-offset:2px}
 `;
@@ -140,44 +137,39 @@ const M = {
     this._lqSprings(dt / 2); this._lqSprings(dt / 2); const nav = this._lqIndStep(dt); const drop = this._lqDropStep(dt, t);
     if (this._lqJ.size || nav || drop || this._lqP) this._lqRaf = requestAnimationFrame((x) => this._lqFrame(x));
   },
-  // ---------- glass drop: one on every page; it lives in a tile of the page and refracts the picture behind it
+  // ---------- glass drops: several free drops float over every page and refract the picture behind it
   _lqHost() {
-    const A = this._appEl, v = this._view, q = (x) => A.querySelector(x), E = this._c.energy || {}, num = (x) => (x ? this._num(x) : null);
-    const lab = (b, sm, aria) => ({ b, sm, aria: aria || `${sm} ${b}` });
-    if (v === "overview") { const h = q(".hero.ap"); if (h) { const w = num(E.home); return { el: h, kind: "hero", lab: w == null ? null : Math.abs(w) >= 1000 ? lab(this._fmt(w / 1000, 1), "kW " + T("Haus")) : lab(this._fmt(w, 0), "W " + T("Haus")) }; } }
-    if (v === "room" || v === "home") { const r = (this._c.rooms || []).find((x) => x.id === this._room) || (this._c.rooms || [])[0]; let t = r && r.temp ? num(r.temp) : null;
+    const A = this._appEl, v = this._view, q = (x) => A.querySelector(x), E = this._c.energy || {}, num = (x) => (x ? this._num(x) : null), lab = (b, sm) => ({ b, sm, aria: `${sm} ${b}` });
+    const H = { kind: v, lab: null, photo: null, tint: null };
+    if (v === "overview") { const w = num(E.home); if (w != null) H.lab = Math.abs(w) >= 1000 ? lab(this._fmt(w / 1000, 1), "kW " + T("Haus")) : lab(this._fmt(w, 0), "W " + T("Haus")); }
+    else if (v === "room" || v === "home") { const r = (this._c.rooms || []).find((x) => x.id === this._room) || (this._c.rooms || [])[0]; let t = r && r.temp ? num(r.temp) : null;
       if (r && t == null) { const cl = (r.devices || []).find((d) => this._dom(d.entity) === "climate"), s = cl && this._st(cl.entity); if (s && typeof s.attributes.current_temperature === "number") t = s.attributes.current_temperature; }
-      const L = t == null ? null : lab(this._fmt(t) + "°", T("Raum")), st = q(".view.room .scene.ph style"), mu = st && (st.textContent.match(/url\("([^"]+)"\)/) || [])[1];
-      if (mu) { // room photo behind the page: the drop floats over it and refracts it
-        const cL = q(".view.room .colL"), big = cL && cL.offsetHeight > 240 && cL.offsetWidth > 200, rg = [...st.textContent.matchAll(/rgba\(([\d.]+),([\d.]+),([\d.]+),([\d.]+)\)/g)].slice(0, 2).map((m) => m.slice(1).map(Number));
-        const tint = rg.length ? [rg[0][0] / 255, rg[0][1] / 255, rg[0][2] / 255, rg.reduce((x, m) => x + m[3], 0) / rg.length] : [0, 0, 0, 0];
-        return { el: big ? cL : q(".view.room .scene.ph"), kind: big ? "room" : "strip", photo: mu, tint, lab: L }; }
-      const h = q(".view.room .hdr"); if (h) return { el: h, kind: "bar", lab: L }; }
-    if (v === "sec") { const h = q(".shero"); if (h) { const t = ((q(".slist .oh small") || {}).textContent || "").trim(), m = t.match(/^(\d+)\s*(.*)$/); return { el: h, kind: "sec", lab: m ? lab(m[1], m[2]) : null }; } }
-    if (v === "energy") { const h = q(".view.energy .flow"); if (h) { const b = q(".fchips span b"); return { el: h, kind: "flow", lab: b ? lab(b.textContent.trim(), T("autark")) : null }; } }
-    if (v === "det") { const h = q(".view.det > :not(.hdr)"); if (h) return { el: h, kind: "det", lab: null }; }
-    const h = q(".view .hdr"); return h ? { el: h, kind: "bar", lab: null } : null;
+      if (t != null) H.lab = lab(this._fmt(t) + "°", T("Raum"));
+      const st = q(".view.room .scene.ph style"), mu = st && (st.textContent.match(/url\("([^"]+)"\)/) || [])[1];
+      if (mu) { const rg = [...st.textContent.matchAll(/rgba\(([\d.]+),([\d.]+),([\d.]+),([\d.]+)\)/g)].slice(0, 2).map((m) => m.slice(1).map(Number)); H.photo = mu; H.tint = rg.length ? [rg[0][0] / 255, rg[0][1] / 255, rg[0][2] / 255, rg.reduce((x, m) => x + m[3], 0) / rg.length] : null; } }
+    else if (v === "sec") { const t = ((q(".slist .oh small") || {}).textContent || "").trim(), m = t.match(/^(\d+)\s*(.*)$/); if (m) H.lab = lab(m[1], m[2]); }
+    else if (v === "energy") { const b = q(".fchips span b"); if (b) H.lab = lab(b.textContent.trim(), T("autark")); }
+    return H;
   },
   _lqDrop() {
-    const H = this._c.liquid_drop !== false && this._lqHost();
-    if (!H) { if (this._lqD) { this._lqD.el.remove(); this._lqD.host = null; } return; }
+    const main = this._appEl.querySelector(".main");
+    if (this._c.liquid_drop === false || !main) { if (this._lqD) this._lqD.el.remove(); return; }
     if (!this._lqD) this._lqDInit();
-    const D = this._lqD, host = H.el; if (getComputedStyle(host).position === "static") host.style.position = "relative";
-    if (D.el.parentElement !== host) { host.appendChild(D.el); D.w = 0; if (D.kind !== H.kind) D.drops.forEach((d) => (d.init = false)); }
-    D.kind = H.kind; D.tint = H.tint || [0, 0, 0, 0]; D.el.dataset.k = H.kind; D.photo = null;
-    if (H.photo) { const I = this._lqImgs || (this._lqImgs = {}); let im = I[H.photo]; if (!im) { im = I[H.photo] = new Image(); im.crossOrigin = "anonymous"; im.onerror = () => (im.bad = true); im.src = H.photo; } D.photo = im;
-      const mn = this._appEl.querySelector(".main"); D.fixed = !mn || getComputedStyle(mn, "::before").position === "fixed"; D.main = mn; } const d0 = D.drops[0].el;
-    d0.innerHTML = H.lab ? `<b>${esc(H.lab.b)}</b><small>${esc(H.lab.sm)}</small>` : ""; d0.setAttribute("aria-label", H.lab ? H.lab.aria : T("Tropfen"));
-    this._lqDHomes(); D.vis = true; this._lqKick();
+    const D = this._lqD, H = this._lqHost(); if (D.el.parentElement !== main) { main.prepend(D.el); D.w = 0; }
+    const cs = getComputedStyle(main); D.el.style.marginLeft = `-${cs.paddingLeft}`; D.el.style.marginRight = `-${cs.paddingRight}`;
+    if (D.kind !== H.kind) { D.kind = H.kind; D.w = 0; } D.tint = H.tint || [0, 0, 0, 0]; D.photo = null;
+    if (H.photo) { const I = this._lqImgs || (this._lqImgs = {}); let im = I[H.photo]; if (!im) { im = I[H.photo] = new Image(); im.crossOrigin = "anonymous"; im.onerror = () => (im.bad = true); im.src = H.photo; } D.photo = im; D.fixed = getComputedStyle(main, "::before").position === "fixed"; D.main = main; }
+    const d0 = D.drops[0].el; d0.innerHTML = H.lab ? `<b>${esc(H.lab.b)}</b><small>${esc(H.lab.sm)}</small>` : ""; d0.setAttribute("aria-label", H.lab ? H.lab.aria : T("Tropfen"));
+    this._lqDHomes(); this._lqKick();
   },
   _lqDInit() {
-    const el = document.createElement("div"); el.className = "lqd"; el.innerHTML = '<canvas aria-hidden="true"></canvas><div class="lqh" tabindex="0" role="button"></div><div class="lqh" tabindex="0" role="button" aria-label="Tropfen"></div>';
+    const el = document.createElement("div"); el.className = "lqd"; el.innerHTML = '<canvas aria-hidden="true"></canvas>' + '<div class="lqh" tabindex="0" role="button"></div>'.repeat(6);
     const cv = el.querySelector("canvas"), gl = cv.getContext("webgl", { premultipliedAlpha: true, antialias: true }), D = this._lqD = { el, cv, gl, drops: [...el.querySelectorAll(".lqh")].map((h) => ({ el: h, x: 0, y: 0, vx: 0, vy: 0, hx: 0, hy: 0, r: 0, s: 1, ca: 1, sa: 0, amp: 0, ph: 0, drag: null, tx: 0, ty: 0, init: false })), near: false };
     if (gl) {
       const sh = (ty, src) => { const o = gl.createShader(ty); gl.shaderSource(o, src); gl.compileShader(o); return o; }, p = gl.createProgram();
       gl.attachShader(p, sh(gl.VERTEX_SHADER, "attribute vec2 a;varying vec2 v;void main(){v=a*.5+.5;gl_Position=vec4(a,0.,1.);}"));
-      gl.attachShader(p, sh(gl.FRAGMENT_SHADER, `precision highp float;varying vec2 v;uniform sampler2D T;uniform vec4 R;uniform vec4 V;uniform vec4 K;uniform float t;uniform vec4 D[2];uniform vec4 E[2];
-float fld(vec2 p,out float re){float F=0.;float wr=0.;for(int i=0;i<2;i++){vec2 q=p-D[i].xy;vec2 e=E[i].xy;q=vec2(q.x*e.x+q.y*e.y,-q.x*e.y+q.y*e.x);q.x/=E[i].z;q.y*=E[i].z;float an=atan(q.y,q.x);float rad=D[i].z*(1.+D[i].w*cos(2.*an)*sin(E[i].w)+.5*D[i].w*cos(3.*an+1.)*sin(E[i].w*1.6)+.012*sin(an*3.+t*.8+float(i)*2.));float d=length(q)/rad;float f=1./(d*d*d*d+1e-4);F+=f;wr+=f*D[i].z;}re=wr/F;return F;}
+      gl.attachShader(p, sh(gl.FRAGMENT_SHADER, `precision highp float;varying vec2 v;uniform sampler2D T;uniform vec4 R;uniform vec4 V;uniform vec4 K;uniform float t;uniform vec4 D[6];uniform vec4 E[6];
+float fld(vec2 p,out float re){float F=0.;float wr=0.;for(int i=0;i<6;i++){if(D[i].z<=0.)continue;vec2 q=p-D[i].xy;vec2 e=E[i].xy;q=vec2(q.x*e.x+q.y*e.y,-q.x*e.y+q.y*e.x);q.x/=E[i].z;q.y*=E[i].z;float an=atan(q.y,q.x);float rad=D[i].z*(1.+D[i].w*cos(2.*an)*sin(E[i].w)+.5*D[i].w*cos(3.*an+1.)*sin(E[i].w*1.6)+.012*sin(an*3.+t*.8+float(i)*2.));float d=length(q)/rad;float f=1./(d*d*d*d+1e-4);F+=f;wr+=f*D[i].z;}re=wr/max(F,1e-6);return F;}
 float hgt(float F){return sqrt(max(0.,1.-inversesqrt(F)));}
 vec3 smp(vec3 N,float ior,vec2 css,float re){vec3 r=refract(vec3(0.,0.,-1.),N,1./ior);return texture2D(T,clamp((css+r.xy*re*.8-V.xy)/V.zw,0.,1.)).rgb;}
 void main(){vec2 l=vec2(v.x,1.-v.y)*R.zw;float re;float F=fld(l,re);float a=smoothstep(1.,1.12,F);if(a<=0.){gl_FragColor=vec4(0.);return;}
@@ -191,55 +183,49 @@ gl_FragColor=vec4(c*a,a);}`));
     }
     const kick = (d, a) => { d.amp = Math.min(.22, d.amp + a); };
     D.drops.forEach((d) => { const h = d.el;
-      h.addEventListener("pointerdown", (e) => { const c = el.getBoundingClientRect(); d.drag = { ox: e.clientX - c.left - d.x, oy: e.clientY - c.top - d.y, moved: 0 }; d.tx = d.x; d.ty = d.y; h.setPointerCapture(e.pointerId); kick(d, .07); D.touch = performance.now() + 1e9; this._lqKick(); e.preventDefault(); e.stopPropagation(); });
+      h.addEventListener("pointerdown", (e) => { const c = el.getBoundingClientRect(); d.drag = { ox: e.clientX - c.left - d.x, oy: e.clientY - c.top - d.y, moved: 0 }; d.tx = d.x; d.ty = d.y; h.setPointerCapture(e.pointerId); kick(d, .07); d.touch = performance.now() + 1e9; this._lqKick(); e.preventDefault(); e.stopPropagation(); });
       h.addEventListener("pointermove", (e) => { if (!d.drag) return; const c = el.getBoundingClientRect(), nx = e.clientX - c.left - d.drag.ox, ny = e.clientY - c.top - d.drag.oy; d.drag.moved += Math.abs(nx - d.tx) + Math.abs(ny - d.ty); d.tx = nx; d.ty = ny; });
-      const up = () => { if (!d.drag) return; D.touch = performance.now(); kick(d, d.drag.moved < 6 ? .12 : Math.min(.16, Math.hypot(d.vx, d.vy) / 4000 + .05)); d.drag = null; };
+      const up = () => { if (!d.drag) return; d.touch = performance.now(); kick(d, d.drag.moved < 6 ? .12 : Math.min(.16, Math.hypot(d.vx, d.vy) / 4000 + .05)); d.drag = null; };
       h.addEventListener("pointerup", up); h.addEventListener("pointercancel", up); h.addEventListener("click", (e) => e.stopPropagation());
       h.addEventListener("keydown", (e) => { const k = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key]; if (k) { d.vx += k[0] * 500; d.vy += k[1] * 500; kick(d, .06); e.preventDefault(); } else if (e.key === "Enter" || e.key === " ") { kick(d, .14); e.preventDefault(); } this._lqKick(); });
     });
     D.kick = kick;
   },
   _lqDHomes() {
-    const D = this._lqD, W = D.el.clientWidth, H = D.el.clientHeight; if (!W || !H) return; const a = D.drops[0], b = D.drops[1], narrow = W < 560, k = D.kind, cl = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
-    if (k === "hero") { a.r = narrow ? Math.min(36, W * .11) : Math.max(30, Math.min(H * .36, 88)); a.hx = W - a.r - (narrow ? 12 : 34); a.hy = narrow ? a.r + 14 : H / 2; }
-    else if (k === "room") { a.r = cl(Math.min(W, H) * .13, 34, 64); a.hx = W * .62; a.hy = Math.max(H * .5, 260); }
-    else if (k === "strip") { a.r = cl(H * .42, 22, 34); a.hx = W - a.r - 12; a.hy = H / 2; }
-    else if (k === "sec") { a.r = narrow ? 30 : cl(H * .3, 34, 60); a.hx = W - a.r - (narrow ? 14 : 34); a.hy = narrow ? a.r + 14 : Math.min(H * .36, a.r + 30); }
-    else if (k === "flow") { a.r = cl(Math.min(W, H) * .11, 28, 50); a.hx = a.r + 22; a.hy = a.r + 22; }
-    else if (k === "det") { a.r = cl(Math.min(W, H) * .1, 28, 56); a.hx = W - a.r - 30; a.hy = H - a.r - 30; }
-    else { a.r = cl(H * .44, 18, 30); a.hx = W - a.r - Math.min(80, W * .2); a.hy = H / 2; }
-    b.r = Math.max(9, a.r * .3); b.hx = a.hx - a.r * .7; b.hy = a.hy + a.r * 1.05; if (b.hy > H - b.r) b.hy = a.hy - a.r * 1.05;
-    D.el.parentElement && D.el.parentElement.classList.toggle("lqn", narrow);
-    for (const d of D.drops) { if (!d.init) { d.x = d.hx; d.y = d.hy; d.vx = d.vy = 0; d.init = true; } d.el.style.width = d.el.style.height = d.r * 2 + "px"; }
+    const D = this._lqD, el = D.el, H = Math.round(innerHeight || 800); el.style.height = H + "px"; el.style.marginBottom = -H + "px";
+    const W = el.clientWidth; if (!W) return; const wide = W >= 700, n = wide ? 5 : 3, R = Math.max(34, Math.min(72, Math.min(W, H) * (wide ? .095 : .13)));
+    const HM = wide ? [[.82, .22], [.34, .74], [.62, .86], [.14, .4], [.93, .64]] : [[.8, .2], [.24, .6], [.72, .84]], F = [1, .78, .64, .54, .46];
+    D.n = n; D.drops.forEach((d, i) => { const on = i < n; d.el.style.display = on ? "" : "none"; if (!on) { d.r = 0; return; }
+      d.r = R * F[i]; d.hx = HM[i][0] * W; d.hy = HM[i][1] * H; d.f1 = .09 + i * .023; d.f2 = .07 + i * .019; d.p0 = i * 1.7;
+      if (!d.init || D.w === 0) { d.x = d.hx; d.y = d.hy; d.vx = d.vy = 0; d.init = true; } d.el.style.width = d.el.style.height = d.r * 2 + "px"; });
+    D.w = W; D.h = H; el.classList.toggle("lqn", !wide);
   },
   _lqDropStep(dt, ms) {
-    const D = this._lqD; if (!D || !D.el.isConnected) return false; const W = D.el.clientWidth, H = D.el.clientHeight; if (!W || !H) return false;
-    if (D.w !== W || D.h !== H) { D.w = W; D.h = H; this._lqDHomes(); }
-    let moving = false; const [a, b] = D.drops;
-    for (let n = 0; n < 2; n++) { const h = dt / 2;
-      // idle: the big drop drifts slowly, the small one circles it and now and then flows into it and out again
-      const idle = !RM() && !a.drag && !b.drag && ms - (D.touch || 0) > 4000, p = ms / 1000, gx = [a.hx, b.hx], gy = [a.hy, b.hy];
-      if (idle) { gx[0] += Math.sin(p * .37) * a.r * .22; gy[0] += Math.cos(p * .29) * a.r * .16; const th = p * .55, rho = a.r * (1.12 + .62 * Math.sin(p * .23)); gx[1] = a.x + Math.cos(th) * rho; gy[1] = a.y + Math.sin(th) * rho * .8; }
-      D.drops.forEach((d, i) => { const m = d.r * .6; gx[i] = Math.max(m, Math.min(W - m, gx[i])); gy[i] = Math.max(m, Math.min(H - m, gy[i])); });
-      D.drops.forEach((d, i) => { const tx = d.drag ? d.tx : gx[i], ty = d.drag ? d.ty : gy[i], k = d.drag ? 260 : idle && i ? 30 : 46, c = d.drag ? 22 : 7.5; d.vx += ((tx - d.x) * k - d.vx * c) * h; d.vy += ((ty - d.y) * k - d.vy * c) * h; });
-      const dx = a.x - b.x, dy = a.y - b.y, dist = Math.hypot(dx, dy) || 1, reach = (a.r + b.r) * 1.25, near = dist < reach;
-      if (near && !idle) { const f = (1 - dist / reach) * 900; for (const [d, sg, m] of [[a, -1, .25], [b, 1, 1]]) if (!d.drag) { d.vx += sg * dx / dist * f * m * h; d.vy += sg * dy / dist * f * m * h; } }
-      if (near !== D.near) { D.near = near; D.kick(a, .05); D.kick(b, .1); }
-      for (const d of D.drops) { d.x += d.vx * h; d.y += d.vy * h; const m = d.r * .55;
+    const D = this._lqD; if (!D || !D.el.isConnected) return false; const W = D.el.clientWidth, H = D.h; if (!W || !H) return false;
+    if (D.w !== W || Math.abs(H - (innerHeight || H)) > 40) this._lqDHomes();
+    const ds = D.drops.slice(0, D.n), p = ms / 1000, rm = RM();
+    for (let s = 0; s < 2; s++) { const h = dt / 2;
+      for (const d of ds) { let tx = d.hx, ty = d.hy;
+        if (d.drag) { tx = d.tx; ty = d.ty; } else if (!rm && ms - (d.touch || 0) > 2500) { tx += Math.sin(p * d.f1 + d.p0) * W * .13 + Math.sin(p * d.f2 * 2.3 + d.p0) * W * .03; ty += Math.cos(p * d.f2 + d.p0 * 1.3) * H * .11; }
+        const m = d.r * 1.05; tx = Math.max(m, Math.min(W - m, tx)); ty = Math.max(m, Math.min(H - m, ty));
+        const k = d.drag ? 260 : 9, c = d.drag ? 22 : 4.2; d.vx += ((tx - d.x) * k - d.vx * c) * h; d.vy += ((ty - d.y) * k - d.vy * c) * h; }
+      // touching drops wobble when they flow together or tear apart
+      for (let i = 0; i < ds.length; i++) for (let j = i + 1; j < ds.length; j++) { const a = ds[i], b = ds[j], key = i * 8 + j, near = Math.hypot(a.x - b.x, a.y - b.y) < (a.r + b.r) * 1.15; D.nr = D.nr || {}; if (near !== !!D.nr[key]) { D.nr[key] = near; D.kick(a, .05); D.kick(b, .09); } }
+      for (const d of ds) { d.x += d.vx * h; d.y += d.vy * h; const m = d.r * .9;
         for (const [ax, lo, hi] of [["x", m, W - m], ["y", m, H - m]]) { const v = "v" + ax; if (d[ax] < lo) { d[ax] = lo; if (d[v] < 0) { D.kick(d, Math.min(.14, -d[v] / 3000)); d[v] *= -.45; } } else if (d[ax] > hi) { d[ax] = hi; if (d[v] > 0) { D.kick(d, Math.min(.14, d[v] / 3000)); d[v] *= -.45; } } }
         const sp = Math.hypot(d.vx, d.vy), ts = 1 + Math.min(.32, sp / 1500); d.s += (ts - d.s) * Math.min(1, h * 14); if (sp > 20) { const q = Math.min(1, h * 16); d.ca += (d.vx / sp - d.ca) * q; d.sa += (d.vy / sp - d.sa) * q; const nn = Math.hypot(d.ca, d.sa) || 1; d.ca /= nn; d.sa /= nn; }
         d.amp *= Math.exp(-2.6 * h); d.ph += h * 15; } }
-    for (const d of D.drops) { d.el.style.transform = `translate(${(d.x - d.r).toFixed(1)}px,${(d.y - d.r).toFixed(1)}px)`; if (d.drag || d.amp > .004 || Math.hypot(d.vx, d.vy) > 2 || Math.hypot(d.x - d.hx, d.y - d.hy) > .5) moving = true; }
-    const gl = D.gl; if (gl) { const cv = D.cv, r = cv.getBoundingClientRect(), pr = Math.min(2, devicePixelRatio || 1), w = Math.round(r.width * pr), hh = Math.round(r.height * pr); if (cv.width !== w || cv.height !== hh) { cv.width = w; cv.height = hh; }
-      // texture: the photo of the tile when the drop sits on one, else the wallpaper
+    for (const d of ds) d.el.style.transform = `translate(${(d.x - d.r).toFixed(1)}px,${(d.y - d.r).toFixed(1)}px)`;
+    const gl = D.gl; if (gl) { const cv = D.cv, r = cv.getBoundingClientRect(); let pr = Math.min(1.5, devicePixelRatio || 1); if (r.width * r.height * pr * pr > 1.6e6) pr = Math.sqrt(1.6e6 / (r.width * r.height)); const w = Math.round(r.width * pr), hh = Math.round(r.height * pr); if (cv.width !== w || cv.height !== hh) { cv.width = w; cv.height = hh; }
+      // texture: the room photo when the page shows one, else the wallpaper
       let src = this._lqCv, tk = "w" + this._lqWv, TR = [0, 0, innerWidth, innerHeight], K = [0, 0, 0, 0]; const im = D.photo;
       if (im && im.complete && im.naturalWidth && !im.bad) { const br = D.fixed || !D.main ? { left: 0, top: 0, width: innerWidth, height: innerHeight } : D.main.getBoundingClientRect(), s = Math.max(br.width / im.naturalWidth, br.height / im.naturalHeight), dw = im.naturalWidth * s, dh = im.naturalHeight * s;
         src = im; tk = "p" + im.src; K = D.tint; TR = [br.left + (br.width - dw) / 2, br.top + (br.height - dh) / 2, dw, dh]; }
       if (src && D.tk !== tk) { gl.bindTexture(gl.TEXTURE_2D, D.tex); try { gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, src); D.tk = tk; } catch (e) { if (src === im) im.bad = true; } for (const [k, v] of [[gl.TEXTURE_MIN_FILTER, gl.LINEAR], [gl.TEXTURE_MAG_FILTER, gl.LINEAR], [gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE]]) gl.texParameteri(gl.TEXTURE_2D, k, v); }
-      if (w && hh && r.bottom > 0 && r.top < innerHeight) { const U = D.U; gl.viewport(0, 0, w, hh); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); gl.uniform1i(U.T, 0); gl.uniform4f(U.R, r.left, r.top, r.width, r.height); gl.uniform4f(U.V, TR[0], TR[1], TR[2], TR[3]); gl.uniform4f(U.K, K[0], K[1], K[2], K[3]); gl.uniform1f(U.t, RM() ? 1.5 : ms / 1000);
-        gl.uniform4fv(U.D, D.drops.flatMap((q) => [q.x, q.y, q.r, q.amp])); gl.uniform4fv(U.E, D.drops.flatMap((q) => [q.ca, q.sa, q.s, q.ph])); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); } }
-    // the gentle wobble of the surface keeps running while the drop is visible (paused with reduced motion)
-    return moving || !RM();
+      if (w && hh) { const U = D.U; gl.viewport(0, 0, w, hh); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); gl.uniform1i(U.T, 0); gl.uniform4f(U.R, r.left, r.top, r.width, r.height); gl.uniform4f(U.V, TR[0], TR[1], TR[2], TR[3]); gl.uniform4f(U.K, K[0], K[1], K[2], K[3]); gl.uniform1f(U.t, rm ? 1.5 : ms / 1000);
+        const DD = [], EE = []; for (let i = 0; i < 6; i++) { const q = D.drops[i]; if (i < D.n) { DD.push(q.x, q.y, q.r, q.amp); EE.push(q.ca, q.sa, q.s, q.ph); } else { DD.push(0, 0, 0, 0); EE.push(1, 0, 1, 0); } }
+        gl.uniform4fv(U.D, DD); gl.uniform4fv(U.E, EE); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); } }
+    return true;
   }
 };
 customElements.whenDefined("home-live-card").then(() => { const C = customElements.get("home-live-card"); Object.assign(C.prototype, M); });
