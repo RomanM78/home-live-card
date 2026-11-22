@@ -104,6 +104,9 @@ rooms:
         name: Ceiling
 ```
 
+The small info chips under the greeting are chosen with `overview.chips` (any of `trash`, `alarm`,
+`climate`, `lights`, `energy`, in the order you list them), also in the visual editor.
+
 All options: [examples/full.yaml](examples/full.yaml).
 
 ## Pictures

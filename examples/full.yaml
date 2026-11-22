@@ -52,6 +52,8 @@ rooms:
 overview:
   hero_day: /local/home-live/house_day.webp
   hero_night: /local/home-live/house_night.webp
+  # info chips under the greeting, in this order (any of: trash, alarm, climate, lights, energy)
+  chips: [trash, alarm, climate, lights, energy]
   persons: [person.alex, person.sam]
   alarm: alarm_control_panel.home
   weather: weather.home

@@ -1,6 +1,6 @@
-/*! home-live-card v0.9.0 | MIT License | https://github.com/RomanM78/home-live-card */
+/*! home-live-card v0.9.1 | MIT License | https://github.com/RomanM78/home-live-card */
 
-window.HOME_LIVE_VERSION = "0.9.0";
+window.HOME_LIVE_VERSION = "0.9.1";
 
 // Home Live Card – translations. Keys are the German source texts; {x} are placeholders.
 const EN = {
@@ -224,8 +224,8 @@ button{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparen
 .wx .wn2{display:flex;align-items:center;gap:12px}.wx .wn2>span:first-child{color:#F2B183;display:flex}.wx .wt{display:flex;flex-direction:column}.wx .wt b{font-size:38px;font-weight:300;line-height:1}.wx .wt small{font-size:13px;color:var(--mu2)}
 .wx .wm{display:flex;justify-content:space-between;font-size:12px;color:var(--mu)}.wx .wm b{color:var(--tx)}
 .fc{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid #221A14;padding-top:10px;text-align:center;font-size:12px;color:var(--mu)}.fc>span{display:flex;flex-direction:column;align-items:center;gap:3px}.fc>span>span{color:#F2B183;display:flex}.fc b{color:var(--tx);font-weight:500}
-.lb2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.lb2 button{height:40px;border-radius:12px;border:1px solid #2A2019;background:#17110D;color:#D9CFC6;font-size:13px;display:flex;align-items:center;justify-content:center;gap:8px}.lb2 button.pri{border-color:rgba(242,138,60,.6);background:rgba(242,138,60,.16);color:#FFC28A}
-.lts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.lb2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,104px),1fr));gap:8px}.lb2 button{white-space:nowrap;min-width:0;overflow:hidden;padding:0 10px}.lb2 button{height:40px;border-radius:12px;border:1px solid #2A2019;background:#17110D;color:#D9CFC6;font-size:13px;display:flex;align-items:center;justify-content:center;gap:8px}.lb2 button.pri{border-color:rgba(242,138,60,.6);background:rgba(242,138,60,.16);color:#FFC28A}
+.lts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,96px),1fr));gap:8px}
 .lt{position:relative;aspect-ratio:3/4;border-radius:16px;overflow:hidden;border:1px solid #2A2019;padding:0;background:#120D0A;text-align:left;color:var(--tx);transition:border-color .3s}.lt.on{border-color:rgba(242,138,60,.7);box-shadow:0 0 18px -6px rgba(242,138,60,.6)}
 .lt>img,.lt>svg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.lt>img{filter:brightness(.45) saturate(.6);transition:filter .3s}.lt.on>img{filter:none}
 .lt .sh{position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,10,8,0) 35%,rgba(13,10,8,.92) 80%)}
@@ -1016,26 +1016,34 @@ class HausLiveCard extends HTMLElement {
     const al = o.alarm && st(o.alarm), alm = al ? (TX(ALARM[al.state], 0) || [al.state === "unavailable" ? T("offline") : al.state, "wn"]) : null;
     const alCls = !al ? "" : al.state === "disarmed" ? "g" : al.state === "armed_home" ? "aor" : al.state.startsWith("armed") || al.state === "triggered" ? "rd" : "wn";
     const solar = n(e.solar), soc = n(e.battery_soc), homeW = n(e.home), grid = n(e.grid);
-    const pills = [];
-    if (alm) pills.push(`<button class="pill" data-a="info" data-v="${esc(o.alarm)}"><span class="${alCls}">${ic("shield", 18, 2)}</span><span><b>${al.state.startsWith("armed") ? T("Alarm scharf") : al.state === "disarmed" ? T("Alarm unscharf") : T("Alarm")}</b><small>${esc(alm[0].replace(/^Scharf · /, ""))}</small></span></button>`);
-    const trp = this._trashHero(); if (trp) pills.unshift(trp);
-    if (solar != null) pills.push(`<button class="pill" data-a="energy"><span class="g">${ic("leaf", 18, 2)}</span><span><b>PV ${f(solar, 0)} W</b><small>${soc != null ? `${T("Batterie")} ${f(soc, 0)} %` : T("Solar")}</small></span></button>`);
+    // small info chips under the greeting: overview.chips picks which ones and in which order
+    const CHIPS = ["trash", "alarm", "climate", "lights", "energy"], csel = Array.isArray(o.chips) ? o.chips.map(String) : null, pick = (m, def) => (csel || def).map((k) => m[k]).filter(Boolean);
+    const tpsAll = (this._c.rooms || []).map((r) => this._roomTemp(r)).filter((v) => v != null), csAll = o.climate && st(o.climate);
+    const lonAll = [...(o.lights || []), ...(o.extra_lights || [])].map((x) => (typeof x === "string" ? { entity: x } : x)).filter((x) => this._on(x.entity));
+    const tTxt = tpsAll.length ? (() => { const a = Math.min(...tpsAll), b = Math.max(...tpsAll); return Math.round(a) === Math.round(b) ? `${f(a, 0)}°` : `${f(a, 0)}–${f(b, 0)}°`; })() : null;
+    const cTxt = T("Innen") + (csAll ? " · " + (csAll.state === "off" ? T("Heizung aus") : (TX(HVAC[csAll.state], 1) || [0, csAll.state])[1]) : "");
+    const lTxt = [lonAll.length ? T(lonAll.length > 1 ? "{n} Lichter an" : "{n} Licht an", { n: lonAll.length }) : T("Alle Lichter aus"), lonAll.length ? lonAll.slice(0, 2).map((x) => x.name || fn(x.entity)).join(", ") + (lonAll.length > 2 ? " …" : "") : T("Beleuchtung")];
+    const PM = {};
+    if (alm) PM.alarm = `<button class="pill" data-a="info" data-v="${esc(o.alarm)}"><span class="${alCls}">${ic("shield", 18, 2)}</span><span><b>${al.state.startsWith("armed") ? T("Alarm scharf") : al.state === "disarmed" ? T("Alarm unscharf") : T("Alarm")}</b><small>${esc(alm[0].replace(/^Scharf · /, ""))}</small></span></button>`;
+    const trp = this._trashHero(); if (trp) PM.trash = trp;
+    if (solar != null) PM.energy = `<button class="pill" data-a="energy"><span class="g">${ic("leaf", 18, 2)}</span><span><b>PV ${f(solar, 0)} W</b><small>${soc != null ? `${T("Batterie")} ${f(soc, 0)} %` : T("Solar")}</small></span></button>`;
+    if (tTxt) PM.climate = `<div class="pill"><span class="aor">${ic("thermo", 18, 2)}</span><span><b>${esc(tTxt)}</b><small>${esc(cTxt)}</small></span></div>`;
+    if ((o.lights || []).length) PM.lights = `<div class="pill"><span class="${lonAll.length ? "aor" : ""}">${ic("bulb", 18, 2)}</span><span><b>${esc(lTxt[0])}</b><small>${esc(lTxt[1])}</small></span></div>`;
+    const pills = pick(PM, ["trash", "alarm", "energy"]);
     let hero = `<div class="oc hero">${(() => { const dy = this._dayEff(), hs = (dy ? o.hero_day : o.hero_night) || o.hero_image || IMGX()[dy ? "hero_day" : "hero_night"] || IMGX().hero; return o.hero !== false && hs ? `<img src="${esc(hs)}" alt="">` : ""; })()}<div class="hc"><span class="hi">${ic("house", 30, 2)}</span>${this._themeBtn("thb thh")}<h2>${esc(greet)}${uname ? `, ${esc(uname)}` : ""}!</h2><div class="pills">${pills.join("")}</div></div></div>`;
     const drs = (o.doors || []).map((d) => { const s = st(d.entity), op = s && s.state === "on", off = !s || s.state === "unavailable"; return { d, op, off }; });
     const nOpen = drs.filter((x) => x.op).length;
     const wst = o.weather && st(o.weather);
     if (ap) {
       const chip = (bg, i, b, sm, a, v) => `<${a ? `button data-a="${a}"${v ? ` data-v="${esc(v)}"` : ""}` : "div"} class="hchip"><span class="d" style="background:${bg}">${ic(i, 15, 2.2)}</span><span><b>${esc(b)}</b><small>${esc(sm)}</small></span></${a ? "button" : "div"}>`;
-      const ch = [];
-      if (trp) ch.push(trp);
-      if (alm) ch.push(chip({ g: "#34C759", aor: "#FF9F0A", rd: "#FF3B30" }[alCls] || "#FF9F0A", "shield", al.state.startsWith("armed") ? T("Alarm scharf") : al.state === "disarmed" ? T("Alarm unscharf") : T("Alarm"), [alm[0].includes(" · ") ? alm[0].split(" · ").slice(1).join(" · ") : "", o.doors && o.doors.length ? (nOpen ? T("{n} offen", { n: nOpen }) : T("Alle Türen zu")) : ""].filter(Boolean).join(" · ") || alm[0], "info", o.alarm));
-      const tps = (this._c.rooms || []).map((r) => this._roomTemp(r)).filter((v) => v != null);
-      const cs = o.climate && st(o.climate);
-      if (tps.length) { const a = Math.min(...tps), b = Math.max(...tps); ch.push(chip("#FF9F0A", "thermo", Math.round(a) === Math.round(b) ? `${f(a, 0)}°` : `${f(a, 0)}–${f(b, 0)}°`, T("Innen") + (cs ? " · " + (cs.state === "off" ? T("Heizung aus") : (TX(HVAC[cs.state], 1) || [0, cs.state])[1]) : ""))); }
-      const lon = [...(o.lights || []), ...(o.extra_lights || [])].map((x) => (typeof x === "string" ? { entity: x } : x)).filter((x) => this._on(x.entity));
-      if ((o.lights || []).length) ch.push(chip(lon.length ? "#FFD45A" : "rgba(255,255,255,.35)", "bulb", lon.length ? T(lon.length > 1 ? "{n} Lichter an" : "{n} Licht an", { n: lon.length }) : T("Alle Lichter aus"), lon.length ? lon.slice(0, 2).map((x) => x.name || fn(x.entity)).join(", ") + (lon.length > 2 ? " …" : "") : T("Beleuchtung")));
-      if (soc != null) ch.push(chip("#0A84FF", "battery", `${T("Akku")} ${f(soc, 0)} %`, solar != null ? `PV ${f(solar, 0)} W` : T("Batterie"), "energy"));
-      else if (solar != null) ch.push(chip("#34C759", "leaf", `PV ${f(solar, 0)} W`, T("Solar"), "energy"));
+      const CM = {};
+      if (trp) CM.trash = trp;
+      if (alm) CM.alarm = (chip({ g: "#34C759", aor: "#FF9F0A", rd: "#FF3B30" }[alCls] || "#FF9F0A", "shield", al.state.startsWith("armed") ? T("Alarm scharf") : al.state === "disarmed" ? T("Alarm unscharf") : T("Alarm"), [alm[0].includes(" · ") ? alm[0].split(" · ").slice(1).join(" · ") : "", o.doors && o.doors.length ? (nOpen ? T("{n} offen", { n: nOpen }) : T("Alle Türen zu")) : ""].filter(Boolean).join(" · ") || alm[0], "info", o.alarm));
+      if (tTxt) CM.climate = chip("#FF9F0A", "thermo", tTxt, cTxt);
+      if ((o.lights || []).length) CM.lights = chip(lonAll.length ? "#FFD45A" : "rgba(255,255,255,.35)", "bulb", lTxt[0], lTxt[1]);
+      if (soc != null) CM.energy = chip("#0A84FF", "battery", `${T("Akku")} ${f(soc, 0)} %`, solar != null ? `PV ${f(solar, 0)} W` : T("Batterie"), "energy");
+      else if (solar != null) CM.energy = chip("#34C759", "leaf", `PV ${f(solar, 0)} W`, T("Solar"), "energy");
+      const ch = pick(CM, CHIPS);
       const sub = [];
       if (wst && typeof wst.attributes.temperature === "number") sub.push(T("Draußen {t}° · {w}", { t: f(wst.attributes.temperature), w: (TX(WX[wst.state], 1) || [0, wst.state])[1] }));
       if (homeW != null) sub.push(T("Haus verbraucht gerade {w} W", { w: f(homeW, 0) }));
@@ -1882,6 +1890,7 @@ const ED = {
     devices: "Geräte", add_device: "Gerät hinzufügen", entity: "Entität", confirm: "Nachfragen vor dem Schalten", sensors: "Fenster und Türen", add_sensor: "Kontakt hinzufügen",
     energy: "Energie", solar: "PV-Leistung (W)", battery: "Akku-Leistung (W)", battery_soc: "Akku-Ladestand (%)", grid: "Netz-Leistung (W)", solar_today: "PV-Ertrag heute (kWh)", consumption_today: "Verbrauch heute (kWh)", import_today: "Netzbezug heute (kWh)", export_today: "Einspeisung heute (kWh)", outdoor_temp: "Außentemperatur", home: "Hausverbrauch (W)", forecast_today: "PV-Prognose heute (kWh)", forecast_tomorrow: "PV-Prognose morgen (kWh)", consumers: "Großverbraucher (Leistung in W)", water_temp: "Warmwasser-Temperatur", water_heater: "Warmwasser-Gerät", battery_invert: "Akku-Vorzeichen umkehren", grid_invert: "Netz-Vorzeichen umkehren",
     more: "Übersicht, Sicherheit und Müllkalender richtest du im Code-Editor ein (Beispiele im README).", up: "Nach oben", down: "Nach unten", remove: "Entfernen", edit: "Bearbeiten",
+    chips: "Infokacheln unter der Begrüßung (leer = Standard)", ch_trash: "Müllabfuhr", ch_alarm: "Alarm und Türen", ch_climate: "Innentemperatur", ch_lights: "Lichter", ch_energy: "PV und Akku",
     auto: "Automatisch", day: "Tag", night: "Abend", overview: "Übersicht", room: "Räume", sec: "Sicherheit", none: "–",
     t_living: "Wohnzimmer", t_dining: "Esszimmer", t_kitchen: "Küche", t_office: "Arbeitszimmer", t_bath: "Bad", t_hall: "Flur", t_utility: "Hauswirtschaft", t_bed: "Schlafzimmer", t_closet: "Ankleide", t_kids: "Kinderzimmer", t_outdoor: "Außen", t_garage: "Garage" },
   en: { general: "General", language: "Language", theme: "Appearance", palette: "Colour scheme", amber: "Amber (warm)", graphite: "Graphite (cool, orange)", neon: "Neon Sunset (synthwave)", glass: "Sky glass (light)", liquid: "Liquid (refraction, elastic)", on_color: "Colour when on (liquid)", oc_auto: "By device type", oc_amber: "Amber", oc_blue: "Blue", oc_violet: "Violet", oc_green: "Green", oc_rose: "Rose", oc_cyan: "Teal", oc_orange: "Orange", liquid_drop: "Glass drop with home consumption (liquid)", refraction: "Refraction (liquid, Chrome-based browsers only)", animation: "Background animation", an_off: "Off", an_city: "City lights (neon city picture)", an_weather: "Weather (rain, snow, clouds)", an_daycycle: "Day cycle (sun position)", background_image: "Background picture (URL, empty = default, none = no picture)", start_view: "Start view", default_room: "Start room", image_path: "Room photo folder", energy_path: "Target of the “Details” button", load_font: "Load the Manrope font from Google",
@@ -1890,6 +1899,7 @@ const ED = {
     devices: "Devices", add_device: "Add device", entity: "Entity", confirm: "Ask before switching", sensors: "Windows and doors", add_sensor: "Add contact",
     energy: "Energy", solar: "Solar power (W)", battery: "Battery power (W)", battery_soc: "Battery level (%)", grid: "Grid power (W)", solar_today: "Solar today (kWh)", consumption_today: "Consumption today (kWh)", import_today: "Grid import today (kWh)", export_today: "Export today (kWh)", outdoor_temp: "Outdoor temperature", home: "Home consumption (W)", forecast_today: "Solar forecast today (kWh)", forecast_tomorrow: "Solar forecast tomorrow (kWh)", consumers: "Largest consumers (power in W)", water_temp: "Hot water temperature", water_heater: "Hot water heater", battery_invert: "Invert battery sign", grid_invert: "Invert grid sign",
     more: "Overview, security and the waste calendar are set up in the code editor (examples in the README).", up: "Move up", down: "Move down", remove: "Remove", edit: "Edit",
+    chips: "Info chips under the greeting (empty = default)", ch_trash: "Waste collection", ch_alarm: "Alarm and doors", ch_climate: "Inside temperature", ch_lights: "Lights", ch_energy: "Solar and battery",
     auto: "Automatic", day: "Day", night: "Evening", overview: "Overview", room: "Rooms", sec: "Security", none: "–",
     t_living: "Living room", t_dining: "Dining room", t_kitchen: "Kitchen", t_office: "Office", t_bath: "Bathroom", t_hall: "Hallway", t_utility: "Utility room", t_bed: "Bedroom", t_closet: "Dressing room", t_kids: "Kids' room", t_outdoor: "Outdoor", t_garage: "Garage" }
 };
@@ -1984,12 +1994,13 @@ class HomeLiveCardEditor extends HTMLElement {
       { name: "animation", selector: this._sel(((window.HOME_LIVE_ANIMS || {})[c.palette || "amber"] || ["off"]).map((a) => ({ value: a, label: L("an_" + a) }))) },
       { name: "background_image", selector: { text: {} } },
       { name: "start_view", selector: this._sel([{ value: "room", label: L("room") }, { value: "overview", label: L("overview") }]) },
+      { name: "chips", selector: { select: { multiple: true, mode: "list", options: ["trash", "alarm", "climate", "lights", "energy"].map((k) => ({ value: k, label: L("ch_" + k) })) } } },
       { name: "default_room", selector: this._sel([{ value: "", label: L("none") }, ...c.rooms.map((r) => ({ value: r.id, label: r.name || r.id }))]) },
       { name: "image_path", selector: { text: {} } },
       { name: "energy_path", selector: { text: {} } },
       { name: "load_font", selector: { boolean: {} } }
-    ], { language: c.language || "auto", theme: c.theme || "auto", palette: c.palette || "amber", animation: (() => { const al = (window.HOME_LIVE_ANIMS || {})[c.palette || "amber"] || ["off"], a = typeof c.animation === "object" && c.animation ? c.animation[c.palette || "amber"] : c.animation; return al.includes(a) ? a : "off"; })(), background_image: c.background_image || "", start_view: c.start_view || "room", default_room: c.default_room || "", image_path: c.image_path || "", energy_path: c.energy_path || "", load_font: c.load_font !== false, on_color: c.on_color || "auto", liquid_drop: c.liquid_drop !== false, refraction: c.refraction !== false },
-    (v) => { const pp = c.palette || "amber"; Object.assign(c, v); if (v.load_font === true) delete c.load_font; if (c.on_color === "auto") delete c.on_color; if (v.liquid_drop === true) delete c.liquid_drop; if (v.refraction === true) delete c.refraction; if (c.palette === "amber") delete c.palette; const np = c.palette || "amber", al = (window.HOME_LIVE_ANIMS || {})[np] || ["off"]; if (np !== pp && !al.includes(c.animation)) c.animation = "off"; if (c.animation === "off") delete c.animation; if (!c.background_image) delete c.background_image; this._clean(c); this._emit(); if (np !== pp) setTimeout(() => this._build(), 0); }));
+    ], { chips: (c.overview && c.overview.chips) || [], language: c.language || "auto", theme: c.theme || "auto", palette: c.palette || "amber", animation: (() => { const al = (window.HOME_LIVE_ANIMS || {})[c.palette || "amber"] || ["off"], a = typeof c.animation === "object" && c.animation ? c.animation[c.palette || "amber"] : c.animation; return al.includes(a) ? a : "off"; })(), background_image: c.background_image || "", start_view: c.start_view || "room", default_room: c.default_room || "", image_path: c.image_path || "", energy_path: c.energy_path || "", load_font: c.load_font !== false, on_color: c.on_color || "auto", liquid_drop: c.liquid_drop !== false, refraction: c.refraction !== false },
+    (v) => { const pp = c.palette || "amber"; Object.assign(c, v); if ("chips" in v) { const ov = c.overview || (c.overview = {}); if (Array.isArray(v.chips) && v.chips.length) ov.chips = v.chips; else delete ov.chips; delete c.chips; } if (v.load_font === true) delete c.load_font; if (c.on_color === "auto") delete c.on_color; if (v.liquid_drop === true) delete c.liquid_drop; if (v.refraction === true) delete c.refraction; if (c.palette === "amber") delete c.palette; const np = c.palette || "amber", al = (window.HOME_LIVE_ANIMS || {})[np] || ["off"]; if (np !== pp && !al.includes(c.animation)) c.animation = "off"; if (c.animation === "off") delete c.animation; if (!c.background_image) delete c.background_image; this._clean(c); this._emit(); if (np !== pp) setTimeout(() => this._build(), 0); }));
     R.appendChild(g.parentNode);
     // rooms
     const rs = this._section(L("rooms"));
